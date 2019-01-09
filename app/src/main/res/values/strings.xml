@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Gumtreiber</string>
+    <string name="no_location_title">Keine Ortung möglich!</string>
+    <string name="no_location_msg">Damit du dich und andere auf der Karte sehen kannst, müssen wir deinen Standort abfragen.\nBitte überprüfe deine Einstellungen, ob wir auf deinen Standort zugrifen dürfen.</string>
+    <string name="settings">Einstellungen</string>
+    <string name="continue_limited">Eingeschränkt Fortfahren</string>
 </resources>
