@@ -64,7 +64,7 @@ public class LocationHandler implements Application.ActivityLifecycleCallbacks, 
      * @param activity The Activity on which the LocationHandler will register its activity lifecycle callbacks
      * @param updatesEnabled Set true to gather the last know lactation and start checking for new location data
      */
-    LocationHandler(AppCompatActivity activity, boolean updatesEnabled) {
+    public LocationHandler(AppCompatActivity activity, boolean updatesEnabled) {
         this.activity = activity;
         this.updatesEnabled = updatesEnabled;
         activity.getApplication().registerActivityLifecycleCallbacks(this);
