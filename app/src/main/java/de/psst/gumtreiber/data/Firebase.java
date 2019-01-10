@@ -26,7 +26,7 @@ import java.util.concurrent.Semaphore;
 public class Firebase {
     //Amount of minutes until the latest location data becomes invalid
     private static final int lifetimeMinutes = 5;
-    private static final String firebaseURL = "https://androidistdoof-20afd.firebaseio.com/user.json";
+    private static final String firebaseURL = "https://gumtreiber-1fb84.firebaseio.com/user.json";
 
     private static final DatabaseReference datebase = FirebaseDatabase.getInstance().getReference();
     private static DateFormat dateFormat = new SimpleDateFormat("/yyyy/MM/dd HH:mm:ss");

@@ -21,6 +21,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         MapView map = findViewById(R.id.map);
+        Firebase.createUser("123","Max");
+        Firebase.setCurrentLocation("123",7.563138,51.024232,  0);
         map.setUserList(Firebase.getAllUsers());
 
         // enable zoom effect
