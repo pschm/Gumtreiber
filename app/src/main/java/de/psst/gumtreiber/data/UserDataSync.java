@@ -19,25 +19,23 @@ import de.psst.gumtreiber.map.MapView;
  * <br>
  * It will automatically start and stop syncing data when the activity gets stopped or started.
  */
-public class UserDataSynchronizer implements Runnable, Application.ActivityLifecycleCallbacks {
+public class UserDataSync implements Runnable, Application.ActivityLifecycleCallbacks {
 
     private Activity activity;
     private LocationHandler locationHandler;
     private MapView mapView;
-
-    private long updateIntervalServer = 2500; //in ms
 
     private Thread updateThread;
     private boolean allowRunning = true;
 
 
     /**
-     * Creates a new instance of UserDatasynchronizer.
+     * Creates a new instance of UserDataSync.
      * @param activity Activity on which the ActivityLifecycleCallbacks are registered.
-     * @param locationHandler LocationHandler from which this syncer will receive the location data.
+     * @param locationHandler LocationHandler from which this sync will receive the location data.
      * @param mapView MapView on which the server data will transferred to.
      */
-    public UserDataSynchronizer(Activity activity, LocationHandler locationHandler, MapView mapView) {
+    public UserDataSync(Activity activity, LocationHandler locationHandler, MapView mapView) {
         this.activity = activity;
         this.locationHandler = locationHandler;
         this.mapView = mapView;
@@ -82,13 +80,13 @@ public class UserDataSynchronizer implements Runnable, Application.ActivityLifec
 
             rngLong = rnd.nextFloat() * 0.003f;
             rngLat = rnd.nextFloat() * 0.002f;
-            Firebase.setCurrentLocation("123",7.563691 + rngLat,51.024161 + rngLong,  0);
+            Firebase.setCurrentLocation("123",7.563691 + rngLat,51.024161 + rngLong, 0);
 
 
             mapView.setUserList( Firebase.getAllUsers() );
 
             try {
-                Thread.sleep(updateIntervalServer);
+                Thread.sleep(LocationHandler.FASTEST_INTERVAL); //Sync as fast as the location updates can be occur
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -106,7 +104,7 @@ public class UserDataSynchronizer implements Runnable, Application.ActivityLifec
     @Override
     public void onActivityStarted(Activity activity) {
         if(!activity.equals(this.activity)) return;
-        Log.d("UserDataSyncer", "onActivityStarted: started updating!");
+        Log.d("UserDataSync", "onActivityStarted: started updating!");
         startUpdating();
     }
 
@@ -123,7 +121,7 @@ public class UserDataSynchronizer implements Runnable, Application.ActivityLifec
     @Override
     public void onActivityStopped(Activity activity) {
         if(!activity.equals(this.activity)) return;
-        Log.d("UserDataSyncer", "onActivityStopped: stopped updating!");
+        Log.d("UserDataSync", "onActivityStopped: stopped updating!");
         stopUpdating();
     }
 

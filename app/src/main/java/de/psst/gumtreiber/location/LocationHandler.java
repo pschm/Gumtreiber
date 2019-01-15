@@ -43,6 +43,9 @@ public class LocationHandler implements Application.ActivityLifecycleCallbacks, 
 
     private AppCompatActivity activity;
 
+    public static final long FASTEST_INTERVAL = 5000;
+    public static final long INTERVAL = 10000;
+
     private static final int PERM_REQ_LASTLOC = 1;
     private static final int PERM_REQ_CURRLOC = 2;
     private static final int PERM_REQ_PLAYSERVICES = 3;
@@ -288,8 +291,8 @@ public class LocationHandler implements Application.ActivityLifecycleCallbacks, 
     //https://developer.android.com/training/location/change-location-settings
     private LocationRequest createLocationRequest() {
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(10000); //Sets the rate in milliseconds at which your app prefers to receive location updates. Can be faster.
-        locationRequest.setFastestInterval(5000); //Sets the fastest rate in milliseconds at which your app can handle location updates.
+        locationRequest.setInterval(INTERVAL); //Sets the rate in milliseconds at which your app prefers to receive location updates. Can be faster.
+        locationRequest.setFastestInterval(FASTEST_INTERVAL); //Sets the fastest rate in milliseconds at which your app can handle location updates.
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); //Sets the priority of the request, which gives the Google Play services location services a strong hint about which location sources to use.
         return locationRequest;
     }

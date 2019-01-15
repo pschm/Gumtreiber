@@ -3,7 +3,7 @@ package de.psst.gumtreiber;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import de.psst.gumtreiber.data.UserDataSynchronizer;
+import de.psst.gumtreiber.data.UserDataSync;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapControl;
 import de.psst.gumtreiber.map.MapView;
@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         LocationHandler locationHandler = new LocationHandler(this, true); //TODO updatesEnabled aus config laden
 
         //create UserDataSync
-        UserDataSynchronizer uds = new UserDataSynchronizer(this, locationHandler, map);
+        UserDataSync uds = new UserDataSync(this, locationHandler, map);
         uds.startUpdating();
 
 
