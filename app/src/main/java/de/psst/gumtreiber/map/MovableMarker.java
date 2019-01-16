@@ -17,8 +17,8 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Vector2;
+import de.psst.gumtreiber.*;
 
 /**
  * Visualisation for a point (Footstep) on an activity.
