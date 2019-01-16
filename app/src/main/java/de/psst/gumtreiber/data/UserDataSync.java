@@ -3,7 +3,15 @@ package de.psst.gumtreiber.data;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 
 import java.util.Random;
 
@@ -24,6 +32,8 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
     private Activity activity;
     private LocationHandler locationHandler;
     private MapView mapView;
+
+    private String userToken;
 
     private Thread updateThread;
     private boolean allowRunning = true;
@@ -53,6 +63,21 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             return;
         }
 
+        //Get/Refresh auth token
+        //TODO evtl. https://firebase.google.com/docs/auth/admin/manage-sessions
+        FirebaseAuth.getInstance().getCurrentUser().getIdToken(true)
+                .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                    public void onComplete(@NonNull Task<GetTokenResult> task) {
+                        if (task.isSuccessful()) {
+                            userToken = task.getResult().getToken();
+                        } else {
+                            task.getException().printStackTrace();
+                        }
+                    }
+                });
+
+
+
         updateThread = new Thread(this);
         updateThread.start();
     }
@@ -73,17 +98,18 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
         float rngLong, rngLat;
 
         while(allowRunning) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            //if(locationHandler.updatesEnabled()) {
-                //Firebase.setCurrentLocation("0815", locationHandler.getCurrentLocation());
-            //}
+            if(locationHandler.updatesEnabled() && user != null) {
+                Firebase.setCurrentLocation(user, locationHandler.getCurrentLocation());
+            }
 
-            rngLong = rnd.nextFloat() * 0.003f;
-            rngLat = rnd.nextFloat() * 0.002f;
-            Firebase.setCurrentLocation("123",7.563691 + rngLat,51.024161 + rngLong, 0);
+            if(!TextUtils.isEmpty(userToken)) {
+                mapView.setUserList(Firebase.getAllUsers(userToken));
+            } else {
+                Log.e("UserDataSync","Auth-Token for getting all users is empty!");
+            }
 
-
-            mapView.setUserList( Firebase.getAllUsers() );
 
             try {
                 Thread.sleep(LocationHandler.FASTEST_INTERVAL); //Sync as fast as the location updates can be occur
