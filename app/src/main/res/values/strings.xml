@@ -6,7 +6,7 @@
     <string name="continue_limited">Eingeschränkt Fortfahren</string>
     <string name="title_activity_login">Gumtreiber</string>
 
-    //NaigationDrawer Menüunterpunkte
+    <!-- NaigationDrawer Menueunterpunkte -->
     <string name="navigation_drawer_visibility">Sichtbarkeit</string>
     <string name="navigation_drawer_location">Standort</string>
     <string name="navigation_drawer_appointments">Zeitplan</string>
@@ -15,7 +15,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
 
-    //Login_context zeugs
+    <!-- Login_context zeugs -->
     <string name="login_context_btn_los">Los!</string>
     <string name="login_context_edt_name">Name</string>
 
