@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -213,7 +214,9 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Auth", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+
+                            String msg = getFirebaseAuthErrorMsg((FirebaseAuthException)task.getException());
+                            Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
 
@@ -246,7 +249,9 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Auth", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+
+                            String msg = getFirebaseAuthErrorMsg((FirebaseAuthException)task.getException());
+                            Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
 
@@ -260,5 +265,23 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         return user.updateProfile(profileUpdate);
+    }
+
+    private String getFirebaseAuthErrorMsg(FirebaseAuthException ae) {
+        if(ae == null) return getString(R.string.auth_unknown_error);
+
+        //Codes: https://stackoverflow.com/questions/37859582/how-to-catch-a-firebase-auth-specific-exceptions
+        switch(ae.getErrorCode()) {
+            case "ERROR_EMAIL_ALREADY_IN_USE": return getString(R.string.auth_email_taken);
+            case "ERROR_INVALID_EMAIL": return getString(R.string.auth_invalid_email);
+            case "ERROR_WRONG_PASSWORD": return getString(R.string.auth_wrong_pwd);
+            case "ERROR_USER_NOT_FOUND": return getString(R.string.auth_user_not_found);
+            case "ERROR_WEAK_PASSWORD": return getString(R.string.auth_weak_pwd);
+
+            default:
+                String msg = ae.getErrorCode() + ": '" + ae.getMessage() + "'";
+                Log.e("getAuthErrMsg", "Unhandled case: " + msg);
+                return getString(R.string.auth_unhandled_error);
+        }
     }
 }
