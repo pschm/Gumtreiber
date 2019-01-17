@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.data.UserDataSync;
@@ -25,7 +26,7 @@ import de.psst.gumtreiber.map.MapView;
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText txtEmail, txtPwd;
+    private EditText txtName, txtEmail, txtPwd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
+        txtName = findViewById(R.id.txtName);
         txtEmail = findViewById(R.id.txtEmail);
         txtPwd = findViewById(R.id.txtPassword);
 
@@ -42,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createAccount(txtEmail.getText().toString(), txtPwd.getText().toString());
+                createAccount(txtName.getText().toString(), txtEmail.getText().toString(), txtPwd.getText().toString());
             }
         });
 
@@ -93,7 +95,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
     /////////////////////////////////////////////////////////////////
     // Authentication                                              //
     /////////////////////////////////////////////////////////////////
@@ -116,14 +117,15 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Checks if the required input fields for signing in or registering are filled.
+     *
      * @return true if everything is filled in.
      */
-    private boolean validateForm() {
+    private boolean validateForm(boolean checkNameField) {
         boolean valid = true;
 
         String email = txtEmail.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            txtEmail.setError("Required.");
+            txtEmail.setError("Pflichtfeld!");
             valid = false;
         } else {
             txtEmail.setError(null);
@@ -131,11 +133,21 @@ public class LoginActivity extends AppCompatActivity {
 
         String password = txtPwd.getText().toString();
         if (TextUtils.isEmpty(password)) {
-            txtPwd.setError("Required.");
+            txtPwd.setError("Pflichtfeld!");
             valid = false;
         } else {
             txtPwd.setError(null);
         }
+
+
+        String displayName = txtName.getText().toString();
+        if (checkNameField && TextUtils.isEmpty(displayName)) {
+            txtName.setError("Pflichtfeld!");
+            valid = false;
+        } else {
+            txtName.setError(null);
+        }
+
 
         return valid;
     }
@@ -144,12 +156,14 @@ public class LoginActivity extends AppCompatActivity {
      * Create a new account by passing the new user's email address and password.
      * <br>
      * If the new account was created, the user is also signed in.
-     * @param email Users email.
+     *
+     * @param name     Users display name.
+     * @param email    Users email.
      * @param password Users password.
      */
-    private void createAccount(String email, String password) {
+    private void createAccount(final String name, String email, String password) {
         Log.d("Auth", "createAccount:" + email);
-        if (!validateForm()) {
+        if (!validateForm(true)) {
             return;
         }
 
@@ -160,9 +174,23 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("Auth", "createUserWithEmail:success");
-                            FirebaseUser user = auth.getCurrentUser();
-                            Firebase.createUser(user.getUid(), "Todo"); //TODO
-                            updateUI(user);
+                            final FirebaseUser user = auth.getCurrentUser();
+
+                            //After successfully created the user, update its display name
+                            updateDisplayName(user, name).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        //When name update request is done, create the user node in the database
+                                        Firebase.createUser(user.getUid(), user.getDisplayName());
+                                        updateUI(user);
+                                    } else {
+                                        task.getException().printStackTrace();
+                                    }
+                                }
+                            });
+
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Auth", "createUserWithEmail:failure", task.getException());
@@ -181,7 +209,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void signIn(String email, String password) {
         Log.d("Auth", "signIn:" + email);
-        if (!validateForm()) {
+        if (!validateForm(false)) {
             return;
         }
 
@@ -203,5 +231,13 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    private Task<Void> updateDisplayName(FirebaseUser user, String displayName) {
+        UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
+                .setDisplayName(displayName)
+                .build();
+
+        return user.updateProfile(profileUpdate);
     }
 }
