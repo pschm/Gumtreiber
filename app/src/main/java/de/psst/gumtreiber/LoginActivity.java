@@ -25,6 +25,8 @@ import de.psst.gumtreiber.map.MapView;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final boolean useLogin = true;
+
     private FirebaseAuth auth;
     private EditText txtName, txtEmail, txtPwd;
     private Button btnLogin, btnRegister;
@@ -32,6 +34,28 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        if(useLogin) {
+            setupAuthOnCreateStuff();
+        } else {
+            setupOldOnCreateStuff();
+        }
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if(useLogin) {
+            // Check if user is signed in (non-null) and update UI accordingly.
+            FirebaseUser currentUser = auth.getCurrentUser();
+            updateUI(currentUser);
+        }
+    }
+
+    private void setupAuthOnCreateStuff() {
         setContentView(R.layout.activity_authentication);
 
         auth = FirebaseAuth.getInstance();
@@ -59,16 +83,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
         signOut(); //For test purposes
-
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = auth.getCurrentUser();
-        updateUI(currentUser);
     }
 
     //TODO Hübsch machen. Ggf. auth in eigene Activity?
@@ -87,12 +101,14 @@ public class LoginActivity extends AppCompatActivity {
         mc.update();
 
 
-        //create LocationHandler
-        LocationHandler locationHandler = new LocationHandler(this, true); //TODO updatesEnabled aus config laden
+        if(useLogin) {
+            //create LocationHandler
+            LocationHandler locationHandler = new LocationHandler(this, true); //TODO updatesEnabled aus config laden
 
-        //create UserDataSync
-        UserDataSync uds = new UserDataSync(this, locationHandler, map);
-        uds.startUpdating();
+            //create UserDataSync
+            UserDataSync uds = new UserDataSync(this, locationHandler, map);
+            uds.startUpdating();
+        }
     }
 
 

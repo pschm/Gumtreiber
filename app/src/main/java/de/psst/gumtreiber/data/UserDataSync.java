@@ -65,18 +65,18 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
         //Get/Refresh auth token
         //TODO evtl. https://firebase.google.com/docs/auth/admin/manage-sessions
-        FirebaseAuth.getInstance().getCurrentUser().getIdToken(true)
-                .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                    public void onComplete(@NonNull Task<GetTokenResult> task) {
-                        if (task.isSuccessful()) {
-                            userToken = task.getResult().getToken();
-                        } else {
-                            task.getException().printStackTrace();
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            FirebaseAuth.getInstance().getCurrentUser().getIdToken(true)
+                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                        public void onComplete(@NonNull Task<GetTokenResult> task) {
+                            if (task.isSuccessful()) {
+                                userToken = task.getResult().getToken();
+                            } else {
+                                task.getException().printStackTrace();
+                            }
                         }
-                    }
-                });
-
-
+                    });
+        }
 
         updateThread = new Thread(this);
         updateThread.start();
@@ -107,7 +107,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             if(!TextUtils.isEmpty(userToken)) {
                 mapView.setUserList(Firebase.getAllUsers(userToken));
             } else {
-                Log.e("UserDataSync","Auth-Token for getting all users is empty!");
+                Log.w("UserDataSync","Auth-Token for getting all users is empty!");
             }
 
 
