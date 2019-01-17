@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     private EditText txtName, txtEmail, txtPwd;
+    private Button btnLogin, btnRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +39,10 @@ public class LoginActivity extends AppCompatActivity {
         txtName = findViewById(R.id.txtName);
         txtEmail = findViewById(R.id.txtEmail);
         txtPwd = findViewById(R.id.txtPassword);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnRegister = findViewById(R.id.btnRegister);
 
 
-        Button btnRegister = findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,8 +106,8 @@ public class LoginActivity extends AppCompatActivity {
             setupOldOnCreateStuff();
 
         } else {
-
-            //setContentView(R.layout.activity_authentication);
+            btnLogin.setClickable(true); //re-enable buttons if login failed
+            btnRegister.setClickable(true);
         }
     }
 
@@ -166,6 +167,8 @@ public class LoginActivity extends AppCompatActivity {
         if (!validateForm(true)) {
             return;
         }
+        btnLogin.setClickable(false); //Disable buttons to avoid double clicking
+        btnRegister.setClickable(false);
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -212,6 +215,8 @@ public class LoginActivity extends AppCompatActivity {
         if (!validateForm(false)) {
             return;
         }
+        btnLogin.setClickable(false); //Disable buttons to avoid double clicking
+        btnRegister.setClickable(false);
 
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
