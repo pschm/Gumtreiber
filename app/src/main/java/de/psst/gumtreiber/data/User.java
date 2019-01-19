@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import de.psst.gumtreiber.map.MovableMarker;
+
 public class User {
 
     public String imei;
@@ -19,6 +21,8 @@ public class User {
     //true, if the user uses a Schedule
     public boolean usingSchedule;
 
+    //marker to show the position on the map
+    private MovableMarker marker;
 
 
     public User(String imei, String name) {
@@ -33,7 +37,12 @@ public class User {
         return imei + ": " + name + " "+ altitude+ "" + longitude + " " + latitude + " "+ s;
     }
 
+    public MovableMarker getMarker() {
+        return marker;
+    }
 
-
+    public void setMarker(MovableMarker marker) {
+        this.marker = marker;
+    }
 }
 

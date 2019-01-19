@@ -3,10 +3,15 @@ package de.psst.gumtreiber;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
+import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserDataSync;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapControl;
 import de.psst.gumtreiber.map.MapView;
+import de.psst.gumtreiber.map.MovableMarker;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -18,7 +23,8 @@ public class LoginActivity extends AppCompatActivity {
         MapView map = findViewById(R.id.map);
         //Firebase.createUser("123","Max");
         //Firebase.setCurrentLocation("123",7.563138,51.024232,  0);
-        //map.setUserList(Firebase.getAllUsers());
+        map.setActivity(this);
+//        map.setUserList(null);
 
         // enable zoom effect
         MapControl mc = new MapControl(map, true);
