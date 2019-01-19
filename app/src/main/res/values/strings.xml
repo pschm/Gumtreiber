@@ -19,5 +19,14 @@
     <string name="login_context_btn_los">Los!</string>
     <string name="login_context_edt_name">Name</string>
 
+    <!-- Firebase-Auth Fehlermeldungen -->
+    <string name="auth_unknown_error">Unbekannter Fehler!</string>
+    <string name="auth_email_taken">Email ist bereits in Verwendung!</string>
+    <string name="auth_invalid_email">Ungültige Email-Adresse!</string>
+    <string name="auth_wrong_pwd">Passwort ungültig!</string>
+    <string name="auth_user_not_found">Account existiert nicht!</string>
+    <string name="auth_weak_pwd">Zu schwaches Passwort!</string>
+    <string name="auth_unhandled_error">Autentifizierung fehlgeschlagen!</string>
+
 
 </resources>

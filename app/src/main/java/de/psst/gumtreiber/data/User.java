@@ -8,7 +8,7 @@ import de.psst.gumtreiber.map.MovableMarker;
 
 public class User {
 
-    public String imei;
+    public String uid;
     public String name;
 
     public double latitude;
@@ -25,8 +25,8 @@ public class User {
     private MovableMarker marker;
 
 
-    public User(String imei, String name) {
-        this.imei = imei;
+    public User(String uid, String name) {
+        this.uid = uid;
         this.name = name;
     }
 
@@ -34,7 +34,7 @@ public class User {
         DateFormat dateFormat = new SimpleDateFormat("/yyyy/MM/dd HH:mm:ss");
         String s = dateFormat.format(expirationDate.getTime());
 
-        return imei + ": " + name + " "+ altitude+ "" + longitude + " " + latitude + " "+ s;
+        return uid + ": " + name + " "+ altitude+ "" + longitude + " " + latitude + " "+ s;
     }
 
     public MovableMarker getMarker() {
