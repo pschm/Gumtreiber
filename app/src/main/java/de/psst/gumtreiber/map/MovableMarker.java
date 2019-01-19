@@ -10,6 +10,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +19,8 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Vector2;
-import de.psst.gumtreiber.*;
 
 /**
  * Visualisation for a point (Footstep) on an activity.
@@ -61,16 +63,41 @@ public class MovableMarker {
      * @param label Name label on top of the marker.
      * @param markAsFriend Set to true to change the color appearance of the marker.
      */
-    public MovableMarker(Activity activity, String label, boolean markAsFriend) {
+    public MovableMarker(final Activity activity, final String label, final boolean markAsFriend) {
+
         this.activity = activity;
         this.curPos = new Vector2();
 
-        initAnimationImages(markAsFriend);
-        initLabel(label, markAsFriend);
+        Runnable init = new Runnable() {
+            @Override
+            public void run() {
+                initAnimationImages(markAsFriend);
+                initLabel(label, markAsFriend);
 
-        activity.addContentView(nameImg, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                activity.addContentView(nameImg, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        setPosition(curPos);
+                setPosition(curPos);
+                synchronized(this) {
+                    notify();
+                }
+            }
+        };
+
+
+        if(isUiThread()) {
+            init.run();
+        } else {
+
+            synchronized(init) {
+                activity.runOnUiThread(init);
+                try {
+                    init.wait(); //Block thread until the stuff is done on ui thread
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     private void initAnimationImages(boolean markAsFriend) {
@@ -106,6 +133,14 @@ public class MovableMarker {
         //TODO friend: to be continued
 
         changeLabel(label);
+    }
+
+    private boolean isUiThread() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return Looper.getMainLooper().isCurrentThread();
+        } else {
+            return Looper.getMainLooper().equals(Looper.myLooper());
+        }
     }
 
     private FootstepImage getNextPrint(boolean leftPrint) {
