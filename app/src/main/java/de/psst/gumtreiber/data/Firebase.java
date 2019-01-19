@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
 //REST
@@ -72,10 +73,49 @@ public class Firebase {
     }
 
 
+    public static void updateUserList(String authToken, HashMap<String, User> userList) {
+        String jsonString = getUserJSON(authToken);
+
+        try {
+            JSONObject reader = new JSONObject(jsonString);
+            JSONArray allUIDs = reader.names();
+            //String s = user1.getString(2);
+            //Log.v("mim",""+user1.length());
+
+            for(int i = 0; i < allUIDs.length(); i++) {
+                String userUid = allUIDs.getString(i);
+                JSONObject userJSON = reader.getJSONObject(userUid);
 
 
+                User myUser; //Check if user has a entry in the userList
+                if(userList.containsKey(userUid)) {
+                    myUser = userList.get(userUid); //true, only UPDATE its values
+                } else {
+                    myUser = new User(userUid, userJSON.getString("name")); //false, create the user
+                    userList.put(userUid, myUser); //and add him/her to the list
+                }
 
 
+                myUser.altitude = userJSON.getDouble("altitude");
+                myUser.latitude = userJSON.getDouble("latitude");
+                myUser.longitude = userJSON.getDouble("longitude");
+                myUser.usingSchedule = userJSON.getBoolean("usingSchedule");
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(dateFormat.parse(userJSON.getString("expirationDate")));
+                myUser.expirationDate = cal;
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //TODO Eigentlich unnötig geworden, oder?
+    //Funktion 1 zu 1 nach oben in "updateUserList" kopiert.
+    //Der geänderte Teil oben ist der if-block mit den Kommentaren :P
      public static ArrayList<User> getAllUsers(String authToken) {
         ArrayList<User> userList= new ArrayList<>();
         String jsonString = getUserJSON(authToken);

@@ -13,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import de.psst.gumtreiber.location.LocationHandler;
@@ -28,6 +30,8 @@ import de.psst.gumtreiber.map.MapView;
  * It will automatically start and stop syncing data when the activity gets stopped or started.
  */
 public class UserDataSync implements Runnable, Application.ActivityLifecycleCallbacks {
+
+    private static final HashMap<String, User> userList = new HashMap<>();
 
     private Activity activity;
     private LocationHandler locationHandler;
@@ -105,7 +109,8 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             }
 
             if(!TextUtils.isEmpty(userToken)) {
-                mapView.setUserList(Firebase.getAllUsers(userToken));
+                Firebase.updateUserList(userToken, userList);
+                mapView.setUserList(new ArrayList<>(userList.values()));
             } else {
                 Log.w("UserDataSync","Auth-Token for getting all users is empty!");
             }

@@ -9,7 +9,9 @@ import android.graphics.Paint;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import java.util.ArrayList;
+
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 
@@ -105,7 +107,9 @@ public class MapView extends AppCompatImageView {
      */
     public void setUserList(ArrayList<User> userList) {
 /*
-        // add dummy data // TODO delete (just for testing)
+        // add dummy data
+        //TODO delete: DO NOT USE THIS ANYMORE! If u want to add test/dummy users, add them to the "userList" in the UserDataSync-Class!
+
         userList = new ArrayList<User>();
         User u = new User("447806517517260", "Nathalie");
         u.latitude =  50.937981;
