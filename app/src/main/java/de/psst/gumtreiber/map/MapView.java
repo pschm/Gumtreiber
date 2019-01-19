@@ -65,6 +65,11 @@ public class MapView extends AppCompatImageView {
         x = pos.latitude * 1000000 - 51020000 - 1335; // min/max: 1335-6252 -> 0-4917
         x = 4917 - x; // x-Achse umkehren von <-- nach -->
         y = pos.longitude* 1000000 -  7560000 -  268; // min/max: 0268-6864 -> 0-6596
+
+        // TODO fix correction
+        y += 2200;
+        x += 200;
+
         //Log.v("MapView", "- cleared: (" +x+ "|" +y+ ")");
 
         xFaktor = getWidth()  / 4917.0;
@@ -99,7 +104,8 @@ public class MapView extends AppCompatImageView {
      * @param userList users to be drawn of the map
      */
     public void setUserList(ArrayList<User> userList) {
-        // add dummy data // TODO delete
+/*
+        // add dummy data // TODO delete (just for testing)
         userList = new ArrayList<User>();
         User u = new User("447806517517260", "Nathalie");
         u.latitude =  50.937981;
@@ -134,10 +140,10 @@ public class MapView extends AppCompatImageView {
         u.longitude =  7.287464;
 //        u.setMarker(new MovableMarker(this,"Philipp"));
         userList.add(u); // olpe
+*/
 
-
-        this.userList = buildUserGroups(activity, userList, 200); // TODO move
-//        this.userList = userList;
+        // TODO move buildUserGroups() call?
+        this.userList = buildUserGroups(activity, userList, 200);
     }
 
     /**
@@ -218,6 +224,7 @@ public class MapView extends AppCompatImageView {
 
     /**
      * Merge multiple geographically close users to a group
+     * As well as add MovableMarkers to each user/group
      * @param boxSize distance before users are merged
      * @param userList Userlist to control
      * @return returns a new list with users and merged users
@@ -261,7 +268,7 @@ public class MapView extends AppCompatImageView {
                 u.setMarker(new MovableMarker(activity, u.name));
                 map[(int)x][(int)y] = u;
             }
-            else if (sector.imei != null) {
+            else if (sector.uid != null) {
                 // u is the second user in this sector
                 // delete both users from list and build a group
                 userList.remove(sector);
