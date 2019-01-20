@@ -25,6 +25,8 @@ public class MapView extends AppCompatImageView {
     private ArrayList<User> prison = new ArrayList<>();
     private Activity activity;
     private boolean firstDraw = true;
+    private double scale = 1.0;
+    private Coordinate defaultSize;
 
     public MapView(Context context) {
         super(context);
@@ -39,7 +41,8 @@ public class MapView extends AppCompatImageView {
     }
 
     /**
-     * TODO delete later
+     * Set the Activity where the map is placed. The Activity is needed to create
+     * the MovableMarker on the same context.
      */
     public void setActivity(Activity activity) {
         this.activity = activity;
@@ -55,14 +58,27 @@ public class MapView extends AppCompatImageView {
     }
 
     /**
+     * @param userList users to be drawn of the map
+     */
+    public void setUserList(ArrayList<User> userList) {
+        this.userList = userList;
+
+        fillPrison();
+
+        // TODO boxSize an den Zoom anpassen? Nachteil, einteilung müsste im onDraw() aufgerufen werden
+        this.userList = buildUserGroups(activity, userList, 200);
+    }
+
+
+    /**
      * TODO Problem beheben, dass die Koordinaten noch eine leichte Verschiebung zur soll Position auf der karte haben
      * Calculates the given coordinate from GPS Position to map coordinates.
      */
     private void gpsToMap(Coordinate pos) {
         double x, y, xFaktor, yFaktor;
 
-        //Log.v("MapView", "- Width:  (" +getWidth()+ ")");
-        //Log.v("MapView", "- Height: (" +getHeight()+ ")");
+//        Log.v("MapView", "- Width:  (" +getWidth()+ ")");  // 1860 normal size
+//        Log.v("MapView", "- Height: (" +getHeight()+ ")"); // 2193 normal size
 
         x = pos.latitude * 1000000 - 51020000 - 1335; // min/max: 1335-6252 -> 0-4917
         x = 4917 - x; // x-Achse umkehren von <-- nach -->
@@ -103,55 +119,22 @@ public class MapView extends AppCompatImageView {
     }
 
     /**
-     * @param userList users to be drawn of the map
+     * Calculates the scaling of the image
      */
-    public void setUserList(ArrayList<User> userList) {
-/*
-        // add dummy data
-        //TODO delete: DO NOT USE THIS ANYMORE! If u want to add test/dummy users, add them to the "userList" in the UserDataSync-Class!
+    private void calcScaling() {
+        Coordinate scaledSize = new Coordinate(defaultSize.latitude, defaultSize.longitude);
+        adjustPosToZoom(scaledSize); // defaultSize;
 
-        userList = new ArrayList<User>();
-        User u = new User("447806517517260", "Nathalie");
-        u.latitude =  50.937981;
-        u.longitude =  7.020804;
-//        u.setMarker(new MovableMarker(this,"Nathalie"));
-        userList.add(u); // cologne
+        scale = (defaultSize.latitude + defaultSize.longitude) / (scaledSize.latitude + scaledSize.longitude);
 
-        u = new User("447806517517261", "Wolfgang");
-        u.latitude =  51.023229;
-        u.longitude =  7.562274;
-//        u.setMarker(new MovableMarker(this,"Wolfgang"));
-
-        userList.add(u); // main building
-
-        u = new User("447806517517262", "Christopher");
-        u.latitude =  51.024237;
-        u.longitude =  7.563138;
-//        u.setMarker(new MovableMarker(this,"Christopher"));
-
-        userList.add(u); // main building
-
-        u = new User("447806517517262", "Chris");
-        u.latitude =  51.024232;
-        u.longitude =  7.563138;
-//        u.setMarker(new MovableMarker(this,"Chris"));
-
-        userList.add(u); // main building
-        userList.add(u); // main building
-
-        u = new User("447806517517263", "Philipp");
-        u.latitude =  50.042789;
-        u.longitude =  7.287464;
-//        u.setMarker(new MovableMarker(this,"Philipp"));
-        userList.add(u); // olpe
-*/
-
-        // TODO move buildUserGroups() call?
-        this.userList = buildUserGroups(activity, userList, 200);
+        if (scale < 0.9) scale = 0.9;
+        else if (scale > 1.25) scale = 1.25;
+        Log.v("MapView", "Scale: " + scale);
     }
 
     /**
-     * Draw the map itself as well as the position of every user on the map
+     * Draw the map itself as well as the position of every user
+     * on the map based on {@link #userList} and {@link #prison}
      */
     @Override
     public void onDraw(Canvas canvas) {
@@ -160,16 +143,13 @@ public class MapView extends AppCompatImageView {
 
         // skip drawing - there are no users to draw
         if (userList == null || userList.isEmpty()) {
-            Log.w("MapView", "Nothing to draw - the user list ist empty ");
+            Log.w("MapView", "Nothing to draw - the user list ist empty or null ");
             return;
         }
 
         // the paint color and size
         paint.setColor(Color.CYAN);
         paint.setTextSize(35);
-
-        // clear the prison
-        prison.clear();
 
         // draw all users on the map
         for(User u : userList) {
@@ -179,29 +159,35 @@ public class MapView extends AppCompatImageView {
 //            Log.v("MapView", "++++++++++++++++++++++++++++++++++++++++++++");
 //            Log.v("MapView", "- GPS (" + u.name + ") " + pos.latitude + "|" + pos.longitude);
 
-            // check if the user is in the area of the map - skip it if not // TODO ggf, aus onDraw an sinvollere Stelle schieben
-            if (pos.latitude > 51.026252 || pos.latitude < 51.021335
-                    || pos.longitude > 7.566864 || pos.longitude < 7.560268) {
-                prison.add(u);
-                continue;
-            }
-
-            // map the coordinate according to the Gumtreiber map
+            // map the coordinate according to the Gumtreiber area
             gpsToMap(pos);
 
             // consider possible zoom
             adjustPosToZoom(pos);
 //            Log.v("MapView", "- Scale " + pos.latitude + "|" + pos.longitude);
 
-            // TODO offest zum zeichnen an die größe des Markers anpassen
+            if (u.getMarker() == null) {
+                Log.w("MapView", "WARNING: User without marker detected!");
+                return;
+            }
+
             // set the marker directly to the new position if the zoom changed
             // or let the marker move to the new position
             if (firstDraw || transformation.equals(oldTransformation)) {
-                u.getMarker().setPosition((float) pos.latitude - 17, (float) pos.longitude - 150);
+                // init scaling (device dependent)
+                defaultSize = new Coordinate(getWidth(), getHeight());
+
+                u.getMarker().setPosition((float) (pos.latitude - 17), (float) (pos.longitude - 150));
+
                 firstDraw = false;
             }
-            else
+            else {
                 u.getMarker().moveTo((float) pos.latitude - 17, (float) pos.longitude - 150);
+            }
+
+            // scale the marker according to the zoom
+            calcScaling();
+            u.getMarker().setScale((float) scale);
 
             // draw user on the map // TODO could be deleted if markers work properly
             canvas.drawCircle((float)pos.latitude, (float) pos.longitude, 17.5f, paint);
@@ -211,7 +197,8 @@ public class MapView extends AppCompatImageView {
             oldTransformation = transformation;
         }
 
-        // draw all prisoners // TODO könnte man später ggf. auch mit einem eigenen Marker machen
+        // draw all prisoners
+        // TODO könnte man später ggf. auch mit einem eigenen Marker machen, jenachdem was besser auf der finalen Karte aussieht
         int c = 0;
         for (User u : prison) {
             pos.latitude  = getWidth() / 10.0;
@@ -249,12 +236,6 @@ public class MapView extends AppCompatImageView {
         for (int i = 0; i < userList.size(); i++) {
             User u = userList.get(i);
 
-            // skip all users not on map TODO should be done separately before this!
-            if (u.latitude > 51.026252 || u.latitude < 51.021335
-                    || u.longitude > 7.566864 || u.longitude < 7.560268) {
-                continue;
-            }
-
             // transform user coordinates to the area
             x = (u.latitude * 1000000 - 51020000 - 1335); // min/max: 1335-6252 -> 0-4917
             x = 4917 - x; // x-Achse umkehren von <-- nach -->
@@ -269,7 +250,8 @@ public class MapView extends AppCompatImageView {
 
             if (sector == null) {
                 // u is the first user in this sector
-                u.setMarker(new MovableMarker(activity, u.name));
+                if (u.getMarker() == null)
+                    u.setMarker(new MovableMarker(activity, u.name));
                 map[(int)x][(int)y] = u;
             }
             else if (sector.uid != null) {
@@ -277,6 +259,9 @@ public class MapView extends AppCompatImageView {
                 // delete both users from list and build a group
                 userList.remove(sector);
                 userList.remove(u);
+
+                // hide label if existing // TODO maybe set invisible instead?
+                if (u.getMarker() != null) u.getMarker().setPosition(-50f, -50f);
 
                 // reduce index according to deleted users
                 i -= 2;
@@ -298,6 +283,9 @@ public class MapView extends AppCompatImageView {
                 // remove u from the userList
                 userList.remove(u);
 
+                // hide label if existing // TODO see above
+                if (u.getMarker() != null) u.getMarker().setPosition(-50f, -50f);
+
                 // reduce index according to the deleted user
                 i--;
 
@@ -311,5 +299,22 @@ public class MapView extends AppCompatImageView {
         // add all mergedUsers to the list an return it
         userList.addAll(mergedUserList);
         return userList;
+    }
+
+    /**
+     * Separate all Users from {@link #userList} which aren't in the geographically area of the map
+     * and save them in their own {@link #prison} list.
+     */
+    private void fillPrison() {
+        prison.clear();
+        for (int i = userList.size() - 1; i >= 0; i--) {
+            User u = userList.get(i);
+
+            if (u.latitude > 51.026252 || u.latitude < 51.021335
+                    || u.longitude > 7.566864 || u.longitude < 7.560268) {
+                prison.add(u);
+                userList.remove(u);
+            }
+        }
     }
 }

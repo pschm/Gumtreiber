@@ -98,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
         //Firebase.createUser("123","Max");
         //Firebase.setCurrentLocation("123",7.563138,51.024232,  0);
         map.setActivity(this);
-//        map.setUserList(null); // TODO delete (just for testing)
 
         // enable zoom effect
         MapControl mc = new MapControl(map, true);
