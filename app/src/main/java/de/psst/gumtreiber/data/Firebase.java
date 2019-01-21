@@ -2,6 +2,7 @@ package de.psst.gumtreiber.data;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -18,10 +19,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
+
+import com.google.firebase.*;
 
 //REST
 
@@ -29,12 +34,19 @@ import java.util.concurrent.Semaphore;
 public class Firebase {
     //Amount of minutes until the latest location data becomes invalid
     private static final int lifetimeMinutes = 5;
-    private static final String firebaseURL = "https://gumtreiber-1fb84.firebaseio.com/users.json";
+    //Firebase URL for GET requests
+    private static final String firebaseURL = "https://gumtreiber-1fb84.firebaseio.com";
 
     private static final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-    private static DateFormat dateFormat = new SimpleDateFormat("/yyyy/MM/dd HH:mm:ss");
+    private static DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
 
+    /**
+     * Creates a new User in the database and initializes it's userdata.
+     * If the user already exists, the name is updated.
+     * @param uid The user id of the user
+     * @param name name of the user
+     */
     public static void createUser(String uid, String name) {
         database.child("users").child(uid).child("name").setValue(name);
 
@@ -43,38 +55,145 @@ public class Firebase {
         deactivateSchedule(uid);
     }
 
+
+    /**
+     * Updates the location of the user in firebase.
+     * @param user
+     * @param location
+     */
     public static void setCurrentLocation(FirebaseUser user, Location location) {
         if(user == null || location == null) return;
         setCurrentLocation(user.getUid(), location.getLatitude(), location.getLongitude(), location.getAltitude());
     }
 
+    /**
+     * Updates the location of the given user in firebase.
+     * @param uid
+     * @param latitude
+     * @param longitude
+     * @param altitude
+     */
     public static void setCurrentLocation(String uid, double latitude, double longitude, double altitude) {
-        String expirationDate = generateExpirationDate();
+        long expirationDate = generateExpirationDate();
         database.child("users").child(uid).child("latitude").setValue(latitude);
         database.child("users").child(uid).child("longitude").setValue(longitude);
         database.child("users").child(uid).child("altitude").setValue(altitude);
         database.child("users").child(uid).child("expirationDate").setValue(expirationDate);
     }
 
-    private static String generateExpirationDate() {
+    /**
+     * Adds an appointment to the users schedule in firebase. Keep in mind, that you have to make
+     * sure, that the added appointments are consistent. That means, there shouldn't be any
+     * overlapping appointments.
+     * Also, you need to use activateSchedule() so that the schedule is actually used for a
+     * virtual user on the map.
+     * @param uid
+     * @param appointment
+     */
+    public static void addAppointmentToSchedule(String uid, Appointment appointment){
+        //TODO change String room to enum of rooms
+        //TODO maybe change Calender to something different
+
+        int start = appointment.getFormatedStarTime();
+        int end = appointment.getFormatedEndTime();
+
+        database.child("schedules").child(uid).child(""+start).child("startTime").setValue(start);
+        database.child("schedules").child(uid).child(""+start).child("endTime").setValue(end);
+        database.child("schedules").child(uid).child(""+start).child("room").setValue( appointment.getRoom() );
+    }
+
+    /**
+     * Deletes the given appointment from the user's schedule in firebase
+     * @param uid
+     * @param appointment
+     */
+    public static void deleteAppointment(String uid, Appointment appointment) {
+        int start = appointment.getFormatedStarTime();
+
+        database.child("schedules").child(uid).child(""+start).removeValue();
+    }
+
+    /**
+     * Requests all appointments of the user from Firebase and returns them as an ArrayList.
+     * @param uid
+     * @param authToken
+     * @return
+     */
+    public static ArrayList<Appointment> getAppointments(String uid, String authToken){
+        ArrayList<Appointment> appointmentList= new ArrayList<>();
+
+        String jsonString = getJSON(firebaseURL+ "/schedules/" + uid + ".json" + "?auth=" + authToken);
+
+        try {
+            JSONObject reader = new JSONObject(jsonString);
+            JSONArray allAppointments = reader.names();
+
+            for(int i = 0; i < allAppointments.length(); i++) {
+                String appointmentID = allAppointments.getString(i);
+                JSONObject appointmentJSON = reader.getJSONObject(appointmentID);
+
+                int startTime = appointmentJSON.getInt("startTime");
+                int endTime = appointmentJSON.getInt("endTime");
+
+                //TODO Change room to enum
+                String room = appointmentJSON.getString("room");
+                Appointment myAppointment = new Appointment(startTime, endTime, room);
+
+                appointmentList.add(myAppointment);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return appointmentList;
+    }
+
+
+    /**
+     * Generates an expiration date for the location data in the form of yyyyMMddHHmmss.
+     * The lifetime of the expiration date is determined by the lifetimeMinutes constant.
+     *
+     * @return expiration date in the form of yyyyMMddHHmmss
+     */
+    private static long generateExpirationDate() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, lifetimeMinutes);
-        String s = dateFormat.format(cal.getTime());
-
-        return s;
+        long date = Long.parseLong( dateFormat.format(cal.getTime()) );
+        return date;
     }
 
+    /**
+     * Generates the current date in the form of yyyyMMddHHmmss.
+     *
+     * @return date in the form of yyyyMMddHHmmss
+     */
+    private static long generateCurrentDate() {
+        Calendar cal = Calendar.getInstance();
+        long date = Long.parseLong( dateFormat.format(cal.getTime()) );
+        return date;
+    }
+
+    /**
+     * Activates the schedule of the user. By doing so, the user will appear as a bot on the map,
+     * controlled by their schedule
+     * @param uid
+     */
     public static void activateSchedule(String uid) {
         database.child("users").child(uid).child("usingSchedule").setValue(true);
+        database.child("users").child(uid).child("expirationDate").setValue(0);
     }
 
-    public static synchronized void deactivateSchedule(String uid) {
+    /**
+     * By deactivating the schedule, only the current location data is considered for the user.
+     * @param uid
+     */
+    public static void deactivateSchedule(String uid) {
         database.child("users").child(uid).child("usingSchedule").setValue(false);
     }
 
-
     public static void updateUserList(String authToken, HashMap<String, User> userList) {
-        String jsonString = getUserJSON(authToken);
+        String jsonString = getJSON(firebaseURL+ "/users.json" + "?auth=" + authToken);
 
         try {
             JSONObject reader = new JSONObject(jsonString);
@@ -113,18 +232,20 @@ public class Firebase {
     }
 
 
-    //TODO Eigentlich unnötig geworden, oder?
-    //Funktion 1 zu 1 nach oben in "updateUserList" kopiert.
-    //Der geänderte Teil oben ist der if-block mit den Kommentaren :P
-     public static ArrayList<User> getAllUsers(String authToken) {
+    /**
+     * Requests all useres from firebase and returns them with their location data in an
+     * ArrayList.
+     * @param authToken
+     * @return all useres with their location data
+     */
+    public static ArrayList<User> getAllUsers(String authToken) {
         ArrayList<User> userList= new ArrayList<>();
-        String jsonString = getUserJSON(authToken);
+
+        String jsonString = getJSON(firebaseURL+ "/users.json" + "?auth=" + authToken);
 
         try {
             JSONObject reader = new JSONObject(jsonString);
             JSONArray allUIDs = reader.names();
-            //String s = user1.getString(2);
-            //Log.v("mim",""+user1.length());
 
             for(int i = 0; i < allUIDs.length(); i++) {
                 String userUid = allUIDs.getString(i);
@@ -137,7 +258,48 @@ public class Firebase {
                 myUser.usingSchedule = userJSON.getBoolean("usingSchedule");
 
                 Calendar cal = Calendar.getInstance();
-                cal.setTime(dateFormat.parse(userJSON.getString("expirationDate")));
+                cal.setTime(dateFormat.parse(""+userJSON.getLong("expirationDate") ));
+                myUser.expirationDate = cal;
+
+                userList.add(myUser);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return userList;
+    }
+
+    /**
+     * Requests all useres from firebase with valid locations and returns them with their
+     * location data in an ArrayList. Users with expired location data will be ignored.
+     *
+     * @param authToken
+     * @return all active useres with their location data
+     */
+    public static ArrayList<User> getAllActiveUsers(String authToken) {
+        ArrayList<User> userList= new ArrayList<>();
+
+        final long date = generateCurrentDate();
+        String jsonString = getJSON(firebaseURL+ "/users.json" + "?orderBy=\"expirationDate\"&startAt=" +date+ "&auth=" + authToken);
+
+        try {
+            JSONObject reader = new JSONObject(jsonString);
+            JSONArray allUIDs = reader.names();
+
+            for(int i = 0; i < allUIDs.length(); i++) {
+                String userUid = allUIDs.getString(i);
+                JSONObject userJSON = reader.getJSONObject(userUid);
+
+                User myUser = new User(userUid, userJSON.getString("name"));
+                myUser.altitude = userJSON.getDouble("altitude");
+                myUser.latitude = userJSON.getDouble("latitude");
+                myUser.longitude = userJSON.getDouble("longitude");
+                myUser.usingSchedule = userJSON.getBoolean("usingSchedule");
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(dateFormat.parse(""+userJSON.getLong("expirationDate") ));
                 myUser.expirationDate = cal;
 
                 userList.add(myUser);
@@ -152,12 +314,14 @@ public class Firebase {
 
 
     /**
-     * Makes a GET request to Firebase for the data of all users
-     * @return JSON-String with all userdata
+     * Makes a GET request to Firebase and returns a JSON
+     * @return JSON-String
      */
-    public static String getUserJSON(final String authToken) {
+    private static String getJSON(final String urlGet) {
         final Semaphore sem = new Semaphore(0);
         final StringBuilder json = new StringBuilder();
+
+
 
         //Android needs a background thread in order to run network operations
         AsyncTask.execute(new Runnable() {
@@ -165,7 +329,7 @@ public class Firebase {
             public void run() {
                 try {
 
-                    URL url = new URL(firebaseURL + "?auth=" + authToken); //needed because of new security guidelines
+                    URL url = new URL(urlGet);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
                     conn.setRequestProperty("Accept", "application/json");
@@ -177,9 +341,7 @@ public class Firebase {
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                     String output;
-                    //Log.v("mim","Output from Server .... \n");
                     if ((output = br.readLine()) != null) {
-                        //Log.v("mim",output);
                         json.append(output);
 
                         try{sem.release();}catch(Exception e){};
@@ -188,13 +350,9 @@ public class Firebase {
                     conn.disconnect();
 
                 } catch (MalformedURLException e) {
-
                     e.printStackTrace();
-
                 } catch (IOException e) {
-
                     e.printStackTrace();
-
                 }
             }
         });
