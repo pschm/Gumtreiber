@@ -2,6 +2,8 @@ package de.psst.gumtreiber.data;
 
 //TODO Make sure that the start time is before the end time
 
+import de.psst.gumtreiber.location.Room;
+
 public class Appointment {
     private int startHour;
     private int startMinute;
@@ -9,22 +11,18 @@ public class Appointment {
     private int endHour;
     private int endMinute;
 
-    //TODO Change to enum - DO NOT IMPLEMENT YET!!!
-    private String room;
+    private Room room;
 
-    //TODO Change String room to enum
-    public Appointment(int startHour, int startMinute, int endHour, int endMinute, String room) {
+    public Appointment(int startHour, int startMinute, int endHour, int endMinute, Room room) {
         setStartHour(startHour);
         setStartMinute(startMinute);
 
         setEndHour(endHour);
         setEndMinute(endMinute);
 
-        //TODO Change to enum
         this.room = room;
     }
 
-    //TODO Change room to enum
 
     /**
      *
@@ -32,7 +30,7 @@ public class Appointment {
      * @param formatedEndTime Time in the form of HHmm (i.e. 16:35 as 1635)
      * @param room
      */
-    public Appointment(int formatedStartTime, int formatedEndTime, String room){
+    public Appointment(int formatedStartTime, int formatedEndTime, Room room){
         setFormatedStartTime(formatedStartTime);
         setFormatedEndTime(formatedEndTime);
 
@@ -71,17 +69,16 @@ public class Appointment {
         this.endMinute = endMinute % 60;
     }
 
-    //TODO Change to enum
-    public String getRoom() {
+    public Room getRoom() {
         return room;
     }
 
-    public void setRoom(String room) {
+    public void setRoom(Room room) {
         this.room = room;
     }
 
     public String toString() {
-        return startHour+":"+startMinute + " - " + endHour+":"+endMinute + " at " + room;
+        return startHour+":"+startMinute + " - " + endHour+":"+endMinute + " at " + room.name();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +90,7 @@ public class Appointment {
      * 16:35 will be returned as 1635.
      * @return formated start time
      */
-    public int getFormatedStarTime() {
+    public int getFormatedStartTime() {
         int formatedTime = startHour * 100 + startMinute;
         return formatedTime;
     }
@@ -104,7 +101,7 @@ public class Appointment {
      * @return formated end time
      */
     public int getFormatedEndTime() {
-        int formatedTime = endHour * 100 + startMinute;
+        int formatedTime = endHour * 100 + endMinute;
         return formatedTime;
     }
 

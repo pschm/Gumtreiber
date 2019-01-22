@@ -19,14 +19,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
-import com.google.firebase.*;
+import de.psst.gumtreiber.location.Room;
 
 //REST
 
@@ -39,6 +37,7 @@ public class Firebase {
 
     private static final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private static DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static DateFormat timeFormat = new SimpleDateFormat("HHmm");
 
 
     /**
@@ -91,15 +90,13 @@ public class Firebase {
      * @param appointment
      */
     public static void addAppointmentToSchedule(String uid, Appointment appointment){
-        //TODO change String room to enum of rooms
-        //TODO maybe change Calender to something different
 
-        int start = appointment.getFormatedStarTime();
+        int start = appointment.getFormatedStartTime();
         int end = appointment.getFormatedEndTime();
 
         database.child("schedules").child(uid).child(""+start).child("startTime").setValue(start);
         database.child("schedules").child(uid).child(""+start).child("endTime").setValue(end);
-        database.child("schedules").child(uid).child(""+start).child("room").setValue( appointment.getRoom() );
+        database.child("schedules").child(uid).child(""+start).child("room").setValue( appointment.getRoom().name() );
     }
 
     /**
@@ -108,7 +105,7 @@ public class Firebase {
      * @param appointment
      */
     public static void deleteAppointment(String uid, Appointment appointment) {
-        int start = appointment.getFormatedStarTime();
+        int start = appointment.getFormatedStartTime();
 
         database.child("schedules").child(uid).child(""+start).removeValue();
     }
@@ -135,8 +132,9 @@ public class Firebase {
                 int startTime = appointmentJSON.getInt("startTime");
                 int endTime = appointmentJSON.getInt("endTime");
 
-                //TODO Change room to enum
-                String room = appointmentJSON.getString("room");
+                String roomString = appointmentJSON.getString("room");
+                Room room = Room.valueOf(roomString);
+
                 Appointment myAppointment = new Appointment(startTime, endTime, room);
 
                 appointmentList.add(myAppointment);
@@ -172,6 +170,13 @@ public class Firebase {
         Calendar cal = Calendar.getInstance();
         long date = Long.parseLong( dateFormat.format(cal.getTime()) );
         return date;
+    }
+
+    //TODO Javadoc
+    private static int generateCurrentTime() {
+        Calendar cal = Calendar.getInstance();
+        int time = Integer.parseInt( timeFormat.format(cal.getTime()) );
+        return time;
     }
 
     /**
@@ -303,6 +308,61 @@ public class Firebase {
                 myUser.expirationDate = cal;
 
                 userList.add(myUser);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return userList;
+    }
+
+    //TODO JAVADOC
+    public static ArrayList<User> getAllScheduledUsers(String authToken) {
+        ArrayList<User> userList= new ArrayList<>();
+
+        String jsonString = getJSON(firebaseURL+ "/users.json" + "?orderBy=\"usingSchedule\"&startAt=" +true+ "&auth=" + authToken);
+
+        try {
+            JSONObject reader = new JSONObject(jsonString);
+            JSONArray allUIDs = reader.names();
+
+            for(int i = 0; i < allUIDs.length(); i++) {
+                String userUid = allUIDs.getString(i);
+                JSONObject userJSON = reader.getJSONObject(userUid);
+                User myUser = new User(userUid, userJSON.getString("name"));
+
+                //Determine the current Appointment
+                ArrayList<Appointment> appointments = getAppointments(userUid, authToken);
+                Appointment currentAppointment = null;
+                int currentTime = generateCurrentTime();
+                for(Appointment each : appointments) {
+                    if(each.getFormatedStartTime() <= currentTime &&
+                            each.getFormatedEndTime() >= currentTime)
+                    {
+                        currentAppointment = each;
+                        break;
+                    }
+
+                }
+
+                //Add user with current Appointment to ArrayList
+                if (currentAppointment != null) {
+                    myUser.altitude = currentAppointment.getRoom().getAltitude();
+                    myUser.latitude = currentAppointment.getRoom().getLatitude();
+                    myUser.longitude = currentAppointment.getRoom().getLongitude();
+                    myUser.usingSchedule = true;
+
+                    Calendar cal = Calendar.getInstance();
+                    cal.set(Calendar.HOUR, currentAppointment.getEndHour());
+                    cal.set(Calendar.MINUTE, currentAppointment.getEndMinute());
+                    myUser.expirationDate = cal;
+
+                    userList.add(myUser);
+                } else {
+                    continue;
+                }
+
             }
 
         } catch (Exception e) {
