@@ -241,6 +241,10 @@ public class MovableMarker {
         setPosition(position.x, position.y);
     }
 
+    public Vector2 getPosition() {
+        return curPos;
+    }
+
     /**
      * Set the rotation offset angle in degree of the label.
      * @param offset Offset in degree.

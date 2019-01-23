@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
+import de.psst.gumtreiber.data.Vector2;
 
 public class MapView extends AppCompatImageView {
 
@@ -39,6 +40,9 @@ public class MapView extends AppCompatImageView {
     private Coordinate pos = new Coordinate();
     private Coordinate prisonPos = new Coordinate(51.022255, 7.560842);
     private float[] defaultMatrix = new float[9];
+    private float[] copyValues = new float[9];
+    private Vector2 markerPos = new Vector2();
+    private PointF markerPoint = new PointF();
 
     // constants for gps calculation
     private final static double MAX_LAT = 51.026252;
@@ -198,9 +202,19 @@ public class MapView extends AppCompatImageView {
 
             // set the marker directly to the new position if the zoom changed
             // or let the marker move to the new position
-            if (firstDraw || transformation.equals(oldTransformation)) {
+            if (firstDraw) {
                 u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
-                firstDraw = false;
+            }
+            else if (!mapControl.getDrawMatrix().equals(oldTransformation)) {
+//                markerPos = u.getMarker().getPosition();
+//                markerPoint.x = markerPos.x;
+//                markerPoint.y = markerPos.y;
+//                Log.v("MapView", "Marker: OLD ++" + markerPoint);
+//                adjustPosToZoom(markerPoint);
+//                Log.v("MapView", "Marker: NEW --" + markerPoint);
+//                u.getMarker().setPosition(markerPoint.x, markerPoint.y);
+//                u.getMarker().moveTo(mapPos.x - 17, mapPos.y - 150);
+                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
             }
             else {
                 u.getMarker().moveTo(mapPos.x - 17, mapPos.y - 150);
@@ -213,10 +227,10 @@ public class MapView extends AppCompatImageView {
             // draw user on the map // TODO delete before presentation?
             canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
             canvas.drawText(u.name, mapPos.x, mapPos.y + 47.5f, paint);
-
-            // save the current transformation
-            oldTransformation = transformation;
         }
+        // save the current transformation
+        copyMatix(oldTransformation, mapControl.getDrawMatrix());
+        firstDraw = false;
 
         // draw all prisoners
         // TODO könnte man später ggf. auch mit einem eigenen Marker machen, jenachdem was besser auf der finalen Karte aussieht
@@ -339,5 +353,10 @@ public class MapView extends AppCompatImageView {
                 userList.remove(u);
             }
         }
+    }
+
+    private void copyMatix(Matrix dest, Matrix src) {
+        src.getValues(copyValues);
+        dest.setValues(copyValues);
     }
 }
