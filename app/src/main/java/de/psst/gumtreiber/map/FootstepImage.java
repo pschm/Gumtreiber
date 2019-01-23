@@ -39,12 +39,16 @@ class FootstepImage extends AppCompatImageView implements Animation.AnimationLis
     }
 
     public void makeVisible() {
+        if(getAnimation() == null && getVisibility() == VISIBLE) return;
+
         setImageAlpha(255);
         clearAnimation();
         startAnimation(makeVisible);
     }
 
     public void makeInvisible() {
+        if(getAnimation() == null && getVisibility() == INVISIBLE) return;
+
         setImageAlpha(0);
         clearAnimation();
         startAnimation(makeVisible);
