@@ -82,7 +82,7 @@ public class LocationHandler implements Application.ActivityLifecycleCallbacks, 
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
-        if(updatesEnabled) updateLastLocation();
+        //if(updatesEnabled) updateLastLocation();
 
         locationCallback = new LocationCallback() {
             @Override
