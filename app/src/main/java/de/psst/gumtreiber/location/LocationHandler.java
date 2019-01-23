@@ -91,6 +91,9 @@ public class LocationHandler implements Application.ActivityLifecycleCallbacks, 
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
+                    if(location == null) continue;
+                    if(getCurrentLocation() == null) setCurrentLocation(location);
+
                     //Only Update the Location if its newer
                     if(location.getElapsedRealtimeNanos() <= getCurrentLocation().getElapsedRealtimeNanos()) {
                         setCurrentLocation(location);
