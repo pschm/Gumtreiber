@@ -15,7 +15,6 @@ import com.google.firebase.auth.GetTokenResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapView;
@@ -67,6 +66,8 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             return;
         }
 
+        updateThread = new Thread(this);
+
         //Get/Refresh auth token
         //TODO evtl. https://firebase.google.com/docs/auth/admin/manage-sessions
         if(FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -75,6 +76,9 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
                         public void onComplete(@NonNull Task<GetTokenResult> task) {
                             if (task.isSuccessful()) {
                                 userToken = task.getResult().getToken();
+
+                                updateThread.start(); //Start syncing when token is there
+
                             } else {
                                 task.getException().printStackTrace();
                             }
@@ -82,8 +86,6 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
                     });
         }
 
-        updateThread = new Thread(this);
-        updateThread.start();
     }
 
     /**
@@ -96,10 +98,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
     @Override
     public void run() {
-        Log.d("UserDataSync", "Thread started!");
-
-        Random rnd = new Random();
-        float rngLong, rngLat;
+        Log.d("UserDataSync", "Sync-Thread started!");
 
         while(allowRunning) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -112,7 +111,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
                 Firebase.updateUserList(userToken, userList);
                 mapView.setUserList(new ArrayList<>(userList.values()));
             } else {
-                Log.w("UserDataSync","Auth-Token for getting all users is empty!");
+                Log.w("UserDataSync","Cannot get all users, Auth-Token is not available yet!");
             }
 
 
