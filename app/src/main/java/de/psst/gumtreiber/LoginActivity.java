@@ -104,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         mc.setMapView(map);
         mc.setMaximumScale(9f);
         mc.update();
+        map.setMapControl(mc);
 
 
         if(useLogin) {

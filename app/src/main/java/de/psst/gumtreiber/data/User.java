@@ -32,9 +32,10 @@ public class User {
 
     public String toString() {
         DateFormat dateFormat = new SimpleDateFormat("/yyyy/MM/dd HH:mm:ss");
+
         String s = dateFormat.format(expirationDate.getTime());
 
-        return uid + ": " + name + " "+ altitude+ "" + longitude + " " + latitude + " "+ s;
+        return uid + ": " + name + " "+ altitude+ " " + longitude + " " + latitude + " "+ s;
     }
 
     public MovableMarker getMarker() {
