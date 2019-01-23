@@ -180,6 +180,42 @@ public class MovableMarker {
 
 
     /**
+     * Makes this MovableMarker and its footsteps immediately invisible.
+     * @param setVisible Set true if the marker should be visible.
+     */
+    public void setVisibility(boolean setVisible) {
+        if(setVisible) {
+            for(FootstepImage img : leftPrints) {
+                img.makeInvisible();
+            }
+            for(FootstepImage img : leftPrints) {
+                img.makeInvisible();
+            }
+            nameImg.setVisibility(View.GONE);
+
+        } else {
+            getLeftFixPrint().makeVisible();
+            getRightFixPrint().makeVisible();
+            nameImg.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Stops all footstep animations.
+     */
+    public void stopFadeAnimation() {
+        for(FootstepImage img : leftPrints) {
+            if(img.equals(getLeftFixPrint())) continue;
+            img.makeInvisible();
+        }
+        for(FootstepImage img : leftPrints) {
+            if(img.equals(getRightFixPrint())) continue;
+            img.makeInvisible();
+        }
+    }
+
+
+    /**
      * Set the marker position on the given activity.
      * This will cancel a running transition from a {@link #moveTo} call.
      * @param x The visual x position of this marker, in pixels.

@@ -11,7 +11,7 @@ import android.view.animation.Animation;
  */
 class FootstepImage extends AppCompatImageView implements Animation.AnimationListener {
 
-    private Animation fadeOut, makeVisible;
+    private Animation fadeOut, makeVisible, makeInvisible;
 
     public FootstepImage(Context context) {
         super(context);
@@ -25,6 +25,10 @@ class FootstepImage extends AppCompatImageView implements Animation.AnimationLis
         makeVisible = new AlphaAnimation(0, 1);
         makeVisible.setAnimationListener(this);
         makeVisible.setDuration(1);
+
+        makeInvisible = new AlphaAnimation(1, 0);
+        makeInvisible.setAnimationListener(this);
+        makeInvisible.setDuration(1);
     }
 
 
@@ -40,6 +44,12 @@ class FootstepImage extends AppCompatImageView implements Animation.AnimationLis
         startAnimation(makeVisible);
     }
 
+    public void makeInvisible() {
+        setImageAlpha(0);
+        clearAnimation();
+        startAnimation(makeVisible);
+    }
+
 
 
     @Override
@@ -49,7 +59,7 @@ class FootstepImage extends AppCompatImageView implements Animation.AnimationLis
 
     @Override
     public void onAnimationEnd(Animation animation) {
-        if(animation.equals(fadeOut)) setVisibility(GONE);
+        if(animation.equals(fadeOut) || animation.equals(makeInvisible)) setVisibility(GONE);
     }
 
     @Override
