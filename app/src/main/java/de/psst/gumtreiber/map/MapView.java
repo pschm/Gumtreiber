@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -17,16 +18,39 @@ import de.psst.gumtreiber.data.User;
 
 public class MapView extends AppCompatImageView {
 
-    private Paint paint = new Paint();
-    private Matrix transformation = new Matrix();
-    private Matrix oldTransformation = new Matrix();
-    private Coordinate pos = new Coordinate();
+    // Users that are drawn on the map
     private ArrayList<User> userList;
     private ArrayList<User> prison = new ArrayList<>();
+
+    // needed for initializing of the movable markers
     private Activity activity;
+
+    private MapControl mapControl;
+
+    private Matrix transformation = new Matrix();
+    private Matrix oldTransformation = new Matrix();
     private boolean firstDraw = true;
     private double scale = 1.0;
-    private Coordinate defaultSize;
+
+    // These are set so we don't keep allocating them on the heap
+    private Paint paint = new Paint();
+    private PointF defaultSize = new PointF();
+    private PointF mapPos = new PointF(-50f, -50f);
+    private Coordinate pos = new Coordinate();
+    private Coordinate prisonPos = new Coordinate(51.022255, 7.560842);
+    private float[] defaultMatrix = new float[9];
+
+    // constants for gps calculation
+    private final static double MAX_LAT = 51.026252;
+    private final static double MIN_LAT = 51.021335;
+    private final static double MAX_LONG = 7.566864;
+    private final static double MIN_LONG = 7.560268;
+    private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
+    private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
+
+    // for zoom correction
+    private static float defaultMatrixError = 1.5827f;
+
 
     public MapView(Context context) {
         super(context);
@@ -38,6 +62,13 @@ public class MapView extends AppCompatImageView {
 
     public MapView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    /**
+     * @param mapControl mapControl which holds this MapView
+     */
+    public void setMapControl(MapControl mapControl) {
+        this.mapControl = mapControl;
     }
 
     /**
@@ -67,53 +98,42 @@ public class MapView extends AppCompatImageView {
 
         // TODO boxSize an den Zoom anpassen? Nachteil, einteilung müsste im onDraw() aufgerufen werden
         this.userList = buildUserGroups(activity, userList, 200);
+
+        invalidate(); // repaint the map
     }
 
-
     /**
-     * TODO Problem beheben, dass die Koordinaten noch eine leichte Verschiebung zur soll Position auf der karte haben
-     * Calculates the given coordinate from GPS Position to map coordinates.
+     * Calculates the given coordinate from GPS Position to map coordinates
+     * and saves it in {@link #mapPos}
      */
     private void gpsToMap(Coordinate pos) {
-        double x, y, xFaktor, yFaktor;
+        // limit gps to the relevant ares
+        pos.latitude = (pos.latitude - MIN_LAT) * 1000000; // value between 0-4917
+        pos.longitude = (pos.longitude - MIN_LONG) * 1000000; // value between 0-6596
 
-//        Log.v("MapView", "- Width:  (" +getWidth()+ ")");  // 1860 normal size
-//        Log.v("MapView", "- Height: (" +getHeight()+ ")"); // 2193 normal size
+        // invert y-Axis (other coordinate system)
+        pos.latitude = DELTA_LAT - pos.latitude;
 
-        x = pos.latitude * 1000000 - 51020000 - 1335; // min/max: 1335-6252 -> 0-4917
-        x = 4917 - x; // x-Achse umkehren von <-- nach -->
-        y = pos.longitude* 1000000 -  7560000 -  268; // min/max: 0268-6864 -> 0-6596
+        // calc x,y values according to screen size
+        mapPos.x = (float)(pos.longitude * (getWidth()/ DELTA_LONG));
+        mapPos.y = (float)(pos.latitude * (getHeight()/ DELTA_LAT));
 
-        // TODO fix correction
-        y += 2200;
-        x += 200;
-
-        //Log.v("MapView", "- cleared: (" +x+ "|" +y+ ")");
-
-        xFaktor = getWidth()  / 4917.0;
-        yFaktor = getHeight() / 6596.0;
-        //Log.v("MapView", "- Faktor: (" +xFaktor+ "|" +yFaktor+ ")");
-
-        pos.latitude  = x * xFaktor;
-        pos.longitude = y * yFaktor;
-
-//        Log.v("MapView", "- Map Coords: (" +pos.latitude+ "|" +pos.longitude+ ")");
-
-//        return pos;
+//        return mapPos;
     }
 
     /**
      * Adjust a given coordinate to the current zoom of the map
      */
-    private void adjustPosToZoom(Coordinate pos) {
-        // Koordinate
-        float[] point = {(float)pos.latitude, (float)pos.longitude};
+    private void adjustPosToZoom(PointF mapPos) {
+        // Coordinate
+        float[] point = {mapPos.x*defaultMatrixError, mapPos.y*defaultMatrixError};
 
-        // Personenkoordinaten auf den Zoomfaktor umrechnen
-        transformation.mapPoints(point);
+        // adjust coordinate to zoom by applying the matrix
+        mapControl.getDrawMatrix().mapPoints(point);
 
-        pos.latitude  = point[0];
-        pos.longitude = point[1];
+        // save the values
+        mapPos.x = point[0];
+        mapPos.y = point[1];
 
 //        return pos;
     }
@@ -122,14 +142,13 @@ public class MapView extends AppCompatImageView {
      * Calculates the scaling of the image
      */
     private void calcScaling() {
-        Coordinate scaledSize = new Coordinate(defaultSize.latitude, defaultSize.longitude);
-        adjustPosToZoom(scaledSize); // defaultSize;
+        PointF scaledSize = new PointF(defaultSize.x, defaultSize.y);
+        adjustPosToZoom(scaledSize);
 
-        scale = (defaultSize.latitude + defaultSize.longitude) / (scaledSize.latitude + scaledSize.longitude);
+        scale = (defaultSize.x + defaultSize.y) / (scaledSize.x + scaledSize.y);
 
         if (scale < 0.9) scale = 0.9;
         else if (scale > 1.25) scale = 1.25;
-        Log.v("MapView", "Scale: " + scale);
     }
 
     /**
@@ -140,6 +159,16 @@ public class MapView extends AppCompatImageView {
     public void onDraw(Canvas canvas) {
         // draw the map
         super.onDraw(canvas);
+
+        if (firstDraw) {
+            // init scaling (device dependent)
+            defaultSize.x = getWidth();
+            defaultSize.y = getHeight();
+
+            // init transformation matrix error
+            mapControl.getDrawMatrix().getValues(defaultMatrix);
+            defaultMatrixError = 1f / defaultMatrix[0];
+        }
 
         // skip drawing - there are no users to draw
         if (userList == null || userList.isEmpty()) {
@@ -156,15 +185,11 @@ public class MapView extends AppCompatImageView {
             // save user position
             pos.setLocation(u.latitude, u.longitude);
 
-//            Log.v("MapView", "++++++++++++++++++++++++++++++++++++++++++++");
-//            Log.v("MapView", "- GPS (" + u.name + ") " + pos.latitude + "|" + pos.longitude);
-
             // map the coordinate according to the Gumtreiber area
             gpsToMap(pos);
 
             // consider possible zoom
-            adjustPosToZoom(pos);
-//            Log.v("MapView", "- Scale " + pos.latitude + "|" + pos.longitude);
+            adjustPosToZoom(mapPos);
 
             if (u.getMarker() == null) {
                 Log.w("MapView", "WARNING: User without marker detected!");
@@ -174,24 +199,20 @@ public class MapView extends AppCompatImageView {
             // set the marker directly to the new position if the zoom changed
             // or let the marker move to the new position
             if (firstDraw || transformation.equals(oldTransformation)) {
-                // init scaling (device dependent)
-                defaultSize = new Coordinate(getWidth(), getHeight());
-
-                u.getMarker().setPosition((float) (pos.latitude - 17), (float) (pos.longitude - 150));
-
+                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
                 firstDraw = false;
             }
             else {
-                u.getMarker().moveTo((float) pos.latitude - 17, (float) pos.longitude - 150);
+                u.getMarker().moveTo(mapPos.x - 17, mapPos.y - 150);
             }
 
             // scale the marker according to the zoom
             calcScaling();
             u.getMarker().setScale((float) scale);
 
-            // draw user on the map // TODO could be deleted if markers work properly
-            canvas.drawCircle((float)pos.latitude, (float) pos.longitude, 17.5f, paint);
-            canvas.drawText(u.name, (float) pos.latitude, (float) pos.longitude + 47.5f, paint);
+            // draw user on the map // TODO delete before presentation?
+            canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
+            canvas.drawText(u.name, mapPos.x, mapPos.y + 47.5f, paint);
 
             // save the current transformation
             oldTransformation = transformation;
@@ -201,16 +222,16 @@ public class MapView extends AppCompatImageView {
         // TODO könnte man später ggf. auch mit einem eigenen Marker machen, jenachdem was besser auf der finalen Karte aussieht
         int c = 0;
         for (User u : prison) {
-            pos.latitude  = getWidth() / 10.0;
-            pos.longitude = (getHeight() / 10.0) * 12 + c*115;
+            pos.setLocation(prisonPos.latitude, prisonPos.longitude);
 
-            adjustPosToZoom(pos);
+            gpsToMap(pos);
+            adjustPosToZoom(mapPos);
 
             if (c > 10) break;
-            canvas.drawText(u.name, (float) pos.latitude, (float) pos.longitude, paint);
+            canvas.drawText(u.name, mapPos.x, mapPos.y + c*115, paint);
             c++;
         }
-        if (c > 10) canvas.drawText("...", (float) pos.latitude, (float) pos.longitude, paint);
+        if (c > 10) canvas.drawText("...", mapPos.x, mapPos.y, paint);
     }
 
     /**
@@ -222,8 +243,8 @@ public class MapView extends AppCompatImageView {
      */
     public ArrayList<User> buildUserGroups(Activity activity, ArrayList<User> userList, int boxSize) {
         // reduce gps coordinates to the area (GM)
-        int xSize = 51026252 - 51021335; // 4917
-        int ySize =  7566864 -  7560268; // 6596
+        int xSize = (int) DELTA_LONG;
+        int ySize = (int) DELTA_LAT;
         double x, y;
 
         // create a grid to detect close users
@@ -237,9 +258,9 @@ public class MapView extends AppCompatImageView {
             User u = userList.get(i);
 
             // transform user coordinates to the area
-            x = (u.latitude * 1000000 - 51020000 - 1335); // min/max: 1335-6252 -> 0-4917
-            x = 4917 - x; // x-Achse umkehren von <-- nach -->
-            y = (u.longitude* 1000000 -  7560000 -  268); // min/max: 0268-6864 -> 0-6596
+            x = (u.longitude - MIN_LONG) * 1000000; // min/max: 0268-6864 -> 0-6596
+            y = (u.latitude - MIN_LAT) * 1000000; // min/max: 1335-6252 -> 0-4917
+            y = DELTA_LAT - y; // invert y-Axis
 
             // calc grid position
             x /= boxSize;
@@ -250,8 +271,10 @@ public class MapView extends AppCompatImageView {
 
             if (sector == null) {
                 // u is the first user in this sector
-                if (u.getMarker() == null)
+                if (u.getMarker() == null) {
                     u.setMarker(new MovableMarker(activity, u.name));
+//                    u.getMarker().setPosition(-100f, -100f);
+                }
                 map[(int)x][(int)y] = u;
             }
             else if (sector.uid != null) {

@@ -17,8 +17,8 @@ public class MapControl extends PhotoViewAttacher {
     }
 
     /**
-     * Die gesetzte MapView erhält updates der Transformationsmatrix
-     * @param mapView
+     * The transformation matrix of the given MapView will now be updated when zoomed.
+     * @param mapView the now zoomable MapView
      */
     public void setMapView(MapView mapView) {
         this.mapView = mapView;
@@ -30,6 +30,7 @@ public class MapControl extends PhotoViewAttacher {
 
         // setze die Transformationsmatrix der Karte,
         // um Personen bei Zoom richtig richtig anzuzeigen.
-        if (mapView != null) mapView.setTransformation(getDrawMatrix());
+
+        if (mapView != null) mapView.setTransformation(getDisplayMatrix());
     }
 }
