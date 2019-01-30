@@ -9,11 +9,11 @@ import android.view.animation.Animation;
 /**
  * Support class for the MovableMarker
  */
-class FootstepImage extends AppCompatImageView implements Animation.AnimationListener {
+class FadingImage extends AppCompatImageView implements Animation.AnimationListener {
 
     private Animation fadeOut, makeVisible, makeInvisible;
 
-    public FootstepImage(Context context) {
+    public FadingImage(Context context) {
         super(context);
 
         fadeOut = new AlphaAnimation(1, 0);

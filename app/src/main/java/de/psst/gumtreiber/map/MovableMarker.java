@@ -15,7 +15,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -38,8 +37,8 @@ public class MovableMarker {
     private boolean allowMovingThread;
     private Vector2 curPos, targetPos;
 
-    private ImageView nameImg;
-    private ArrayList<FootstepImage> leftPrints, rightPrints;
+    private FadingImage nameImg;
+    private ArrayList<FadingImage> leftPrints, rightPrints;
     private int lastLeftIndex, lastRightIndex;
 
     private Vector2 nameOffset = DEFAULT_NAME_OFFSET;
@@ -104,7 +103,7 @@ public class MovableMarker {
         leftPrints = new ArrayList<>(4);
         rightPrints = new ArrayList<>(4);
         for(int i = 0; i < 8; i++) {
-            FootstepImage image = new FootstepImage(activity);
+            FadingImage image = new FadingImage(activity);
             image.setAdjustViewBounds(true);
             image.setMaxWidth(DEFAULT_SIZE);
 
@@ -126,7 +125,7 @@ public class MovableMarker {
     }
 
     private void initLabel(String label, boolean markAsFriend) {
-        nameImg = new ImageView(activity);
+        nameImg = new FadingImage(activity);
         nameImg.setAdjustViewBounds(true);
         nameImg.setMaxWidth(DEFAULT_SIZE * 2);
 
@@ -143,7 +142,7 @@ public class MovableMarker {
         }
     }
 
-    private FootstepImage getNextPrint(boolean leftPrint) {
+    private FadingImage getNextPrint(boolean leftPrint) {
         if(leftPrint) {
             lastLeftIndex = (lastLeftIndex + 1) % (leftPrints.size() - 1);
             return leftPrints.get(lastLeftIndex);
@@ -153,11 +152,11 @@ public class MovableMarker {
         }
     }
 
-    private FootstepImage getLeftFixPrint() {
+    private FadingImage getLeftFixPrint() {
         return leftPrints.get(3);
     }
 
-    private FootstepImage getRightFixPrint() {
+    private FadingImage getRightFixPrint() {
         return rightPrints.get(3);
     }
 
@@ -185,18 +184,18 @@ public class MovableMarker {
      */
     public void setVisibility(boolean setVisible) {
         if(setVisible) {
-            for(FootstepImage img : leftPrints) {
+            for(FadingImage img : leftPrints) {
                 img.makeInvisible();
             }
-            for(FootstepImage img : leftPrints) {
+            for(FadingImage img : leftPrints) {
                 img.makeInvisible();
             }
-            nameImg.setVisibility(View.GONE);
+            nameImg.makeInvisible();
 
         } else {
             getLeftFixPrint().makeVisible();
             getRightFixPrint().makeVisible();
-            nameImg.setVisibility(View.VISIBLE);
+            nameImg.makeVisible();
         }
     }
 
@@ -204,11 +203,11 @@ public class MovableMarker {
      * Stops all footstep animations.
      */
     public void stopFadeAnimation() {
-        for(FootstepImage img : leftPrints) {
+        for(FadingImage img : leftPrints) {
             if(img.equals(getLeftFixPrint())) continue;
             img.makeInvisible();
         }
-        for(FootstepImage img : leftPrints) {
+        for(FadingImage img : leftPrints) {
             if(img.equals(getRightFixPrint())) continue;
             img.makeInvisible();
         }
@@ -261,11 +260,11 @@ public class MovableMarker {
         //if(scaleFactor >= 2) scaleStepSpeedFactor = scaleFactor * .5f;
         scaleStepSpeedFactor = scaleFactor; //TODO Checken ob das immer noch doof aussieht auf echter Karte
 
-        for(FootstepImage img : leftPrints) {
+        for(FadingImage img : leftPrints) {
             img.setScaleX(scaleFactor);
             img.setScaleY(scaleFactor);
         }
-        for(FootstepImage img : rightPrints) {
+        for(FadingImage img : rightPrints) {
             img.setScaleX(scaleFactor);
             img.setScaleY(scaleFactor);
         }
@@ -309,13 +308,13 @@ public class MovableMarker {
                 Log.d("MoveThread","Thread started!");
                 long counter = 0;
 
-                final FootstepImage stepImgL = getLeftFixPrint();
-                final FootstepImage stepImgR = getRightFixPrint();
+                final FadingImage stepImgL = getLeftFixPrint();
+                final FadingImage stepImgR = getRightFixPrint();
 
                 boolean isSecondTime = false;
                 boolean isLeftStep = false;
                 float rotation;
-                FootstepImage stepImg;
+                FadingImage stepImg;
 
 
                 stepImgL.startFadeOut();

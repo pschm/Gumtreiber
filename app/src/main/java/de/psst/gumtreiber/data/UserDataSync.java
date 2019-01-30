@@ -30,7 +30,7 @@ import de.psst.gumtreiber.map.MapView;
  */
 public class UserDataSync implements Runnable, Application.ActivityLifecycleCallbacks {
 
-    private static final HashMap<String, User> userList = new HashMap<>();
+    private HashMap<String, User> userList = new HashMap<>();
 
     private Activity activity;
     private LocationHandler locationHandler;
