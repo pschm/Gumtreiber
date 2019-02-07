@@ -7,7 +7,8 @@ import android.content.SharedPreferences;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.Objects;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -20,7 +21,7 @@ public class FriendsViewModel extends AndroidViewModel {
     private static final String FRIENDLIST_KEY = "friendList";
 
     //TODO Später erstezen -> Name Überdenken
-    private MutableLiveData<List<String>> friends;
+    private MutableLiveData<List<String>> friends = new MutableLiveData<>();
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
@@ -37,19 +38,26 @@ public class FriendsViewModel extends AndroidViewModel {
     }
 
     private void fetchFriends() {
-        friends.setValue(new ArrayList<>(getPreferences().getStringSet(FRIENDLIST_KEY, new TreeSet<String>())));
+        friends.setValue(getOrCreateFriends());
+    }
+
+    private List<String> getOrCreateFriends() {
+        Set<String> dbFriends = getPreferences().getStringSet(FRIENDLIST_KEY, new HashSet<>());
+        return new ArrayList<>(Objects.requireNonNull(dbFriends));
+    }
+
+    private List<String> saveFriends(List<String> friends) {
+        getPreferences().edit().putStringSet(FRIENDLIST_KEY, new HashSet<>(friends)).apply();
+        return friends;
     }
 
     //Momentan noch name
     public void deleteFriend(String id) {
         //Aus der SharedPreference löschen
         List<String> friendList = friends.getValue();
-        friendList.remove(id);
-        SharedPreferences.Editor editor = getPreferences().edit();
-        editor.remove(FRIENDLIST_KEY);
-        editor.putStringSet(FRIENDLIST_KEY, new HashSet<>(friendList));
-        editor.apply();
-        friends.setValue(friendList);
+        if (friendList != null)
+            friendList.remove(id);
+        friends.setValue(saveFriends(friendList));
 
     }
 }
