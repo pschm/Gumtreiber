@@ -20,8 +20,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import de.psst.gumtreiber.FriendsViewModel;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.viewmodels.FriendsViewModel;
 
 public class FriendListFragment extends ListFragment {
 

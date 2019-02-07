@@ -1,4 +1,4 @@
-package de.psst.gumtreiber;
+package de.psst.gumtreiber.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
