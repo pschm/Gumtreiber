@@ -5,10 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import java.util.ArrayList;
+
+import androidx.appcompat.widget.AppCompatImageView;
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 
