@@ -2,71 +2,92 @@ package de.psst.gumtreiber.data;
 
 //TODO Make sure that the start time is before the end time
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import de.psst.gumtreiber.location.Room;
 
 public class Appointment {
-    private int startHour;
-    private int startMinute;
-
-    private int endHour;
-    private int endMinute;
 
     private Room room;
 
-    public Appointment(int startHour, int startMinute, int endHour, int endMinute, Room room) {
-        setStartHour(startHour);
-        setStartMinute(startMinute);
+    //Appointment should use a complete Date
+    private static DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    private Calendar startDate;
+    private Calendar endDate;
 
-        setEndHour(endHour);
-        setEndMinute(endMinute);
+    public Appointment(Calendar startDate, Calendar endDate, Room room) {
+        this.startDate = startDate;
+        this.endDate = endDate;
 
+        this.room = room;
+    }
+
+    public Appointment(long formatedStartDate, long formatedEndDate, Room room) {
+
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        try {
+            start.setTime(dateFormat.parse(""+formatedStartDate ));
+            end.setTime(dateFormat.parse(""+formatedEndDate ));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        this.startDate = start;
+        this.endDate = end;
         this.room = room;
     }
 
 
     /**
-     *
-     * @param formatedStartTime Time in the form of HHmm (i.e. 16:35 as 1635)
-     * @param formatedEndTime Time in the form of HHmm (i.e. 16:35 as 1635)
-     * @param room
+     * Returns the start date of the appointment in the form of yyyyMMddHHmmss as a long value
+     * @return start date in the form of a long value
      */
-    public Appointment(int formatedStartTime, int formatedEndTime, Room room){
-        setFormatedStartTime(formatedStartTime);
-        setFormatedEndTime(formatedEndTime);
-
-        this.room = room;
+    public long getFormatedStartDate() {
+        long date = Long.parseLong( dateFormat.format(startDate.getTime()) );
+        return date;
     }
 
-    public int getStartHour() {
-        return startHour;
+    /**
+     * Returns the end date of the appointment in the form of yyyyMMddHHmmss as a long value
+     * @return end date in the form of a long value
+     */
+    public long getFormatedEndDate() {
+        long date = Long.parseLong( dateFormat.format(endDate.getTime()) );
+        return date;
     }
 
-    public void setStartHour(int startHour) {
-        this.startHour = startHour % 24;
+    public void setFormatedStartDate(long formatedStartDate) {
+        Calendar start = Calendar.getInstance();
+        try {
+            start.setTime(dateFormat.parse(""+formatedStartDate ));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        this.startDate = start;
     }
 
-    public int getStartMinute() {
-        return startMinute;
+    public void setFormatedEndDate(long formatedEndDate) {
+        Calendar end = Calendar.getInstance();
+        try {
+            end.setTime(dateFormat.parse(""+formatedEndDate ));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        this.startDate = end;
     }
 
-    public void setStartMinute(int startMinute) {
-        this.startMinute = startMinute % 60;
+    public Calendar getStartDate() {
+        return startDate;
     }
 
-    public int getEndHour() {
-        return endHour;
-    }
-
-    public void setEndHour(int endHour) {
-        this.endHour = endHour % 24;
-    }
-
-    public int getEndMinute() {
-        return endMinute;
-    }
-
-    public void setEndMinute(int endMinute) {
-        this.endMinute = endMinute % 60;
+    public Calendar getEndDate() {
+        return endDate;
     }
 
     public Room getRoom() {
@@ -77,69 +98,16 @@ public class Appointment {
         this.room = room;
     }
 
+    public void setEndDate(Calendar endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setStartDate(Calendar startDate) {
+        this.startDate = startDate;
+    }
+
     public String toString() {
-        return startHour+":"+startMinute + " - " + endHour+":"+endMinute + " at " + room.name();
+        return getFormatedStartDate()+ " - " + getFormatedEndDate() + " at " + room.name();
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //Methods for Firebase use:
-
-    /**
-     * Returns the starting time as an integer.
-     * 16:35 will be returned as 1635.
-     * @return formated start time
-     */
-    public int getFormatedStartTime() {
-        int formatedTime = startHour * 100 + startMinute;
-        return formatedTime;
-    }
-
-    /**
-     * Returns the ending time as an integer.
-     * 16:35 will be returned as 1635.
-     * @return formated end time
-     */
-    public int getFormatedEndTime() {
-        int formatedTime = endHour * 100 + endMinute;
-        return formatedTime;
-    }
-
-    /**
-     * Takes an integer with a time in the form of HHmm and saves it as the starting time of
-     * the appointment. The integer should represent 16:35 as 1635.
-     * @param formatedStartTime A time as an integer in the form of HHmm
-     */
-    public void setFormatedStartTime(int formatedStartTime){
-        if (formatedStartTime == 0) {
-            setStartHour(0);
-            setStartMinute(0);
-            return;
-        }
-
-        int startHour = formatedStartTime / 100;
-        int startMinute = formatedStartTime - (startHour * 100);
-
-        setStartHour(startHour);
-        setStartMinute(startMinute);
-    }
-
-    /**
-     * Takes an integer with a time in the form of HHmm and saves it as the ending time of
-     * the appointment. The integer should represent 16:35 as 1635.
-     * @param formatedEndTime A time as an integer in the form of HHmm
-     */
-    public void setFormatedEndTime(int formatedEndTime){
-        if (formatedEndTime == 0) {
-            setEndHour(0);
-            setEndMinute(0);
-            return;
-        }
-
-        int endHour = formatedEndTime / 100;
-        int endMinute = formatedEndTime - (endHour * 100);
-
-        setEndHour(endHour);
-        setEndMinute(endMinute);
-    }
 }

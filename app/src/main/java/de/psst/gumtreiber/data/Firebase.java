@@ -91,11 +91,14 @@ public class Firebase {
      */
     public static void addAppointmentToSchedule(String uid, Appointment appointment){
 
-        int start = appointment.getFormatedStartTime();
-        int end = appointment.getFormatedEndTime();
+        //int start = appointment.getFormatedStartTime();
+        //int end = appointment.getFormatedEndTime();
 
-        database.child("schedules").child(uid).child(""+start).child("startTime").setValue(start);
-        database.child("schedules").child(uid).child(""+start).child("endTime").setValue(end);
+        long start = appointment.getFormatedStartDate();
+        long end = appointment.getFormatedEndDate();
+
+        database.child("schedules").child(uid).child(""+start).child("startDate").setValue(start);
+        database.child("schedules").child(uid).child(""+start).child("endDate").setValue(end);
         database.child("schedules").child(uid).child(""+start).child("room").setValue( appointment.getRoom().name() );
     }
 
@@ -105,7 +108,7 @@ public class Firebase {
      * @param appointment
      */
     public static void deleteAppointment(String uid, Appointment appointment) {
-        int start = appointment.getFormatedStartTime();
+        long start = appointment.getFormatedStartDate();
 
         database.child("schedules").child(uid).child(""+start).removeValue();
     }
@@ -114,7 +117,7 @@ public class Firebase {
      * Requests all appointments of the user from Firebase and returns them as an ArrayList.
      * @param uid
      * @param authToken
-     * @return
+     * @return ArrayList
      */
     public static ArrayList<Appointment> getAppointments(String uid, String authToken){
         ArrayList<Appointment> appointmentList= new ArrayList<>();
@@ -129,13 +132,13 @@ public class Firebase {
                 String appointmentID = allAppointments.getString(i);
                 JSONObject appointmentJSON = reader.getJSONObject(appointmentID);
 
-                int startTime = appointmentJSON.getInt("startTime");
-                int endTime = appointmentJSON.getInt("endTime");
+                long startDate = appointmentJSON.getLong("startDate");
+                long endDate = appointmentJSON.getLong("endDate");
 
                 String roomString = appointmentJSON.getString("room");
                 Room room = Room.valueOf(roomString);
 
-                Appointment myAppointment = new Appointment(startTime, endTime, room);
+                Appointment myAppointment = new Appointment(startDate, endDate, room);
 
                 appointmentList.add(myAppointment);
             }
@@ -317,7 +320,12 @@ public class Firebase {
         return userList;
     }
 
-    //TODO JAVADOC
+    /**
+     * Requests all users with an activated schedule, looks for their current appointment and puts
+     * the user and the location of the current appointment in an ArrayList.
+     * @param authToken
+     * @return Arraylist with the appointments of all scheduled users.
+     */
     public static ArrayList<User> getAllScheduledUsers(String authToken) {
         ArrayList<User> userList= new ArrayList<>();
 
@@ -335,10 +343,10 @@ public class Firebase {
                 //Determine the current Appointment
                 ArrayList<Appointment> appointments = getAppointments(userUid, authToken);
                 Appointment currentAppointment = null;
-                int currentTime = generateCurrentTime();
+                long currentDate = generateCurrentDate();
                 for(Appointment each : appointments) {
-                    if(each.getFormatedStartTime() <= currentTime &&
-                            each.getFormatedEndTime() >= currentTime)
+                    if(each.getFormatedStartDate() <= currentDate &&
+                            each.getFormatedEndDate() >= currentDate)
                     {
                         currentAppointment = each;
                         break;
@@ -353,10 +361,7 @@ public class Firebase {
                     myUser.longitude = currentAppointment.getRoom().getLongitude();
                     myUser.usingSchedule = true;
 
-                    Calendar cal = Calendar.getInstance();
-                    cal.set(Calendar.HOUR, currentAppointment.getEndHour());
-                    cal.set(Calendar.MINUTE, currentAppointment.getEndMinute());
-                    myUser.expirationDate = cal;
+                    myUser.expirationDate = currentAppointment.getEndDate();
 
                     userList.add(myUser);
                 } else {
