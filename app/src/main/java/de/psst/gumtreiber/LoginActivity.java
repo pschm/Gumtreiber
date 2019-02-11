@@ -1,8 +1,7 @@
 package de.psst.gumtreiber;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +17,8 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import de.psst.gumtreiber.data.Firebase;
 import java.util.ArrayList;
 
@@ -27,10 +28,11 @@ import de.psst.gumtreiber.data.UserDataSync;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapControl;
 import de.psst.gumtreiber.map.MapView;
+import de.psst.gumtreiber.ui.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final boolean useLogin = true;
+    private static final boolean useLogin = false;
 
     private FirebaseAuth auth;
     private EditText txtName, txtEmail, txtPwd;
@@ -90,9 +92,10 @@ public class LoginActivity extends AppCompatActivity {
         signOut(); //For test purposes
     }
 
-    //TODO Hübsch machen. Ggf. auth in eigene Activity?
+    //TODO Hübsch machen. Ggf. auth in eigene Activity -> Wird in "MainActivity" verwendet - also das Map zeugs
     private void setupOldOnCreateStuff() {
         setContentView(R.layout.activity_login);
+
 
         MapView map = findViewById(R.id.map);
         //Firebase.createUser("123","Max");
@@ -105,6 +108,17 @@ public class LoginActivity extends AppCompatActivity {
         mc.setMaximumScale(9f);
         mc.update();
         map.setMapControl(mc);
+
+        Button btnProvLogin = findViewById(R.id.btn_prov_login);
+        btnProvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
         if(useLogin) {

@@ -3,7 +3,6 @@ package de.psst.gumtreiber.data;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -16,6 +15,7 @@ import com.google.firebase.auth.GetTokenResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import androidx.annotation.NonNull;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapView;
 

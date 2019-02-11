@@ -1,10 +1,11 @@
 package de.psst.gumtreiber.map;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatImageView;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * Support class for the MovableMarker
