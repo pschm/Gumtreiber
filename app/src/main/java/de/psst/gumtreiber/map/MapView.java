@@ -48,11 +48,11 @@ public class MapView extends AppCompatImageView {
 
     private int actionBarHeight;
 
-    // constants for gps calculation
-    private final static double MAX_LAT = 51.026252;
-    private final static double MIN_LAT = 51.021335;
-    private final static double MAX_LONG = 7.566864;
-    private final static double MIN_LONG = 7.560268;
+    // constants for gps calculation                    OLD Values
+    private final static double MAX_LAT = 51.027653; // 51.026252;
+    private final static double MIN_LAT = 51.020989; // 51.021335;
+    private final static double MAX_LONG = 7.566508; // 7.566864;
+    private final static double MIN_LONG = 7.560669; // 7.560268;
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
 
