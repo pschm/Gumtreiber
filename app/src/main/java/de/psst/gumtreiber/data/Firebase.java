@@ -115,7 +115,7 @@ public class Firebase {
     /**
      * Requests all appointments of the user from Firebase and returns them as an ArrayList.
      * @param uid
-     * @param authToken
+     * @param authToken TODO missing desc.
      * @return ArrayList
      */
     public static ArrayList<Appointment> getAppointments(String uid, String authToken){

@@ -45,20 +45,21 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Setting Layout and MapFragment
-        setContentView(R.layout.activity_main);
-        fragmentManager.beginTransaction().add(R.id.content_frame, new MapFragment()).commit();
-
         //Getting the locationState from the ViewModel
         model = new MainViewModel(getApplication());
         locationState = model.getLocationState();
 
+        //Creating a new LocationHandler
+        locationHandler = new LocationHandler(this, locationState);
+
+        //Setting Layout and MapFragment
+        setContentView(R.layout.activity_main);
+        fragmentManager.beginTransaction().add(R.id.content_frame, new MapFragment()).commit();
+
+
         //Setting Uid
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // TODO Sven Fragen ob's so Passt ?
-        //Creating a new LocationHandler
-        locationHandler = new LocationHandler(this, locationState);
 
         //TODO Hier das Icon für den Standort setzen
         //Init Toolbar
@@ -164,5 +165,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         return true;
+    }
+
+    public LocationHandler getLocationHandler() {
+        return locationHandler;
     }
 }
