@@ -2,7 +2,6 @@ package de.psst.gumtreiber.data;
 
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -239,7 +238,6 @@ public class Firebase {
         }
     }
 
-
     /**
      * Requests all useres from firebase and returns them with their location data in an
      * ArrayList.
@@ -376,7 +374,6 @@ public class Firebase {
 
         return userList;
     }
-
 
     /**
      * Makes a GET request to Firebase and returns a JSON

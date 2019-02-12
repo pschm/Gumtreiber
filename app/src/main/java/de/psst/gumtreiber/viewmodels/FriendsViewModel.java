@@ -17,10 +17,12 @@ import androidx.lifecycle.MutableLiveData;
 
 public class FriendsViewModel extends AndroidViewModel {
 
+    //TODO Echte firebase Userliste Abrufen!
+
     private static final String PREFERENCES_KEY = "de.psst.gumtreiber";
     private static final String FRIENDLIST_KEY = "friendList";
 
-    //TODO Später erstezen -> Name Überdenken
+    //TODO Später vielleicht erstezen -> Name Überdenken
     private MutableLiveData<List<String>> friends = new MutableLiveData<>();
 
     public FriendsViewModel(@NonNull Application application) {

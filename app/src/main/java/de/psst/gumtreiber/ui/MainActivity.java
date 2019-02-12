@@ -2,11 +2,14 @@ package de.psst.gumtreiber.ui;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,30 +18,52 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.location.LocationHandler;
+import de.psst.gumtreiber.ui.fragments.CalendarFragment;
+import de.psst.gumtreiber.ui.fragments.MapFragment;
+import de.psst.gumtreiber.viewmodels.MainViewModel;
+
+//import de.psst.gumtreiber.ui.fragments.FriendListFragment;
+//import de.psst.gumtreiber.ui.fragments.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    //TODO Wirklich abfragen & irgendwie beim start setzten !!!
-    private boolean visibilityState, locationState;
-    private FragmentManager fragmentManager = getSupportFragmentManager();
+    //LocationState stuff
+    private MainViewModel model;
+    private Boolean locationState;
+    private LocationHandler locationHandler;
 
+    //Firebase UserID
+    private String uid;
+
+    //Fragment Manager
+    private FragmentManager fragmentManager = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //HIer die Icons Setzten
-
+        //Setting Layout and MapFragment
         setContentView(R.layout.activity_main);
         fragmentManager.beginTransaction().add(R.id.content_frame, new MapFragment()).commit();
-        //android.R.attr.actionBarSize -> actionbar größe auslesen Standard 56dp
 
-        //Toolbar stuff
+        //Getting the locationState from the ViewModel
+        model = new MainViewModel(getApplication());
+        locationState = model.getLocationState();
+
+        //Setting Uid
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // TODO Sven Fragen ob's so Passt ?
+        //Creating a new LocationHandler
+        locationHandler = new LocationHandler(this, locationState);
+
+        //TODO Hier das Icon für den Standort setzen
+        //Init Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().hide();
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -72,41 +97,45 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        // int id = item.getItemId();
-
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         switch (item.getItemId()) {
 
-            case (R.id.nav_visibility):
-
-                if (visibilityState) {
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_visibility_off_24dp));
-                    visibilityState = false;
-                } else {
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_visibility_on_24dp));
-                    visibilityState = true;
-                }
-                break;
-
             case (R.id.nav_location):
 
                 if (locationState) {
+                    //Changing Icon
                     item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_location_off_24dp));
-                    locationState = false;
+                    //disable GPS
+                    locationHandler.disableUpdates();
+                    //activate TimeSchedule on Firebase
+                    Firebase.activateSchedule(uid);
+                    //changing the shared preference
+                    model.setLocationState(false);
+                    locationState = model.getLocationState();
+                    Log.v("LOCATION STATE", locationState.toString());
+
+
                 } else {
+                    //Changing Icon
                     item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_location_on_24dp));
-                    locationState = true;
+                    //disable GPS
+                    locationHandler.enableUpdates();
+                    //activate TimeSchedule on Firebase
+                    Firebase.deactivateSchedule(uid);
+                    //changing the shared preference
+                    model.setLocationState(true);
+                    locationState = model.getLocationState();
+                    Log.v("LOCATION STATE", locationState.toString());
+
                 }
                 break;
 
@@ -117,6 +146,7 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
                 break;
 
+            /*
             case (R.id.nav_friendList):
 
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FriendListFragment()).addToBackStack(null).commit();
@@ -130,6 +160,7 @@ public class MainActivity extends AppCompatActivity
 
                 drawer.closeDrawer(GravityCompat.START);
                 break;
+            */
         }
 
         return true;

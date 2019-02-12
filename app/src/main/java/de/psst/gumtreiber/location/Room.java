@@ -1,7 +1,8 @@
 package de.psst.gumtreiber.location;
 
 import android.location.Location;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 /**
  * Enum representation of the rooms.

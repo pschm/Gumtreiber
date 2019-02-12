@@ -1,4 +1,4 @@
-package de.psst.gumtreiber.ui;
+package de.psst.gumtreiber.ui.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
@@ -38,7 +37,7 @@ public class FriendListFragment extends ListFragment {
         View fragmentView = inflater.inflate(R.layout.fragment_friendlist, container, false);
 
 
-        model = ViewModelProviders.of((FragmentActivity) getActivity()).get(FriendsViewModel.class);
+        model = ViewModelProviders.of(getActivity()).get(FriendsViewModel.class);
         model.getFriends().observe(getActivity(), new Observer<List<String>>() {
 
             @Override

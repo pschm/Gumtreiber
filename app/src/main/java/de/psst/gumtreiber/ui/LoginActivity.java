@@ -1,4 +1,4 @@
-package de.psst.gumtreiber;
+package de.psst.gumtreiber.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,20 +19,11 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Firebase;
-import java.util.ArrayList;
-
-import de.psst.gumtreiber.data.Firebase;
-import de.psst.gumtreiber.data.User;
-import de.psst.gumtreiber.data.UserDataSync;
-import de.psst.gumtreiber.location.LocationHandler;
-import de.psst.gumtreiber.map.MapControl;
-import de.psst.gumtreiber.map.MapView;
-import de.psst.gumtreiber.ui.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final boolean useLogin = false;
 
     private FirebaseAuth auth;
     private EditText txtName, txtEmail, txtPwd;
@@ -41,28 +32,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        if(useLogin) {
-            setupAuthOnCreateStuff();
-        } else {
-            setupOldOnCreateStuff();
-        }
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        if(useLogin) {
-            // Check if user is signed in (non-null) and update UI accordingly.
-            FirebaseUser currentUser = auth.getCurrentUser();
-            updateUI(currentUser);
-        }
-    }
-
-    private void setupAuthOnCreateStuff() {
         setContentView(R.layout.activity_authentication);
 
         auth = FirebaseAuth.getInstance();
@@ -87,65 +56,36 @@ public class LoginActivity extends AppCompatActivity {
                 signIn(txtEmail.getText().toString(), txtPwd.getText().toString());
             }
         });
-
-
         signOut(); //For test purposes
     }
 
-    //TODO Hübsch machen. Ggf. auth in eigene Activity -> Wird in "MainActivity" verwendet - also das Map zeugs
-    private void setupOldOnCreateStuff() {
-        setContentView(R.layout.activity_login);
+    @Override
+    public void onStart() {
+        super.onStart();
 
+        // Check if user is signed in (non-null) and update UI accordingly
+        FirebaseUser currentUser = auth.getCurrentUser();
+        updateUI(currentUser);
 
-        MapView map = findViewById(R.id.map);
-        //Firebase.createUser("123","Max");
-        //Firebase.setCurrentLocation("123",7.563138,51.024232,  0);
-        map.setActivity(this);
-
-        // enable zoom effect
-        MapControl mc = new MapControl(map, true);
-        mc.setMapView(map);
-        mc.setMaximumScale(9f);
-        mc.update();
-        map.setMapControl(mc);
-
-        Button btnProvLogin = findViewById(R.id.btn_prov_login);
-        btnProvLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
-
-
-        if(useLogin) {
-            //create LocationHandler
-            LocationHandler locationHandler = new LocationHandler(this, true); //TODO updatesEnabled aus config laden
-
-            //create UserDataSync
-            UserDataSync uds = new UserDataSync(this, locationHandler, map);
-            uds.startUpdating();
-        }
     }
 
 
     /////////////////////////////////////////////////////////////////
-    // Authentication                                              //
+    //                    Authentication                           //
     /////////////////////////////////////////////////////////////////
     //TODO Manage User (e.g. displayname, passwd reset, etc.): https://firebase.google.com/docs/auth/android/manage-users
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            setupOldOnCreateStuff();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
 
         } else {
             btnLogin.setClickable(true); //re-enable buttons if login failed
             btnRegister.setClickable(true);
         }
     }
+
 
     private void signOut() {
         auth.signOut();
@@ -278,6 +218,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+
     private Task<Void> updateDisplayName(FirebaseUser user, String displayName) {
         UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
@@ -285,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
 
         return user.updateProfile(profileUpdate);
     }
+
 
     private String getFirebaseAuthErrorMsg(FirebaseAuthException ae) {
         if(ae == null) return getString(R.string.auth_unknown_error);

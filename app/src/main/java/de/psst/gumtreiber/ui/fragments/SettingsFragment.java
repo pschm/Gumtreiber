@@ -1,4 +1,4 @@
-package de.psst.gumtreiber.ui;
+package de.psst.gumtreiber.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

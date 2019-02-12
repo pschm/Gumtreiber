@@ -1,4 +1,4 @@
-package de.psst.gumtreiber.ui;
+package de.psst.gumtreiber.ui.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;

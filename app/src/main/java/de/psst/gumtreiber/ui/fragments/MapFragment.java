@@ -1,4 +1,4 @@
-package de.psst.gumtreiber.ui;
+package de.psst.gumtreiber.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,19 +26,15 @@ public class MapFragment extends Fragment {
     /**
      * Initialisert die Map
      */
-    public void initMap() {
+    private void initMap() {
 
         MapView map = fragmentView.findViewById(R.id.map);
-        //Firebase.createUser("123","Max");
-        //Firebase.setCurrentLocation("123",7.563138,51.024232,  0);
-        //map.setUserList(Firebase.getAllUsers());
 
         // enable zoom effect
         MapControl mc = new MapControl(map, true);
         mc.setMapView(map);
         mc.setMaximumScale(9f);
         mc.update();
-
     }
 
 

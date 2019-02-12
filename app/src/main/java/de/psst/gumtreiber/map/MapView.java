@@ -7,12 +7,12 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 
 import java.util.ArrayList;
 
+import androidx.appcompat.widget.AppCompatImageView;
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.Vector2;
@@ -164,6 +164,14 @@ public class MapView extends AppCompatImageView {
         // draw the map
         super.onDraw(canvas);
 
+
+        if (mapControl == null || mapControl.getDrawMatrix() == null) return;
+
+        // skip drawing - there are no users to draw
+        if (userList == null || userList.isEmpty()) {
+            Log.w("MapView", "Nothing to draw - the user list ist empty or null ");
+            return;
+        }
         if (firstDraw) {
             // init scaling (device dependent)
             defaultSize.x = getWidth();
@@ -174,11 +182,6 @@ public class MapView extends AppCompatImageView {
             defaultMatrixError = 1f / defaultMatrix[0];
         }
 
-        // skip drawing - there are no users to draw
-        if (userList == null || userList.isEmpty()) {
-            Log.w("MapView", "Nothing to draw - the user list ist empty or null ");
-            return;
-        }
 
         // the paint color and size
         paint.setColor(Color.CYAN);

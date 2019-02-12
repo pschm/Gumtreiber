@@ -9,4 +9,5 @@ public class MapViewModel extends AndroidViewModel {
     public MapViewModel(@NonNull Application application) {
         super(application);
     }
+
 }

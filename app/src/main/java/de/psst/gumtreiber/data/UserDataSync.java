@@ -95,7 +95,6 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
         allowRunning = false;
     }
 
-
     @Override
     public void run() {
         Log.d("UserDataSync", "Sync-Thread started!");
@@ -122,9 +121,6 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             }
         }
     }
-
-
-
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {

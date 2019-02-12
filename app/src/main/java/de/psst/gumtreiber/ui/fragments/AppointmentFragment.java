@@ -1,4 +1,4 @@
-package de.psst.gumtreiber.ui;
+package de.psst.gumtreiber.ui.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -21,6 +21,10 @@ import de.psst.gumtreiber.R;
 
 public class AppointmentFragment extends Fragment {
 
+
+    //TODO Kontrolle auf Zeitpunkte -> Zeitreisen sind nicht möglich
+    //TODO Zeugs nach ViewModel auslagern Appointment abspeichern als long "yyyyMMddHHmmss" + Sekunden als 00 -> Absprechen
+    //TODO Termin Specihern -> addAppointmentToSchedule(FirebaseAuth.getInstance().getCurrentUser().getUid() , Appiontment);
 
     private GregorianCalendar c = new GregorianCalendar();
     private View fragmentView;
@@ -56,6 +60,7 @@ public class AppointmentFragment extends Fragment {
      * Initiates the TextViews with Date & Time Pickers in a barbaric kind of way
      */
     public void initTextViews() {
+
 
         //Termin Anfang
         TextView tvStartDate = getView().findViewById(R.id.tv_start_date);
