@@ -38,12 +38,16 @@ public class MainActivity extends AppCompatActivity
     //Firebase UserID
     private String uid;
 
-    //Fragment Manager
-    private FragmentManager fragmentManager = getSupportFragmentManager();
+    //Fragment Manager & Fragments
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Initailizing Fragments
+        fragmentManager = getSupportFragmentManager();
+
 
         //Setting Layout and MapFragment
         setContentView(R.layout.activity_main);
@@ -56,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         //Setting Uid
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // TODO Sven Fragen ob's so Passt ?
+
         //Creating a new LocationHandler
         locationHandler = new LocationHandler(this, locationState);
 
@@ -64,6 +68,7 @@ public class MainActivity extends AppCompatActivity
         //Init Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -92,6 +97,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+
         return true;
     }
 
@@ -142,7 +149,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_calendar:
 
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new CalendarFragment()).addToBackStack(null).commit();
-
                 drawer.closeDrawer(GravityCompat.START);
                 break;
 
@@ -164,5 +170,13 @@ public class MainActivity extends AppCompatActivity
         }
 
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        //TODO menu.findMenuItem(...) wirft nullPoniterExeption ... aber warum ?
+        //if (!locationState) menu.findItem(R.id.nav_location).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_location_off_24dp));
+        return super.onPrepareOptionsMenu(menu);
     }
 }
