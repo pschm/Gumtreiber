@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -12,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity
     //LocationState stuff
     private MainViewModel model;
     private Boolean locationState;
+    private MenuItem drawerNavSwitch;
     private LocationHandler locationHandler;
 
     //Firebase UserID
@@ -75,6 +78,42 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        //Listener for the location switch
+        drawerNavSwitch = navigationView.getMenu().findItem(R.id.nav_location);
+        ((SwitchCompat) drawerNavSwitch.getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (locationState) {
+                    //Changing Icon
+                    drawerNavSwitch.setIcon(ContextCompat.getDrawable(buttonView.getContext(), R.drawable.ic_location_off_24dp));
+                    //disable GPS
+                    locationHandler.disableUpdates();
+                    //activate TimeSchedule on Firebase
+                    Firebase.activateSchedule(uid);
+                    //changing the shared preference
+                    model.setLocationState(false);
+                    locationState = model.getLocationState();
+                    Log.v("LOCATION STATE", locationState.toString());
+
+
+                } else {
+                    //Changing Icon
+                    drawerNavSwitch.setIcon(ContextCompat.getDrawable(buttonView.getContext(), R.drawable.ic_location_on_24dp));
+                    //disable GPS
+                    locationHandler.enableUpdates();
+                    //activate TimeSchedule on Firebase
+                    Firebase.deactivateSchedule(uid);
+                    //changing the shared preference
+                    model.setLocationState(true);
+                    locationState = model.getLocationState();
+                    Log.v("LOCATION STATE", locationState.toString());
+
+                }
+            }
+        });
+
     }
 
 
@@ -112,32 +151,8 @@ public class MainActivity extends AppCompatActivity
 
             case (R.id.nav_location):
 
-                if (locationState) {
-                    //Changing Icon
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_location_off_24dp));
-                    //disable GPS
-                    locationHandler.disableUpdates();
-                    //activate TimeSchedule on Firebase
-                    Firebase.activateSchedule(uid);
-                    //changing the shared preference
-                    model.setLocationState(false);
-                    locationState = model.getLocationState();
-                    Log.v("LOCATION STATE", locationState.toString());
-
-
-                } else {
-                    //Changing Icon
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_location_on_24dp));
-                    //disable GPS
-                    locationHandler.enableUpdates();
-                    //activate TimeSchedule on Firebase
-                    Firebase.deactivateSchedule(uid);
-                    //changing the shared preference
-                    model.setLocationState(true);
-                    locationState = model.getLocationState();
-                    Log.v("LOCATION STATE", locationState.toString());
-
-                }
+                //Toggle drawer switch. This will call the onCheckedChangeListener from the switch
+                ((SwitchCompat) drawerNavSwitch.getActionView()).setChecked(!locationState);
                 break;
 
             case R.id.nav_calendar:
