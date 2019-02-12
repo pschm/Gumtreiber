@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
+//import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -28,7 +29,6 @@ public class MapView extends AppCompatImageView {
 
     private MapControl mapControl;
 
-    private Matrix transformation = new Matrix();
     private Matrix oldTransformation = new Matrix();
     private boolean firstDraw = true;
     private double scale = 1.0;
@@ -40,7 +40,7 @@ public class MapView extends AppCompatImageView {
     private Coordinate pos = new Coordinate();
     private Coordinate prisonPos = new Coordinate(51.022255, 7.560842);
     private float[] defaultMatrix = new float[9];
-    private float[] copyValues = new float[9];
+    private float[] matrixValues = new float[9];
     private Vector2 markerPos = new Vector2();
     private PointF markerPoint = new PointF();
 
@@ -84,21 +84,12 @@ public class MapView extends AppCompatImageView {
     }
 
     /**
-     * The transformation matrix is used to calculate the user position
-     * on the map accordingly to the zoom
-     * @param transformation the matrix that is used to calculate the current zoom
-     */
-    public void setTransformation(Matrix transformation) {
-        this.transformation = transformation;
-    }
-
-    /**
      * @param userList users to be drawn of the map
      */
     public void setUserList(ArrayList<User> userList) {
         this.userList = userList;
 
-        fillPrison();
+        fillPrisonList();
 
         // TODO boxSize an den Zoom anpassen? Nachteil, einteilung müsste im onDraw() aufgerufen werden
         this.userList = buildUserGroups(activity, userList, 200);
@@ -122,6 +113,8 @@ public class MapView extends AppCompatImageView {
         mapPos.x = (float)(pos.longitude * (getWidth()/ DELTA_LONG));
         mapPos.y = (float)(pos.latitude * (getHeight()/ DELTA_LAT));
 
+        Log.d("MapView", "W:" +getWidth()+" H:"+getHeight());
+
 //        return mapPos;
     }
 
@@ -129,11 +122,18 @@ public class MapView extends AppCompatImageView {
      * Adjust a given coordinate to the current zoom of the map
      */
     private void adjustPosToZoom(PointF mapPos) {
+        adjustPosToZoom(mapPos, mapControl.getDrawMatrix());
+    }
+
+    /**
+     * Adjust a given coordinate to the zoom of the given transformation matrix
+     */
+    private void adjustPosToZoom(PointF mapPos, Matrix transformation) {
         // Coordinate
         float[] point = {mapPos.x*defaultMatrixError, mapPos.y*defaultMatrixError};
 
         // adjust coordinate to zoom by applying the matrix
-        mapControl.getDrawMatrix().mapPoints(point);
+        transformation.mapPoints(point);
 
         // save the values
         mapPos.x = point[0];
@@ -164,14 +164,22 @@ public class MapView extends AppCompatImageView {
         // draw the map
         super.onDraw(canvas);
 
+        if (mapControl == null) {
+            Log.d("MapView", "mapControl missing");
+            return;
+        }
 
-        if (mapControl == null || mapControl.getDrawMatrix() == null) return;
+        if (mapControl.getDrawMatrix() == null) {
+            Log.d("MapView", "There is no draw Matrix");
+            return;
+        }
 
         // skip drawing - there are no users to draw
         if (userList == null || userList.isEmpty()) {
             Log.w("MapView", "Nothing to draw - the user list ist empty or null ");
             return;
         }
+
         if (firstDraw) {
             // init scaling (device dependent)
             defaultSize.x = getWidth();
@@ -181,7 +189,6 @@ public class MapView extends AppCompatImageView {
             mapControl.getDrawMatrix().getValues(defaultMatrix);
             defaultMatrixError = 1f / defaultMatrix[0];
         }
-
 
         // the paint color and size
         paint.setColor(Color.CYAN);
@@ -199,9 +206,15 @@ public class MapView extends AppCompatImageView {
             adjustPosToZoom(mapPos);
 
             if (u.getMarker() == null) {
-                Log.w("MapView", "WARNING: User without marker detected!");
+                Log.w("MapView", "WARNING: User without marker detected! (" +u.name+ ")");
                 return;
             }
+
+//            if (u.getMarker() != null) {
+//                Log.v("MapView", "Everything should be fine...");
+//                u.getMarker().setVisibility(true);
+//                u.getMarker().setPosition(100f, 100f);
+//            }
 
             // set the marker directly to the new position if the zoom changed
             // or let the marker move to the new position
@@ -209,14 +222,23 @@ public class MapView extends AppCompatImageView {
                 u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
             }
             else if (!mapControl.getDrawMatrix().equals(oldTransformation)) {
+                // TODO smooth moveable markers while zooming
 //                markerPos = u.getMarker().getPosition();
 //                markerPoint.x = markerPos.x;
 //                markerPoint.y = markerPos.y;
-//                Log.v("MapView", "Marker: OLD ++" + markerPoint);
+////                Log.v("MapView", "Marker: OLD ++" + markerPoint);
+//
+//                Matrix m = substracMatrix(mapControl.getDisplayMatrix(), oldTransformation);
+////                Log.v("MapView", "Matrix a: " + mapControl.getDrawMatrix());
+////                Log.v("MapView", "Matrix b: " + oldTransformation);
+////                Log.v("MapView", "Matrix m: " + m);
 //                adjustPosToZoom(markerPoint);
-//                Log.v("MapView", "Marker: NEW --" + markerPoint);
+//                adjustPosToZoom(markerPoint, m);
+////                Log.v("MapView", "Marker: NEW --" + markerPoint);
 //                u.getMarker().setPosition(markerPoint.x, markerPoint.y);
-//                u.getMarker().moveTo(mapPos.x - 17, mapPos.y - 150);
+////                u.getMarker().moveTo(mapPos.x - 17, mapPos.y - 150);
+////                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
+
                 u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
             }
             else {
@@ -231,24 +253,13 @@ public class MapView extends AppCompatImageView {
             canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
             canvas.drawText(u.name, mapPos.x, mapPos.y + 47.5f, paint);
         }
+
         // save the current transformation
         copyMatix(oldTransformation, mapControl.getDrawMatrix());
         firstDraw = false;
 
         // draw all prisoners
-        // TODO könnte man später ggf. auch mit einem eigenen Marker machen, jenachdem was besser auf der finalen Karte aussieht
-        int c = 0;
-        for (User u : prison) {
-            pos.setLocation(prisonPos.latitude, prisonPos.longitude);
-
-            gpsToMap(pos);
-            adjustPosToZoom(mapPos);
-
-            if (c > 10) break;
-            canvas.drawText(u.name, mapPos.x, mapPos.y + c*115, paint);
-            c++;
-        }
-        if (c > 10) canvas.drawText("...", mapPos.x, mapPos.y, paint);
+        drawPrison(canvas);
     }
 
     /**
@@ -345,7 +356,7 @@ public class MapView extends AppCompatImageView {
      * Separate all Users from {@link #userList} which aren't in the geographically area of the map
      * and save them in their own {@link #prison} list.
      */
-    private void fillPrison() {
+    private void fillPrisonList() {
         prison.clear();
         for (int i = userList.size() - 1; i >= 0; i--) {
             User u = userList.get(i);
@@ -353,13 +364,46 @@ public class MapView extends AppCompatImageView {
             if (u.latitude > 51.026252 || u.latitude < 51.021335
                     || u.longitude > 7.566864 || u.longitude < 7.560268) {
                 prison.add(u);
+                if (u.getMarker() != null) u.getMarker().setVisibility(false);
                 userList.remove(u);
             }
         }
     }
 
+    /**
+     * Draws all member of prisonList in a special area of the map
+     * @param canvas canvas to draw on
+     * TODO könnte man später ggf. auch mit einem eigenen Marker machen, jenachdem was besser auf der finalen Karte aussieht
+     */
+    private void drawPrison(Canvas canvas) {
+        int c = 0;
+        for (User u : prison) {
+            pos.setLocation(prisonPos.latitude, prisonPos.longitude);
+
+            gpsToMap(pos);
+            adjustPosToZoom(mapPos);
+
+            if (c > 10) break;
+            canvas.drawText(u.name, mapPos.x, mapPos.y + c*115, paint);
+            c++;
+        }
+        if (c > 10) canvas.drawText("...", mapPos.x, mapPos.y, paint);
+    }
+
     private void copyMatix(Matrix dest, Matrix src) {
-        src.getValues(copyValues);
-        dest.setValues(copyValues);
+        src.getValues(matrixValues);
+        dest.setValues(matrixValues);
+    }
+
+    private Matrix substracMatrix(Matrix a, Matrix b) {
+        float[] aA = new float[9];
+        float[] bA = new float[9];
+        a.getValues(aA);
+        b.getValues(bA);
+        for (int i = 0; i < 9; i++) {
+            aA[i] = aA[i] - bA[i];
+        }
+        a.setValues(aA);
+        return a;
     }
 }

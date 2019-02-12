@@ -32,7 +32,7 @@ public class MapFragment extends Fragment {
 
         // enable zoom effect
         MapControl mc = new MapControl(map, true);
-        mc.setMapView(map);
+        map.setMapControl(mc);
         mc.setMaximumScale(9f);
         mc.update();
     }
