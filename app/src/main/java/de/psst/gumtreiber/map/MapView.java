@@ -18,7 +18,6 @@ import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.Vector2;
 
-//import android.support.v7.widget.AppCompatImageView;
 
 public class MapView extends AppCompatImageView {
 
@@ -48,11 +47,11 @@ public class MapView extends AppCompatImageView {
 
     private int actionBarHeight;
 
-    // constants for gps calculation                    OLD Values
-    private final static double MAX_LAT = 51.027653; // 51.026252;
-    private final static double MIN_LAT = 51.020989; // 51.021335;
-    private final static double MAX_LONG = 7.566508; // 7.566864;
-    private final static double MIN_LONG = 7.560669; // 7.560268;
+    // constants for gps calculation
+    private final static double MAX_LAT = 51.027653;
+    private final static double MIN_LAT = 51.020989;
+    private final static double MAX_LONG = 7.566508;
+    private final static double MIN_LONG = 7.560669;
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
 
@@ -129,7 +128,7 @@ public class MapView extends AppCompatImageView {
         mapPos.x = (float)(pos.longitude * (getWidth()/ DELTA_LONG));
         mapPos.y = (float)(pos.latitude * (getHeight()/ DELTA_LAT));
 
-        Log.d("MapView", "W:" +getWidth()+" H:"+getHeight());
+//        Log.d("MapView", "W:" +getWidth()+" H:"+getHeight());
 
 //        return mapPos;
     }
@@ -169,19 +168,6 @@ public class MapView extends AppCompatImageView {
 
         if (scale < 0.9) scale = 0.9;
         else if (scale > 1.25) scale = 1.25;
-    }
-
-    /**
-     * TODO DELETE
-     */
-    private void initTest() {
-        userList = new ArrayList<>();
-        User u = new User("1234567", "Hans Peter");
-        u.latitude = 51.023572; // 51.023572, 7.5627197
-        u.longitude = 7.5627197;
-        userList.add(u);
-
-        setUserList(userList);
     }
 
     /**
@@ -245,16 +231,11 @@ public class MapView extends AppCompatImageView {
                 return;
             }
 
-//            if (u.getMarker() != null) {
-//                Log.v("MapView", "Everything should be fine...");
-//                u.getMarker().setVisibility(true);
-//                u.getMarker().setPosition(100f, 100f);
-//            }
-
             // set the marker directly to the new position if the zoom changed
             // or let the marker move to the new position
-            if (firstDraw) {
+            if (firstDraw || !u.getMarker().isAlreadyDrawn()) {
                 u.getMarker().setPosition(mapPos.x, mapPos.y);
+                u.getMarker().setAlreadyDrawn(true);
             }
             else if (!mapControl.getDrawMatrix().equals(oldTransformation)) {
                 // TODO smooth moveable markers while zooming
@@ -277,9 +258,6 @@ public class MapView extends AppCompatImageView {
 //                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150 + getActionbarHeight());
                 u.getMarker().setPosition(mapPos.x, mapPos.y);
 //                u.getMarker().setPosition(250, 250 + getActionbarHeight());
-                //android.R.attr.actionBarSize
-                Log.d("MapView", "Actionbar size: " + getActionbarHeight());
-
             }
             else {
                 u.getMarker().moveTo(mapPos.x, mapPos.y);
@@ -328,7 +306,7 @@ public class MapView extends AppCompatImageView {
 
             // transform user coordinates to the area
             x = (u.longitude - MIN_LONG) * 1000000; // min/max: 0268-6864 -> 0-6596
-            y = (u.latitude - MIN_LAT) * 1000000; // min/max: 1335-6252 -> 0-4917
+            y = (u.latitude  - MIN_LAT)  * 1000000; // min/max: 1335-6252 -> 0-4917
             y = DELTA_LAT - y; // invert y-Axis
 
             // calc grid position
@@ -403,10 +381,15 @@ public class MapView extends AppCompatImageView {
         for (int i = userList.size() - 1; i >= 0; i--) {
             User u = userList.get(i);
 
-            if (u.latitude > 51.026252 || u.latitude < 51.021335
-                    || u.longitude > 7.566864 || u.longitude < 7.560268) {
+            if (u.latitude > MAX_LAT || u.latitude < MIN_LAT
+                    || u.longitude > MAX_LONG || u.longitude < MIN_LONG) {
                 prison.add(u);
-                if (u.getMarker() != null) u.getMarker().setVisibility(false);
+                if (u.getMarker() != null) {
+                    Log.d("MapView", "User: " + u.name);
+                    u.getMarker().setPosition(-500, -500); // TODO remove if setVisibility works
+                    u.getMarker().setVisibility(false);
+                    u.getMarker().setAlreadyDrawn(false);
+                }
                 userList.remove(u);
             }
         }
