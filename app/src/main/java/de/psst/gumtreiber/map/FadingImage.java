@@ -52,7 +52,7 @@ class FadingImage extends AppCompatImageView implements Animation.AnimationListe
 
         setImageAlpha(0);
         clearAnimation();
-        startAnimation(makeVisible);
+        startAnimation(makeInvisible);
     }
 
 
