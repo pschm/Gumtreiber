@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
-//import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -15,10 +14,11 @@ import android.util.TypedValue;
 import java.util.ArrayList;
 
 import androidx.appcompat.widget.AppCompatImageView;
-import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.Vector2;
+
+//import android.support.v7.widget.AppCompatImageView;
 
 public class MapView extends AppCompatImageView {
 
@@ -254,7 +254,7 @@ public class MapView extends AppCompatImageView {
             // set the marker directly to the new position if the zoom changed
             // or let the marker move to the new position
             if (firstDraw) {
-                u.getMarker().setPosition(mapPos.x - 30,mapPos.y + 30 + getActionbarHeight());
+                u.getMarker().setPosition(mapPos.x, mapPos.y);
             }
             else if (!mapControl.getDrawMatrix().equals(oldTransformation)) {
                 // TODO smooth moveable markers while zooming
@@ -275,14 +275,14 @@ public class MapView extends AppCompatImageView {
 ////                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
 
 //                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150 + getActionbarHeight());
-                u.getMarker().setPosition(mapPos.x - 30,mapPos.y + 30  + getActionbarHeight());
+                u.getMarker().setPosition(mapPos.x, mapPos.y);
 //                u.getMarker().setPosition(250, 250 + getActionbarHeight());
                 //android.R.attr.actionBarSize
                 Log.d("MapView", "Actionbar size: " + getActionbarHeight());
 
             }
             else {
-                u.getMarker().moveTo(mapPos.x - 30, mapPos.y + 30 + getActionbarHeight());
+                u.getMarker().moveTo(mapPos.x, mapPos.y);
             }
 
             // scale the marker according to the zoom
