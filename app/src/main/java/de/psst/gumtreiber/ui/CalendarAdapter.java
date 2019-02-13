@@ -6,14 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
@@ -36,7 +34,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     public CalendarAdapter.CalendarViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recycler_view_calendar_row_layout, parent,false);
+                .inflate(R.layout.recycler_view_calendar_row_layout, parent, false);
         v.setOnClickListener(new CalendarRecyclerViewOnClickListener());
 
         CalendarViewHolder vh = new CalendarViewHolder(v);
@@ -57,7 +55,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     public int getItemCount() {
         return appointments.size();
     }
-
 
 
     public class CalendarViewHolder extends RecyclerView.ViewHolder {
@@ -85,7 +82,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             RecyclerView calendarRecyclerView = (RecyclerView) view.findViewById(R.id.rv_calendar);
             RecyclerView.ViewHolder holder = calendarRecyclerView.getChildViewHolder(view);
             int itemPosition = holder.getAdapterPosition();
-            Log.v("POSITION", itemPosition+"");
+            Log.v("POSITION", itemPosition + "");
 
             //AltertDialog für Abfrage ob wirklich gelösht werden soll
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);

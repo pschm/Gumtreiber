@@ -46,17 +46,18 @@ public class CalendarFragment extends Fragment {
         //Init ViewModel
         model = new CalendarViewModel(activity.getApplication());
 
-        //recycler View
+        //Init RecyclerView
         recyclerView = activity.findViewById(R.id.rv_calendar);
 
-        // use a linear layout manager
+        //use a LinearLayout manager
         manager = new LinearLayoutManager(activity);
         recyclerView.setLayoutManager(manager);
 
-        // specify an adapter (see also next example)
-        adapter = new CalendarAdapter();
-        recyclerView.setAdapter(adapter);
-
+        //specify an adapter
+        if (getContext() != null) {
+            adapter = new CalendarAdapter(model, getContext());
+            recyclerView.setAdapter(adapter);
+        }
 
         //Init Floating Action Button
         FloatingActionButton btnAdd = activity.findViewById(R.id.fab_add_appointment);

@@ -36,7 +36,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
     private LocationHandler locationHandler;
     private MapView mapView;
 
-    private String userToken;
+    private static String userToken;
 
     private Thread updateThread;
     private boolean allowRunning = true;
@@ -88,12 +88,8 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
     }
 
-    /**
-     * Stops synchronizing the data
-     */
-    public void stopUpdating() {
-        allowRunning = false;
-        userToken = null;
+    public static String getUserToken() {
+        return userToken;
     }
 
     @Override
@@ -164,7 +160,11 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
         activity.getApplication().unregisterActivityLifecycleCallbacks(this);
     }
 
-    public String getUserToken() {
-        return userToken;
+    /**
+     * Stops synchronizing the data
+     */
+    public void stopUpdating() {
+        allowRunning = false;
+        userToken = null;
     }
 }

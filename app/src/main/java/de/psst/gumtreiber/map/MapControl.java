@@ -1,6 +1,7 @@
 package de.psst.gumtreiber.map;
 
 import android.widget.ImageView;
+
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 // TODO maybe delete and just use PhotoViewAttacher
