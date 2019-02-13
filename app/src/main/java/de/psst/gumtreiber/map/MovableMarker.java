@@ -189,6 +189,11 @@ public class MovableMarker {
      */
     public void setVisibility(boolean setVisible) {
         if(setVisible) {
+            getLeftFixPrint().makeVisible();
+            getRightFixPrint().makeVisible();
+            nameImg.makeVisible();
+
+        } else {
             for(FadingImage img : leftPrints) {
                 img.makeInvisible();
             }
@@ -196,11 +201,6 @@ public class MovableMarker {
                 img.makeInvisible();
             }
             nameImg.makeInvisible();
-
-        } else {
-            getLeftFixPrint().makeVisible();
-            getRightFixPrint().makeVisible();
-            nameImg.makeVisible();
         }
     }
 
