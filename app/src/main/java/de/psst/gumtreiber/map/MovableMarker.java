@@ -14,10 +14,10 @@ import android.os.Build;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Vector2;
 
@@ -30,7 +30,8 @@ public class MovableMarker {
     private static final int RIGHT_PRINT_RES_ID = R.drawable.footstep_right;
     private static final int NAME_LABEL_RES_ID = R.drawable.banner;
     private static final int DEFAULT_SIZE = 64;
-    private static final Vector2 DEFAULT_NAME_OFFSET = new Vector2(-30, -60);
+    private static final Vector2 LBL_CNTR_OFFSET = new Vector2(-60, -90); //Offset for centering the image (0,0 -> left top corner)
+    private static final Vector2 IMG_CNTR_OFFSET = new Vector2(-30, -30);
 
     private Activity activity;
     private Thread moveThread;
@@ -41,11 +42,13 @@ public class MovableMarker {
     private ArrayList<FadingImage> leftPrints, rightPrints;
     private int lastLeftIndex, lastRightIndex;
 
-    private Vector2 nameOffset = DEFAULT_NAME_OFFSET;
+    private Vector2 nameCntrOffset = LBL_CNTR_OFFSET; //Centering offset based on scaling
     private float stepSpeed = 30;
     private float animationSpeed = 2.2f;
     private float rotOffset = 0f;
     private float scaleStepSpeedFactor = 1f;
+
+    private boolean alreadyDrawn = false;
 
     /**
      * Creates a new movable marker.
@@ -70,10 +73,13 @@ public class MovableMarker {
         Runnable init = new Runnable() {
             @Override
             public void run() {
-                initAnimationImages(markAsFriend);
+                ConstraintLayout layout = activity.findViewById(R.id.mapConstraintLayout);
+
+                initAnimationImages(layout, markAsFriend);
                 initLabel(label, markAsFriend);
 
-                activity.addContentView(nameImg, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                layout.addView(nameImg);
+                //activity.addContentView(nameImg, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
                 setPosition(curPos);
                 synchronized(this) {
@@ -99,7 +105,7 @@ public class MovableMarker {
 
     }
 
-    private void initAnimationImages(boolean markAsFriend) {
+    private void initAnimationImages(ConstraintLayout layout, boolean markAsFriend) {
         leftPrints = new ArrayList<>(4);
         rightPrints = new ArrayList<>(4);
         for(int i = 0; i < 8; i++) {
@@ -120,7 +126,8 @@ public class MovableMarker {
                 rightPrints.add(image);
             }
 
-            activity.addContentView(image, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            layout.addView(image);
+            //activity.addContentView(image, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }
 
@@ -184,6 +191,11 @@ public class MovableMarker {
      */
     public void setVisibility(boolean setVisible) {
         if(setVisible) {
+            getLeftFixPrint().makeVisible();
+            getRightFixPrint().makeVisible();
+            nameImg.makeVisible();
+
+        } else {
             for(FadingImage img : leftPrints) {
                 img.makeInvisible();
             }
@@ -191,11 +203,6 @@ public class MovableMarker {
                 img.makeInvisible();
             }
             nameImg.makeInvisible();
-
-        } else {
-            getLeftFixPrint().makeVisible();
-            getRightFixPrint().makeVisible();
-            nameImg.makeVisible();
         }
     }
 
@@ -224,6 +231,12 @@ public class MovableMarker {
         allowMovingThread = false;
         curPos = new Vector2(x, y);
 
+        nameImg.setX(x + nameCntrOffset.x);
+        nameImg.setY(y + nameCntrOffset.y);
+
+        x += IMG_CNTR_OFFSET.x;
+        y += IMG_CNTR_OFFSET.y;
+
         getLeftFixPrint().setX(x);
         getLeftFixPrint().setY(y);
         getLeftFixPrint().makeVisible();
@@ -231,9 +244,6 @@ public class MovableMarker {
         getRightFixPrint().setX(x);
         getRightFixPrint().setY(y);
         getRightFixPrint().makeVisible();
-
-        nameImg.setX(x + nameOffset.x);
-        nameImg.setY(y + nameOffset.y);
     }
 
     private void setPosition(Vector2 position) {
@@ -271,9 +281,9 @@ public class MovableMarker {
 
         nameImg.setScaleX(scaleFactor);
         nameImg.setScaleY(scaleFactor);
-        nameOffset = new Vector2(DEFAULT_NAME_OFFSET.x, DEFAULT_NAME_OFFSET.y * scaleFactor);
-        nameImg.setX(curPos.x + nameOffset.x);
-        nameImg.setY(curPos.y + nameOffset.y);
+        nameCntrOffset = new Vector2(LBL_CNTR_OFFSET.x, LBL_CNTR_OFFSET.y * scaleFactor);
+        nameImg.setX(curPos.x + nameCntrOffset.x);
+        nameImg.setY(curPos.y + nameCntrOffset.y);
     }
 
     /**
@@ -333,8 +343,8 @@ public class MovableMarker {
                             rotation = direction.angle() + 90f;
 
                             stepImg = getNextPrint(isLeftStep);
-                            stepImg.setX(curPos.x);
-                            stepImg.setY(curPos.y);
+                            stepImg.setX(curPos.x + IMG_CNTR_OFFSET.x);
+                            stepImg.setY(curPos.y + IMG_CNTR_OFFSET.y);
                             stepImg.setRotation(rotation);
                             stepImg.startFadeOut();
 
@@ -347,12 +357,12 @@ public class MovableMarker {
                         if(counter >= stepSpeed * scaleStepSpeedFactor && !isSecondTime) {
                             rotation = direction.angle() + 90f;
 
-                            stepImgL.setX(targetPos.x);
-                            stepImgL.setY(targetPos.y);
+                            stepImgL.setX(targetPos.x + IMG_CNTR_OFFSET.x);
+                            stepImgL.setY(targetPos.y + IMG_CNTR_OFFSET.y);
                             stepImgL.setRotation(rotation);
 
-                            stepImgR.setX(targetPos.x);
-                            stepImgR.setY(targetPos.y);
+                            stepImgR.setX(targetPos.x + IMG_CNTR_OFFSET.x);
+                            stepImgR.setY(targetPos.y + IMG_CNTR_OFFSET.y);
                             stepImgR.setRotation(rotation);
 
                             if (isLeftStep) stepImgL.makeVisible();
@@ -375,8 +385,8 @@ public class MovableMarker {
 
                     }
 
-                    nameImg.setX(curPos.x + nameOffset.x);
-                    nameImg.setY(curPos.y + nameOffset.y);
+                    nameImg.setX(curPos.x + nameCntrOffset.x);
+                    nameImg.setY(curPos.y + nameCntrOffset.y);
                     nameImg.setRotation(rotOffset);
 
                     try {
@@ -446,4 +456,11 @@ public class MovableMarker {
         return (int) ((nDP * conversionScale) + 0.5f) ;
     }
 
+    public boolean isAlreadyDrawn() {
+        return alreadyDrawn;
+    }
+
+    public void setAlreadyDrawn(boolean alreadyDrawn) {
+        this.alreadyDrawn = alreadyDrawn;
+    }
 }

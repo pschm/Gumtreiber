@@ -17,6 +17,7 @@ public class User {
 
     //After this date the location data becomes invalid
     public Calendar expirationDate;
+    DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
     //true, if the user uses a Schedule
     public boolean usingSchedule;
@@ -30,8 +31,20 @@ public class User {
         this.name = name;
     }
 
+    public boolean isExpired() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.getTime();
+
+        long now = Long.parseLong(dateFormat.format(cal.getTime()));
+        long expiration = Long.parseLong(dateFormat.format(expirationDate.getTime()));
+
+        boolean isExpired = expiration < now;
+
+        return isExpired;
+    }
+
     public String toString() {
-        DateFormat dateFormat = new SimpleDateFormat("/yyyy/MM/dd HH:mm:ss");
 
         String s = dateFormat.format(expirationDate.getTime());
 

@@ -7,9 +7,9 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
-//import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 
 import java.util.ArrayList;
 
@@ -17,6 +17,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.Vector2;
+
 
 public class MapView extends AppCompatImageView {
 
@@ -44,11 +45,13 @@ public class MapView extends AppCompatImageView {
     private Vector2 markerPos = new Vector2();
     private PointF markerPoint = new PointF();
 
+    private int actionBarHeight;
+
     // constants for gps calculation
-    private final static double MAX_LAT = 51.026252;
-    private final static double MIN_LAT = 51.021335;
-    private final static double MAX_LONG = 7.566864;
-    private final static double MIN_LONG = 7.560268;
+    private final static double MAX_LAT = 51.027653;
+    private final static double MIN_LAT = 51.020989;
+    private final static double MAX_LONG = 7.566508;
+    private final static double MIN_LONG = 7.560669;
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
 
@@ -66,6 +69,19 @@ public class MapView extends AppCompatImageView {
 
     public MapView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    /**
+     * Calculates the actionbar height relative to the current device
+     * @return actionbar height in pixel
+     */
+    public int getActionbarHeight() {
+        TypedValue tv = new TypedValue();
+        if (activity.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+        return actionBarHeight;
     }
 
     /**
@@ -88,7 +104,6 @@ public class MapView extends AppCompatImageView {
      */
     public void setUserList(ArrayList<User> userList) {
         this.userList = userList;
-
         fillPrisonList();
 
         // TODO boxSize an den Zoom anpassen? Nachteil, einteilung müsste im onDraw() aufgerufen werden
@@ -113,7 +128,7 @@ public class MapView extends AppCompatImageView {
         mapPos.x = (float)(pos.longitude * (getWidth()/ DELTA_LONG));
         mapPos.y = (float)(pos.latitude * (getHeight()/ DELTA_LAT));
 
-        Log.d("MapView", "W:" +getWidth()+" H:"+getHeight());
+//        Log.d("MapView", "W:" +getWidth()+" H:"+getHeight());
 
 //        return mapPos;
     }
@@ -175,8 +190,14 @@ public class MapView extends AppCompatImageView {
         }
 
         // skip drawing - there are no users to draw
-        if (userList == null || userList.isEmpty()) {
-            Log.w("MapView", "Nothing to draw - the user list ist empty or null ");
+        if (userList == null) {
+            Log.d("MapView", "userList is NUll!");
+//            initTest();
+            return;
+        }
+
+        if (userList.isEmpty()) {
+            Log.w("MapView", "Nothing to draw - the user list ist empty");
             return;
         }
 
@@ -210,16 +231,11 @@ public class MapView extends AppCompatImageView {
                 return;
             }
 
-//            if (u.getMarker() != null) {
-//                Log.v("MapView", "Everything should be fine...");
-//                u.getMarker().setVisibility(true);
-//                u.getMarker().setPosition(100f, 100f);
-//            }
-
             // set the marker directly to the new position if the zoom changed
             // or let the marker move to the new position
-            if (firstDraw) {
-                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
+            if (firstDraw || !u.getMarker().isAlreadyDrawn()) {
+                u.getMarker().setPosition(mapPos.x, mapPos.y);
+                u.getMarker().setAlreadyDrawn(true);
             }
             else if (!mapControl.getDrawMatrix().equals(oldTransformation)) {
                 // TODO smooth moveable markers while zooming
@@ -239,10 +255,12 @@ public class MapView extends AppCompatImageView {
 ////                u.getMarker().moveTo(mapPos.x - 17, mapPos.y - 150);
 ////                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
 
-                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
+//                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150 + getActionbarHeight());
+                u.getMarker().setPosition(mapPos.x, mapPos.y);
+//                u.getMarker().setPosition(250, 250 + getActionbarHeight());
             }
             else {
-                u.getMarker().moveTo(mapPos.x - 17, mapPos.y - 150);
+                u.getMarker().moveTo(mapPos.x, mapPos.y);
             }
 
             // scale the marker according to the zoom
@@ -250,6 +268,7 @@ public class MapView extends AppCompatImageView {
             u.getMarker().setScale((float) scale);
 
             // draw user on the map // TODO delete before presentation?
+//            canvas.drawCircle(250, 250, 17.5f, paint);
             canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
             canvas.drawText(u.name, mapPos.x, mapPos.y + 47.5f, paint);
         }
@@ -287,7 +306,7 @@ public class MapView extends AppCompatImageView {
 
             // transform user coordinates to the area
             x = (u.longitude - MIN_LONG) * 1000000; // min/max: 0268-6864 -> 0-6596
-            y = (u.latitude - MIN_LAT) * 1000000; // min/max: 1335-6252 -> 0-4917
+            y = (u.latitude  - MIN_LAT)  * 1000000; // min/max: 1335-6252 -> 0-4917
             y = DELTA_LAT - y; // invert y-Axis
 
             // calc grid position
@@ -300,6 +319,7 @@ public class MapView extends AppCompatImageView {
             if (sector == null) {
                 // u is the first user in this sector
                 if (u.getMarker() == null) {
+                    if (activity == null) Log.w("MapView", "Activity not given");
                     u.setMarker(new MovableMarker(activity, u.name));
 //                    u.getMarker().setPosition(-100f, -100f);
                 }
@@ -361,10 +381,15 @@ public class MapView extends AppCompatImageView {
         for (int i = userList.size() - 1; i >= 0; i--) {
             User u = userList.get(i);
 
-            if (u.latitude > 51.026252 || u.latitude < 51.021335
-                    || u.longitude > 7.566864 || u.longitude < 7.560268) {
+            if (u.latitude > MAX_LAT || u.latitude < MIN_LAT
+                    || u.longitude > MAX_LONG || u.longitude < MIN_LONG) {
                 prison.add(u);
-                if (u.getMarker() != null) u.getMarker().setVisibility(false);
+                if (u.getMarker() != null) {
+                    Log.d("MapView", "User: " + u.name);
+                    u.getMarker().setPosition(-500, -500); // TODO remove if setVisibility works
+                    u.getMarker().setVisibility(false);
+                    u.getMarker().setAlreadyDrawn(false);
+                }
                 userList.remove(u);
             }
         }
