@@ -212,7 +212,7 @@ public class MapView extends AppCompatImageView {
         }
 
         // the paint color and size
-        paint.setColor(Color.CYAN);
+        paint.setColor(Color.WHITE);
         paint.setTextSize(35);
 
         // draw all users on the map
@@ -270,7 +270,7 @@ public class MapView extends AppCompatImageView {
             // draw user on the map // TODO delete before presentation?
 //            canvas.drawCircle(250, 250, 17.5f, paint);
             canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
-            canvas.drawText(u.name, mapPos.x, mapPos.y + 47.5f, paint);
+//            canvas.drawText(u.name, mapPos.x, mapPos.y + 47.5f, paint);
         }
 
         // save the current transformation
@@ -385,8 +385,8 @@ public class MapView extends AppCompatImageView {
                     || u.longitude > MAX_LONG || u.longitude < MIN_LONG) {
                 prison.add(u);
                 if (u.getMarker() != null) {
-                    Log.d("MapView", "User: " + u.name);
-                    u.getMarker().setPosition(-500, -500); // TODO remove if setVisibility works
+//                    Log.d("MapView", "User: " + u.name);
+//                    u.getMarker().setPosition(-500, -500); // TODO remove if setVisibility works
                     u.getMarker().setVisibility(false);
                     u.getMarker().setAlreadyDrawn(false);
                 }

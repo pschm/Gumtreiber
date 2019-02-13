@@ -119,10 +119,10 @@ public class MovableMarker {
             else image.setVisibility(View.GONE);
 
             if(i < 4) {
-                image.setImageResource(LEFT_PRINT_RES_ID);
+//                image.setImageResource(LEFT_PRINT_RES_ID);
                 leftPrints.add(image);
             } else {
-                image.setImageResource(RIGHT_PRINT_RES_ID);
+//                image.setImageResource(RIGHT_PRINT_RES_ID);
                 rightPrints.add(image);
             }
 
