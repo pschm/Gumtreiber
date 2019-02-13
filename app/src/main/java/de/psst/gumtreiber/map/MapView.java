@@ -192,7 +192,6 @@ public class MapView extends AppCompatImageView {
         // skip drawing - there are no users to draw
         if (userList == null) {
             Log.d("MapView", "userList is NUll!");
-//            initTest();
             return;
         }
 
@@ -231,6 +230,8 @@ public class MapView extends AppCompatImageView {
                 return;
             }
 
+            u.getMarker().setVisibility(true);
+
             // set the marker directly to the new position if the zoom changed
             // or let the marker move to the new position
             if (firstDraw || !u.getMarker().isAlreadyDrawn()) {
@@ -267,8 +268,7 @@ public class MapView extends AppCompatImageView {
             calcScaling();
             u.getMarker().setScale((float) scale);
 
-            // draw user on the map // TODO delete before presentation?
-//            canvas.drawCircle(250, 250, 17.5f, paint);
+            // draw user on the map
             canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
 //            canvas.drawText(u.name, mapPos.x, mapPos.y + 47.5f, paint);
         }
@@ -321,7 +321,6 @@ public class MapView extends AppCompatImageView {
                 if (u.getMarker() == null) {
                     if (activity == null) Log.w("MapView", "Activity not given");
                     u.setMarker(new MovableMarker(activity, u.name));
-//                    u.getMarker().setPosition(-100f, -100f);
                 }
                 map[(int)x][(int)y] = u;
             }
@@ -331,8 +330,8 @@ public class MapView extends AppCompatImageView {
                 userList.remove(sector);
                 userList.remove(u);
 
-                // hide label if existing // TODO maybe set invisible instead?
-                if (u.getMarker() != null) u.getMarker().setPosition(-50f, -50f);
+                // hide label if existing
+                if (u.getMarker() != null) u.getMarker().setVisibility(false);
 
                 // reduce index according to deleted users
                 i -= 2;
@@ -354,8 +353,8 @@ public class MapView extends AppCompatImageView {
                 // remove u from the userList
                 userList.remove(u);
 
-                // hide label if existing // TODO see above
-                if (u.getMarker() != null) u.getMarker().setPosition(-50f, -50f);
+                // hide label if existing
+                if (u.getMarker() != null) u.getMarker().setVisibility(false);
 
                 // reduce index according to the deleted user
                 i--;
@@ -385,8 +384,6 @@ public class MapView extends AppCompatImageView {
                     || u.longitude > MAX_LONG || u.longitude < MIN_LONG) {
                 prison.add(u);
                 if (u.getMarker() != null) {
-//                    Log.d("MapView", "User: " + u.name);
-//                    u.getMarker().setPosition(-500, -500); // TODO remove if setVisibility works
                     u.getMarker().setVisibility(false);
                     u.getMarker().setAlreadyDrawn(false);
                 }
