@@ -93,6 +93,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
      */
     public void stopUpdating() {
         allowRunning = false;
+        userToken = null;
     }
 
     @Override
@@ -161,5 +162,9 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
         if(!activity.equals(this.activity)) return;
 
         activity.getApplication().unregisterActivityLifecycleCallbacks(this);
+    }
+
+    public String getUserToken() {
+        return userToken;
     }
 }

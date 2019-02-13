@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -12,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -33,42 +35,39 @@ public class MainActivity extends AppCompatActivity
     //LocationState stuff
     private MainViewModel model;
     private Boolean locationState;
+    private MenuItem drawerNavSwitch;
     private LocationHandler locationHandler;
 
     //Firebase UserID
     private String uid;
 
-    //Fragment Manager & Fragments
-    private FragmentManager fragmentManager;
+    //Fragment Manager
+    private FragmentManager fragmentManager = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Initailizing Fragments
-        fragmentManager = getSupportFragmentManager();
+        //Getting the locationState from the ViewModel
+        model = new MainViewModel(getApplication());
+        locationState = model.getLocationState();
 
+        //Creating a new LocationHandler
+        locationHandler = new LocationHandler(this, locationState);
 
         //Setting Layout and MapFragment
         setContentView(R.layout.activity_main);
         fragmentManager.beginTransaction().add(R.id.content_frame, new MapFragment()).commit();
 
-        //Getting the locationState from the ViewModel
-        model = new MainViewModel(getApplication());
-        locationState = model.getLocationState();
 
         //Setting Uid
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
-        //Creating a new LocationHandler
-        locationHandler = new LocationHandler(this, locationState);
-
         //TODO Hier das Icon für den Standort setzen
         //Init Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -79,48 +78,16 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-    }
 
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            fragmentManager.popBackStackImmediate();
-        }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-
-
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-
-        switch (item.getItemId()) {
-
-            case (R.id.nav_location):
+        //Listener for the location switch
+        drawerNavSwitch = navigationView.getMenu().findItem(R.id.nav_location);
+        ((SwitchCompat) drawerNavSwitch.getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (locationState) {
                     //Changing Icon
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_location_off_24dp));
+                    drawerNavSwitch.setIcon(ContextCompat.getDrawable(buttonView.getContext(), R.drawable.ic_location_off_24dp));
                     //disable GPS
                     locationHandler.disableUpdates();
                     //activate TimeSchedule on Firebase
@@ -133,7 +100,7 @@ public class MainActivity extends AppCompatActivity
 
                 } else {
                     //Changing Icon
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_location_on_24dp));
+                    drawerNavSwitch.setIcon(ContextCompat.getDrawable(buttonView.getContext(), R.drawable.ic_location_on_24dp));
                     //disable GPS
                     locationHandler.enableUpdates();
                     //activate TimeSchedule on Firebase
@@ -144,11 +111,50 @@ public class MainActivity extends AppCompatActivity
                     Log.v("LOCATION STATE", locationState.toString());
 
                 }
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            fragmentManager.popBackStackImmediate();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
+        switch (item.getItemId()) {
+
+            case (R.id.nav_location):
+
+                //Toggle drawer switch. This will call the onCheckedChangeListener from the switch
+                ((SwitchCompat) drawerNavSwitch.getActionView()).setChecked(!locationState);
                 break;
 
             case R.id.nav_calendar:
 
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new CalendarFragment()).addToBackStack(null).commit();
+
                 drawer.closeDrawer(GravityCompat.START);
                 break;
 
@@ -172,11 +178,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
 
-        //TODO menu.findMenuItem(...) wirft nullPoniterExeption ... aber warum ?
-        //if (!locationState) menu.findItem(R.id.nav_location).setIcon(ContextCompat.getDrawable(this, R.drawable.ic_location_off_24dp));
-        return super.onPrepareOptionsMenu(menu);
+    public LocationHandler getLocationHandler() {
+        return locationHandler;
     }
+
 }
