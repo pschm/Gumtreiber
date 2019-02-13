@@ -48,6 +48,8 @@ public class MovableMarker {
     private float rotOffset = 0f;
     private float scaleStepSpeedFactor = 1f;
 
+    private boolean alreadyDrawn = false;
+
     /**
      * Creates a new movable marker.
      * @param activity The Activity on which all ImageViews will be added to display them.
@@ -454,4 +456,11 @@ public class MovableMarker {
         return (int) ((nDP * conversionScale) + 0.5f) ;
     }
 
+    public boolean isAlreadyDrawn() {
+        return alreadyDrawn;
+    }
+
+    public void setAlreadyDrawn(boolean alreadyDrawn) {
+        this.alreadyDrawn = alreadyDrawn;
+    }
 }
