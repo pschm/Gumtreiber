@@ -14,10 +14,10 @@ import android.os.Build;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Vector2;
 
@@ -70,10 +70,13 @@ public class MovableMarker {
         Runnable init = new Runnable() {
             @Override
             public void run() {
-                initAnimationImages(markAsFriend);
+                ConstraintLayout layout = activity.findViewById(R.id.mapConstraintLayout);
+
+                initAnimationImages(layout, markAsFriend);
                 initLabel(label, markAsFriend);
 
-                activity.addContentView(nameImg, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                layout.addView(nameImg);
+                //activity.addContentView(nameImg, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
                 setPosition(curPos);
                 synchronized(this) {
@@ -99,7 +102,7 @@ public class MovableMarker {
 
     }
 
-    private void initAnimationImages(boolean markAsFriend) {
+    private void initAnimationImages(ConstraintLayout layout, boolean markAsFriend) {
         leftPrints = new ArrayList<>(4);
         rightPrints = new ArrayList<>(4);
         for(int i = 0; i < 8; i++) {
@@ -120,7 +123,8 @@ public class MovableMarker {
                 rightPrints.add(image);
             }
 
-            activity.addContentView(image, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            layout.addView(image);
+            //activity.addContentView(image, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }
 
