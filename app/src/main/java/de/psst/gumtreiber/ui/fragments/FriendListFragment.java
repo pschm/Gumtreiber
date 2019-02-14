@@ -28,7 +28,7 @@ public class FriendListFragment extends ListFragment {
 
     private FriendsViewModel model;
     private ArrayAdapter<String> adapter;
-
+    //private Activity activity;
 
     @Nullable
     @Override
@@ -36,6 +36,7 @@ public class FriendListFragment extends ListFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_friendlist, container, false);
 
+        //activity = getActivity();
 
         model = ViewModelProviders.of(getActivity()).get(FriendsViewModel.class);
         model.getFriends().observe(getActivity(), new Observer<List<String>>() {

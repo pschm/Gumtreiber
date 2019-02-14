@@ -1,69 +1,88 @@
 package de.psst.gumtreiber.ui.fragments;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.data.Appointment;
+import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.location.Room;
 
 
 public class AppointmentFragment extends Fragment {
 
 
     //TODO Kontrolle auf Zeitpunkte -> Zeitreisen sind nicht möglich
-    //TODO Zeugs nach ViewModel auslagern Appointment abspeichern als long "yyyyMMddHHmmss" + Sekunden als 00 -> Absprechen
-    //TODO Termin Specihern -> addAppointmentToSchedule(FirebaseAuth.getInstance().getCurrentUser().getUid() , Appiontment);
+    //TODO Zeugs nach ViewModel auslagern
 
+    private String uid;
     private GregorianCalendar c = new GregorianCalendar();
-    private View fragmentView;
+    private Activity activity;
+    private Spinner spinner;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        fragmentView = inflater.inflate(R.layout.fragment_appointment, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_appointment, container, false);
+        activity = getActivity();
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         return fragmentView;
+
     }
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initTextViews();
+        initViews();
 
-        Button btnSubmitAppointment = getActivity().findViewById(R.id.btn_submit_appointment);
+        Button btnSubmitAppointment = activity.findViewById(R.id.btn_submit_appointment);
         btnSubmitAppointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO Termin Speichern
 
-                getActivity().onBackPressed();
+                activity.onBackPressed();
             }
         });
     }
 
-
+    //TODO In mehrere Metohden unterteilen
     /**
      * Initiates the TextViews with Date & Time Pickers in a barbaric kind of way
      */
-    public void initTextViews() {
+    public void initViews() {
+
+        //Spinner for the Rooms
+        spinner = activity.findViewById(R.id.spinn_room);
+        spinner.setAdapter(new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item, Room.values()));
+
+
 
 
         //Termin Anfang
-        TextView tvStartDate = getView().findViewById(R.id.tv_start_date);
+        TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
         tvStartDate.setText(getCurrentDate());
         tvStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,10 +92,10 @@ public class AppointmentFragment extends Fragment {
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+                DatePickerDialog datePickerDialog = new DatePickerDialog(activity,
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                TextView tvStartDate = getActivity().findViewById(R.id.tv_start_date);
+                                TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
                                 tvStartDate.setText(getFancyDate(day, month, year));
                             }
                         }, year, month, day);
@@ -84,7 +103,7 @@ public class AppointmentFragment extends Fragment {
             }
         });
 
-        TextView tvStartTime = getView().findViewById(R.id.tv_start_time);
+        TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
         tvStartTime.setText(getCurrentTime());
         tvStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,7 +116,7 @@ public class AppointmentFragment extends Fragment {
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                                TextView tvStartTime = getActivity().findViewById(R.id.tv_start_time);
+                                TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
                                 tvStartTime.setText(getFancyTime(hourOfDay, minute));
                             }
                         }, hourOfDay, minute, true);
@@ -107,7 +126,7 @@ public class AppointmentFragment extends Fragment {
 
 
         //Termin Ende
-        TextView tvEndDate = getView().findViewById(R.id.tv_end_date);
+        TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
         tvEndDate.setText(getCurrentDate());
         tvEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,10 +136,10 @@ public class AppointmentFragment extends Fragment {
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+                DatePickerDialog datePickerDialog = new DatePickerDialog(activity,
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                TextView tvStartDate = getActivity().findViewById(R.id.tv_end_date);
+                                TextView tvStartDate = activity.findViewById(R.id.tv_end_date);
                                 tvStartDate.setText(getFancyDate(day, month, year));
                             }
                         }, year, month, day);
@@ -128,7 +147,7 @@ public class AppointmentFragment extends Fragment {
             }
         });
 
-        TextView tvEndTime = getView().findViewById(R.id.tv_end_time);
+        TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
         tvEndTime.setText(getCurrentTime());
         tvEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,15 +160,22 @@ public class AppointmentFragment extends Fragment {
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                                TextView tvEndTime = getActivity().findViewById(R.id.tv_end_time);
+                                TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
                                 tvEndTime.setText(getFancyTime(hourOfDay, minute));
                             }
                         }, hourOfDay, minute, true);
                 timePickerDialog.show();
             }
         });
-    }
 
+        Button btnSave = activity.findViewById(R.id.btn_submit_appointment);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveAppointment();
+            }
+        });
+    }
 
     /**
      * Getting the current date as a String
@@ -165,7 +191,6 @@ public class AppointmentFragment extends Fragment {
         return getFancyDate(day, month, year);
 
     }
-
 
     /**
      * Formats a date given as integers (day,month,year) to a String with the dd.mm.yyyy format
@@ -188,7 +213,6 @@ public class AppointmentFragment extends Fragment {
         return sDay + "." + sMonth + "." + sYear;
     }
 
-
     /**
      * Getting the current time as a String
      *
@@ -202,7 +226,6 @@ public class AppointmentFragment extends Fragment {
         return getFancyTime(hour, minute);
 
     }
-
 
     /**
      * Formats a time given as integers (hour,minutes) to a String with the hh:mm format
@@ -222,5 +245,52 @@ public class AppointmentFragment extends Fragment {
         return sHour + ":" + sMinute;
     }
 
+
+    private void saveAppointment() {
+
+        //Room
+        Room room = (Room) spinner.getSelectedItem();
+
+        //Start Date
+        TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
+        TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
+
+        String startDate = tvStartDate.getText().toString();
+        String startTime = tvStartTime.getText().toString();
+
+        //End Date
+        TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
+        TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
+
+        String endDate = tvEndDate.getText().toString();
+        String endTime = tvEndTime.getText().toString();
+
+
+        Appointment appointment = new Appointment(formatDate(startDate, startTime), formatDate(endDate, endTime), room);
+        Firebase.addAppointmentToSchedule(uid, appointment);
+
+    }
+
+    /**
+     * Formats a date given as "DD.MM.YYYY","HH:MM" to a long with the Format "YYYYMMDDHHMMSS"
+     *
+     * @param date the String date "DD.MM.YYYY"
+     * @param time the String time "HH:MM"
+     * @return a long Formated to fit Firebase
+     */
+    private long formatDate(String date, String time) {
+
+        String day = date.substring(0, 2);
+        String month = date.substring(3, 5);
+        String year = date.substring(6, 10);
+
+        String hours = time.substring(0, 2);
+        String minutes = date.substring(3, 5);
+
+        //Long.valueOf(year+month+day+hours+minutes+"00").longValue();
+
+        return Long.valueOf(year + month + day + hours + minutes + "00");
+
+    }
 
 }

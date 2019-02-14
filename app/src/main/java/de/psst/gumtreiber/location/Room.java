@@ -2,6 +2,7 @@ package de.psst.gumtreiber.location;
 
 import android.location.Location;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -81,5 +82,12 @@ public enum Room {
         location.setAltitude(altitude);
 
         return location;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return name;
+
     }
 }

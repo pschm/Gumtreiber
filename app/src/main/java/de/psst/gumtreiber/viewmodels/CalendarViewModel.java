@@ -2,12 +2,15 @@ package de.psst.gumtreiber.viewmodels;
 
 import android.app.Application;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import de.psst.gumtreiber.data.Appointment;
-import de.psst.gumtreiber.location.Room;
+import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.data.UserDataSync;
 
 public class CalendarViewModel extends AndroidViewModel {
 
@@ -19,12 +22,7 @@ public class CalendarViewModel extends AndroidViewModel {
     }
 
     private void fetchAppointments() {
-        //appointments = Firebase.getAppointments(FirebaseAuth.getInstance().getCurrentUser().getUid(), UserDataSync.getUserToken());
-        //TODO Beispieldaten entfernen !!
-        appointments = new ArrayList<>();
-        appointments.add(new Appointment(20190123133000l, 20190123143001l, Room.R0300));
-        appointments.add(new Appointment(20190123143002l, 20190123153003l, Room.R0300));
-        appointments.add(new Appointment(20190123153004l, 20190123163005l, Room.R0300));
+        appointments = Firebase.getAppointments(FirebaseAuth.getInstance().getCurrentUser().getUid(), UserDataSync.getUserToken());
     }
 
 
@@ -33,12 +31,14 @@ public class CalendarViewModel extends AndroidViewModel {
     }
 
     //TODO
-    public void saveAppointment() {
+    public void saveAppointment(Appointment appointment) {
+        Firebase.deleteAppointment(FirebaseAuth.getInstance().getCurrentUser().getUid(), appointment);
 
     }
 
     //TODO
-    public void removeAppointment() {
+    public void removeAppointment(Appointment appointment) {
+        Firebase.addAppointmentToSchedule(FirebaseAuth.getInstance().getCurrentUser().getUid(), appointment);
 
     }
 

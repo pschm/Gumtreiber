@@ -1,8 +1,6 @@
 package de.psst.gumtreiber.ui;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +9,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
@@ -79,7 +76,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         public void onClick(View view) {
 
             //TODO NullPointerExeption Beheben !!!
-            RecyclerView calendarRecyclerView = (RecyclerView) view.findViewById(R.id.rv_calendar);
+            /*RecyclerView calendarRecyclerView = (RecyclerView) view.findViewById(R.id.rv_calendar);
             RecyclerView.ViewHolder holder = calendarRecyclerView.getChildViewHolder(view);
             int itemPosition = holder.getAdapterPosition();
             Log.v("POSITION", itemPosition + "");
@@ -102,6 +99,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 }
             });
             alertDialogBuilder.show();
+            */
         }
     }
 }
