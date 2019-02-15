@@ -198,7 +198,7 @@ public class MapView extends AppCompatImageView {
         }
 
         // the paint color and size
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.CYAN);
         paint.setTextSize(35);
 
         // draw all users on the map
