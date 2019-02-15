@@ -57,6 +57,17 @@ public class Firebase {
 
 
     /**
+     * Changes the name of the user in Firebase.
+     *
+     * @param uid  The user id of the user
+     * @param name name of the user
+     */
+    public static void changeName(String uid, String name) {
+        database.child("users").child(uid).child("name").setValue(name);
+    }
+
+
+    /**
      * Updates the location of the user in firebase.
      *
      * @param user
