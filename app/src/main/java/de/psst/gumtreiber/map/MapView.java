@@ -72,19 +72,6 @@ public class MapView extends AppCompatImageView {
     }
 
     /**
-     * Calculates the actionbar height relative to the current device
-     * @return actionbar height in pixel
-     */
-    public int getActionbarHeight() {
-        TypedValue tv = new TypedValue();
-        if (activity.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-        {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-        }
-        return actionBarHeight;
-    }
-
-    /**
      * @param mapControl mapControl which holds this MapView
      */
     public void setMapControl(MapControl mapControl) {
@@ -322,6 +309,7 @@ public class MapView extends AppCompatImageView {
                     if (activity == null) Log.w("MapView", "Activity not given");
                     u.setMarker(new MovableMarker(activity, u.name));
                 }
+                u.getMarker().changeLabel(u.name); // needed if a user moves out of a group
                 map[(int)x][(int)y] = u;
             }
             else if (sector.uid != null) {
