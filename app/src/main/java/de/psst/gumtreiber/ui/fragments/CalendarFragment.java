@@ -137,6 +137,7 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
         Appointment ap = dataset.get(position);
 
         holder.txtRoomNbr.setText(ap.getRoom().getNumberDot());
+        tintRoomCircle(holder.imgRoomCircle, ap.getRoom());
 
         holder.txtStartDay.setText(ap.getStartDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault() ));
         holder.txtStartTime.setText(ap.getReadableStartDate() + "\n" + ap.getReadableStartTime() + " Uhr");
@@ -155,6 +156,37 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
         });
     }
 
+    private void tintRoomCircle(ImageView imageView, Room room) {
+        int colorResId;
+        switch(room.getBuildingNumber()) {
+            case "1":
+                colorResId = R.color.colorBuildingNbr1;
+                break;
+
+            case "2":
+                colorResId = R.color.colorBuildingNbr2;
+                break;
+
+            case "3":
+                colorResId = R.color.colorBuildingNbr3;
+                break;
+
+            case "4":
+                colorResId = R.color.colorBuildingNbr4;
+                break;
+
+            case "5":
+                colorResId = R.color.colorBuildingNbr5;
+                break;
+
+            default:
+                colorResId = R.color.colorPrimary;
+                break;
+        }
+
+        imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), colorResId));
+    }
+
     @Override
     public int getItemCount() {
         return dataset.size();
@@ -169,12 +201,14 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
 
         private TextView txtRoomNbr, txtStartDay, txtStartTime, txtEndDay, txtEndTime;
         private Button btnDelete;
+        private ImageView imgRoomCircle;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             txtRoomNbr = itemView.findViewById(R.id.txtRoomNbr);
             btnDelete = itemView.findViewById(R.id.btnDeleteAppointment);
+            imgRoomCircle = itemView.findViewById(R.id.circle_image);
 
             txtStartDay = itemView.findViewById(R.id.txtStartName);
             txtStartTime = itemView.findViewById(R.id.txtStartTime);

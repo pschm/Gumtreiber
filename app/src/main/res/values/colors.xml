@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ea5800</color>
+    <color name="colorPrimary">#EA5800</color>
     <color name="colorPrimaryDark">#c81e0f</color>
-    <color name="colorAccent">#b43092</color>
+    <color name="colorAccent">#B43092</color>
+
+    <color name="colorBuildingNbr1">#618F32</color>
+    <color name="colorBuildingNbr2">#328F41</color>
+    <color name="colorBuildingNbr3">#328F87</color>
+    <color name="colorBuildingNbr4">#32528F</color>
+    <color name="colorBuildingNbr5">#4E328F</color>
 </resources>
