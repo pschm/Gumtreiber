@@ -44,6 +44,27 @@ public enum Room {
     }
 
     /**
+     * @return Number of this room without the leading R.
+     */
+    public String getNumber() {
+        return name().substring(1);
+    }
+
+    /**
+     * @return Number of this room without the leading R but with the dot-convention.
+     */
+    public String getNumberDot() {
+        return getNumber().substring(0,1) + "." + getNumber().substring(1);
+    }
+
+    /**
+     * @return Number of the building in witch this room in in. (e.g. 3=Mensa, ...)
+     */
+    public String getBuildingNumber() {
+        return getNumber().substring(1,2);
+    }
+
+    /**
      * @return Name of this room if it has one, {@code null} otherwise.
      */
     @Nullable
