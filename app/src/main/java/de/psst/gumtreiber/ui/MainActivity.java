@@ -63,10 +63,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager.beginTransaction().add(R.id.content_frame, new MapFragment()).commit();
 
 
-        //Setting Uid
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-
         //TODO Hier das Icon für den Standort setzen
         //Init Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -82,6 +78,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        //Setting Uid
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        uid = user.getUid();
+
+        TextView txtNavHeader = navigationView.getHeaderView(0).findViewById(R.id.nav_header);
+        txtNavHeader.setText(user.getDisplayName());
 
 
         //Listener for the location switch
