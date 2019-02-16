@@ -15,6 +15,7 @@ import android.widget.TimePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -39,6 +40,9 @@ public class AppointmentFragment extends Fragment {
     private GregorianCalendar c = new GregorianCalendar();
     private MainActivity activity;
     private Spinner spinner;
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd. MMM yyyy");
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     @Nullable
     @Override
@@ -70,6 +74,7 @@ public class AppointmentFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //TODO Termin Speichern
+                CalendarViewModel.saveAppointment(new Appointment(20190124140500L, 20190124140500L, Room.R1400));
 
                 activity.onBackPressed();
             }
@@ -84,14 +89,14 @@ public class AppointmentFragment extends Fragment {
 
         //Spinner for the Rooms
         spinner = activity.findViewById(R.id.spinn_room);
-        spinner.setAdapter(new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item, Room.values()));
+        spinner.setAdapter(new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item, Room.getAllRooms())); //TODO getAllRooms() ggf probleme bei speichern?
 
 
 
 
         //Termin Anfang
         TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
-        tvStartDate.setText(getCurrentDate());
+        tvStartDate.setText(dateFormat.format(c.getTime()));
         tvStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +109,9 @@ public class AppointmentFragment extends Fragment {
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                                 TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
-                                tvStartDate.setText(getFancyDate(day, month, year));
+
+                                Calendar calendar = new GregorianCalendar(year, month, day);
+                                tvStartDate.setText(dateFormat.format(calendar.getTime()));
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -112,7 +119,7 @@ public class AppointmentFragment extends Fragment {
         });
 
         TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
-        tvStartTime.setText(getCurrentTime());
+        tvStartTime.setText(timeFormat.format(c.getTime()));
         tvStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +132,9 @@ public class AppointmentFragment extends Fragment {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                                 TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
-                                tvStartTime.setText(getFancyTime(hourOfDay, minute));
+
+                                Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
+                                tvStartTime.setText(timeFormat.format(calendar.getTime()));
                             }
                         }, hourOfDay, minute, true);
                 timePickerDialog.show();
@@ -135,7 +144,7 @@ public class AppointmentFragment extends Fragment {
 
         //Termin Ende
         TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
-        tvEndDate.setText(getCurrentDate());
+        tvEndDate.setText(dateFormat.format(c.getTime()));
         tvEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,8 +156,10 @@ public class AppointmentFragment extends Fragment {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(activity,
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                TextView tvStartDate = activity.findViewById(R.id.tv_end_date);
-                                tvStartDate.setText(getFancyDate(day, month, year));
+                                TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
+
+                                Calendar calendar = new GregorianCalendar(year, month, day);
+                                tvEndDate.setText(dateFormat.format(calendar.getTime()));
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -156,7 +167,7 @@ public class AppointmentFragment extends Fragment {
         });
 
         TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
-        tvEndTime.setText(getCurrentTime());
+        tvEndTime.setText(timeFormat.format(c.getTime()));
         tvEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,7 +180,9 @@ public class AppointmentFragment extends Fragment {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                                 TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
-                                tvEndTime.setText(getFancyTime(hourOfDay, minute));
+
+                                Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
+                                tvEndTime.setText(timeFormat.format(calendar.getTime()));
                             }
                         }, hourOfDay, minute, true);
                 timePickerDialog.show();
