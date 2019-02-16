@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,12 +20,14 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
+import de.psst.gumtreiber.location.Room;
 import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
 public class CalendarFragment extends Fragment {
@@ -137,12 +140,13 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
         Appointment ap = dataset.get(position);
 
         holder.txtRoomNbr.setText(ap.getRoom().getNumberDot());
+        holder.txtRoomName.setText(ap.getRoom().getName());
         tintRoomCircle(holder.imgRoomCircle, ap.getRoom());
 
-        holder.txtStartDay.setText(ap.getStartDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault() ));
+        holder.txtStartDay.setText("VON " + ap.getStartDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault() ));
         holder.txtStartTime.setText(ap.getReadableStartDate() + "\n" + ap.getReadableStartTime() + " Uhr");
 
-        holder.txtEndDay.setText(ap.getEndDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault() ));
+        holder.txtEndDay.setText("BIS " +ap.getEndDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault() ));
         holder.txtEndTime.setText(ap.getReadableEndDate() + "\n" + ap.getReadableEndTime() + " Uhr");
 
 
@@ -199,7 +203,7 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView txtRoomNbr, txtStartDay, txtStartTime, txtEndDay, txtEndTime;
+        private TextView txtRoomNbr, txtRoomName, txtStartDay, txtStartTime, txtEndDay, txtEndTime;
         private Button btnDelete;
         private ImageView imgRoomCircle;
 
@@ -207,6 +211,7 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
             super(itemView);
 
             txtRoomNbr = itemView.findViewById(R.id.txtRoomNbr);
+            txtRoomName = itemView.findViewById(R.id.txtRoomName);
             btnDelete = itemView.findViewById(R.id.btnDeleteAppointment);
             imgRoomCircle = itemView.findViewById(R.id.circle_image);
 
@@ -231,7 +236,7 @@ class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
 
 /*
 
-//TODO old code; to be deleted.
+//TODO old code; to be deleted. -> check old xml filed too!
 
 import android.app.Activity;
 import android.content.Context;

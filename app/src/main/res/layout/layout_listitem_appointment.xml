@@ -46,94 +46,80 @@
             android:layout_marginTop="-9dp"/>
 
         <TextView
-            android:id="@+id/txtBegin"
-            android:layout_width="100dp"
+            android:id="@+id/txtRoomName"
+            android:layout_width="255dp"
             android:layout_height="wrap_content"
 
-            android:layout_marginTop="0dp"
-            android:layout_marginStart="10dp"
+            android:text="Mensa Essensausgabe"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:textStyle="italic|bold"
+            android:textColor="@color/colorPrimary"
+
             android:layout_toEndOf="@+id/circle_image"
-            android:text="Beginn"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="-2dp"/>
 
-        <TextView
-            android:id="@+id/txtEnd"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-
-            android:layout_marginTop="0dp"
-            android:layout_marginStart="5dp"
-            android:layout_toEndOf="@+id/txtBegin"
-            android:text="Ende"
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textColor="@color/colorAccent"
-            android:textSize="16sp"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtStartName"
-            android:layout_width="100dp"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
 
-            android:layout_below="@+id/txtBegin"
-            android:layout_marginTop="-5dp"
-            android:layout_marginStart="10dp"
+            android:layout_below="@+id/txtRoomName"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
             android:layout_toEndOf="@+id/circle_image"
-            android:text="Freitag"
-            android:textStyle="italic"
+            android:text="VON Donnerstag"
+            android:textStyle="bold"
             android:textAlignment="center"
             android:textColor="@color/colorAccent"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/txtEndName"
-            android:layout_width="100dp"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
 
-            android:layout_below="@+id/txtBegin"
-            android:layout_marginTop="-5dp"
+            android:layout_below="@+id/txtRoomName"
+            android:layout_marginTop="2dp"
             android:layout_marginStart="5dp"
-            android:layout_toEndOf="@+id/txtBegin"
-            android:text="Samstag"
-            android:textStyle="italic"
+            android:layout_toEndOf="@+id/txtStartName"
+            android:text="BIS Donnerstag"
+            android:textStyle="bold"
             android:textAlignment="center"
             android:textColor="@color/colorAccent"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/txtStartTime"
-            android:layout_width="100dp"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
 
             android:text="15.02.2019
-    16:45 Uhr"
-            android:textSize="16sp"
+16:45 Uhr"
+            android:textSize="15sp"
             android:textAlignment="center"
             android:textColor="#C8C8C8"
             android:layout_toEndOf="@+id/circle_image"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="8dp"
             android:layout_below="@+id/txtStartName"
-            android:layout_marginTop="3dp"/>
+            android:layout_marginTop="-2dp"/>
 
         <TextView
             android:id="@+id/txtEndTime"
-            android:layout_width="100dp"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
 
             android:text="16.02.2019
-    13:13 Uhr"
-            android:textSize="16sp"
+13:13 Uhr"
+            android:textSize="15sp"
             android:textAlignment="center"
             android:textColor="#C8C8C8"
             android:layout_toEndOf="@+id/txtStartTime"
             android:layout_marginStart="5dp"
             android:layout_below="@+id/txtEndName"
-            android:layout_marginTop="3dp"/>
+            android:layout_marginTop="-2dp"/>
 
 
         <Button
