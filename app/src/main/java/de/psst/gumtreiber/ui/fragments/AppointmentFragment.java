@@ -119,7 +119,7 @@ public class AppointmentFragment extends Fragment {
         });
 
         TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
-        tvStartTime.setText(timeFormat.format(c.getTime()));
+        tvStartTime.setText("12:00");
         tvStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,7 +167,8 @@ public class AppointmentFragment extends Fragment {
         });
 
         TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
-        tvEndTime.setText(timeFormat.format(c.getTime()));
+        tvEndTime.setText("13:00");
+
         tvEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
