@@ -55,6 +55,11 @@ public class Firebase {
         deactivateSchedule(uid);
     }
 
+    public static void createUser(String uid, String name, Course course) {
+        createUser(uid, name);
+        if (course != null) setCourse(uid, course);
+    }
+
 
     /**
      * Changes the name of the user in Firebase.
@@ -64,6 +69,11 @@ public class Firebase {
      */
     public static void changeName(String uid, String name) {
         database.child("users").child(uid).child("name").setValue(name);
+    }
+
+
+    public static void setCourse(String uid, Course course) {
+        database.child("users").child(uid).child("course").setValue(course.name());
     }
 
 
@@ -250,6 +260,11 @@ public class Firebase {
                 cal.setTime(dateFormat.parse(userJSON.getString("expirationDate")));
                 myUser.expirationDate = cal;
 
+                if (userJSON.has("course")){
+                    String courseString = userJSON.getString("course");
+                    myUser.setCourse(Course.valueOf(courseString));
+                }
+
             }
 
         } catch (Exception e) {
@@ -269,6 +284,7 @@ public class Firebase {
                 //Update Data, that may has changed.
                 myUser.usingSchedule = each.usingSchedule;
                 myUser.name = each.name;
+                myUser.setCourse(each.getCourse());
 
                 if (myUser.usingSchedule) {
                     //User uses his schedule:
@@ -388,6 +404,12 @@ public class Firebase {
                 myUser.longitude = userJSON.getDouble("longitude");
                 myUser.usingSchedule = userJSON.getBoolean("usingSchedule");
 
+                //Wenn Nutzer einen Studiengang hat, dann setze ihn
+                if (userJSON.has("course")){
+                    String courseString = userJSON.getString("course");
+                    myUser.setCourse(Course.valueOf(courseString));
+                }
+
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(dateFormat.parse("" + userJSON.getLong("expirationDate")));
                 myUser.expirationDate = cal;
@@ -430,6 +452,11 @@ public class Firebase {
                 myUser.latitude = userJSON.getDouble("latitude");
                 myUser.longitude = userJSON.getDouble("longitude");
                 myUser.usingSchedule = userJSON.getBoolean("usingSchedule");
+
+                if (userJSON.has("course")){
+                    String courseString = userJSON.getString("course");
+                    myUser.setCourse(Course.valueOf(courseString));
+                }
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(dateFormat.parse("" + userJSON.getLong("expirationDate")));
@@ -487,6 +514,11 @@ public class Firebase {
                     myUser.latitude = currentAppointment.getRoom().getLatitude();
                     myUser.longitude = currentAppointment.getRoom().getLongitude();
                     myUser.usingSchedule = true;
+
+                    if (userJSON.has("course")){
+                        String courseString = userJSON.getString("course");
+                        myUser.setCourse(Course.valueOf(courseString));
+                    }
 
                     myUser.expirationDate = currentAppointment.getEndDate();
 
