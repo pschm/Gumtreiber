@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
 import de.psst.gumtreiber.location.Room;
+import de.psst.gumtreiber.ui.MainActivity;
 import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
 public class CalendarFragment extends Fragment {
@@ -47,8 +48,16 @@ public class CalendarFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Termin Übersicht");
 
         //Init ViewModel
         model = new CalendarViewModel(getActivity().getApplication());

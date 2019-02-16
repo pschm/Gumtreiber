@@ -6,9 +6,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -23,14 +25,15 @@ import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.ui.fragments.CalendarFragment;
+import de.psst.gumtreiber.ui.fragments.FriendListFragment;
 import de.psst.gumtreiber.ui.fragments.MapFragment;
+import de.psst.gumtreiber.ui.fragments.SettingsFragment;
 import de.psst.gumtreiber.viewmodels.MainViewModel;
 
 //import de.psst.gumtreiber.ui.fragments.FriendListFragment;
 //import de.psst.gumtreiber.ui.fragments.SettingsFragment;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //LocationState stuff
     private MainViewModel model;
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity
         //Init Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle(R.string.app_name);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

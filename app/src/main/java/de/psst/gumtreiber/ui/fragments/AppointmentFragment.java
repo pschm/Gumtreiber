@@ -1,6 +1,5 @@
 package de.psst.gumtreiber.ui.fragments;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -26,6 +25,8 @@ import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
 import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.location.Room;
+import de.psst.gumtreiber.ui.MainActivity;
+import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
 
 public class AppointmentFragment extends Fragment {
@@ -36,7 +37,7 @@ public class AppointmentFragment extends Fragment {
 
     private String uid;
     private GregorianCalendar c = new GregorianCalendar();
-    private Activity activity;
+    private MainActivity activity;
     private Spinner spinner;
 
     @Nullable
@@ -44,10 +45,16 @@ public class AppointmentFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_appointment, container, false);
-        activity = getActivity();
+        activity = (MainActivity) getActivity();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         return fragmentView;
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        activity.getSupportActionBar().setTitle(R.string.app_name);
+        super.onDestroyView();
     }
 
 
@@ -55,6 +62,7 @@ public class AppointmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        activity.getSupportActionBar().setTitle("Termin erstellen");
         initViews();
 
         Button btnSubmitAppointment = activity.findViewById(R.id.btn_submit_appointment);
