@@ -4,218 +4,165 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp">
+    android:padding="0dp">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/circle_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:srcCompat="@drawable/circle"
+            android:tint="#32528F"/>
+
+        <TextView
+            android:id="@+id/txtR"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+
+            android:text="R"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="#9E9E9E"
+            android:layout_marginTop="6dp"/>
+
+        <TextView
+            android:id="@+id/txtRoomNbr"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+
+            android:text="3.100"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="#9E9E9E"
+            android:layout_below="@+id/txtR"
+            android:layout_marginTop="-9dp"/>
+
+        <TextView
+            android:id="@+id/txtBegin"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/circle_image"
+            android:text="Beginn"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtEnd"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/txtBegin"
+            android:text="Ende"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtStartName"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/txtBegin"
+            android:layout_marginTop="-5dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/circle_image"
+            android:text="Freitag"
+            android:textStyle="italic"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txtEndName"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/txtBegin"
+            android:layout_marginTop="-5dp"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/txtBegin"
+            android:text="Samstag"
+            android:textStyle="italic"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txtStartTime"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:text="15.02.2019
+    16:45 Uhr"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:textColor="#C8C8C8"
+            android:layout_toEndOf="@+id/circle_image"
+            android:layout_marginStart="10dp"
+            android:layout_below="@+id/txtStartName"
+            android:layout_marginTop="3dp"/>
+
+        <TextView
+            android:id="@+id/txtEndTime"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:text="16.02.2019
+    13:13 Uhr"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:textColor="#C8C8C8"
+            android:layout_toEndOf="@+id/txtStartTime"
+            android:layout_marginStart="5dp"
+            android:layout_below="@+id/txtEndName"
+            android:layout_marginTop="3dp"/>
+
+
+        <Button
+            android:id="@+id/btnDeleteAppointment"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="3dp"
+            android:background="#7A3131"
+            android:text="X"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#C8C8C8"
+            android:textAlignment="center" />
+
+
+
+    </RelativeLayout>
 
 
     <ImageView
-        android:id="@+id/circle_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        app:srcCompat="@drawable/circle"
-        android:tint="#32528F"/>
-
-    <TextView
-        android:id="@+id/txtR"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-
-        android:text="R"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
-        android:textColor="#9E9E9E"
-        android:layout_marginTop="6dp"/>
-
-    <TextView
-        android:id="@+id/txtRoomNbr"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-
-        android:text="3.100"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
-        android:textColor="#9E9E9E"
-        android:layout_below="@+id/txtR"
-        android:layout_marginTop="-9dp"/>
-
-    <TextView
-        android:id="@+id/txtBegin"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/circle_image"
-        android:text="Beginn"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="@color/colorAccent"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/txtEnd"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="0dp"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/txtBegin"
-        android:text="Ende"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="@color/colorAccent"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/txtStartName"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-
-        android:layout_below="@+id/txtBegin"
-        android:layout_marginTop="-5dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/circle_image"
-        android:text="Freitag"
-        android:textStyle="italic"
-        android:textAlignment="center"
-        android:textColor="@color/colorAccent"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/txtEndName"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-
-        android:layout_below="@+id/txtBegin"
-        android:layout_marginTop="-5dp"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/txtBegin"
-        android:text="Samstag"
-        android:textStyle="italic"
-        android:textAlignment="center"
-        android:textColor="@color/colorAccent"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/txtStartTime"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-
-        android:text="15.02.2019
-16:45 Uhr"
-        android:textSize="16sp"
-        android:textAlignment="center"
-        android:textColor="#C8C8C8"
-        android:layout_toEndOf="@+id/circle_image"
-        android:layout_marginStart="10dp"
-        android:layout_below="@+id/txtStartName"
-        android:layout_marginTop="3dp"/>
-
-    <TextView
-        android:id="@+id/txtEndTime"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-
-        android:text="16.02.2019
-13:13 Uhr"
-        android:textSize="16sp"
-        android:textAlignment="center"
-        android:textColor="#C8C8C8"
-        android:layout_toEndOf="@+id/txtStartTime"
-        android:layout_marginStart="5dp"
-        android:layout_below="@+id/txtEndName"
-        android:layout_marginTop="3dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#868686"
+        android:layout_marginTop="112dp"/>
 
 
-    <Button
-        android:id="@+id/btnDeleteAppointment"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginTop="3dp"
-        android:background="#7A3131"
-        android:text="X"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#C8C8C8"
-        android:textAlignment="center" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!--
-
-    <TextView
-        android:id="@+id/txtStartTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="15.02.2019 16:45"
-        android:textSize="16sp"
-        android:textColor="#FFFFFF"
-
-        android:layout_toEndOf="@+id/circle_image"
-        android:layout_marginStart="15dp" />
-
-    <TextView
-        android:id="@+id/txtEndTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text=" bis 16.02.2019 13:13"
-        android:textSize="16sp"
-        android:textColor="#FFFFFF"
-
-        android:layout_toEndOf="@+id/circle_image"
-        android:layout_marginStart="15dp"
-        android:layout_below="@+id/txtStartTime"
-        android:layout_marginTop="2dp" />
-
-    <TextView
-        android:id="@+id/txtUnused"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="LOOOOOOL"
-        android:textSize="16sp"
-        android:textColor="#FFFFFF"
-
-        android:layout_toEndOf="@+id/circle_image"
-        android:layout_marginStart="15dp"
-        android:layout_below="@+id/txtEndTime"
-        android:layout_marginTop="14dp" />
--->
 
 </RelativeLayout>
 
