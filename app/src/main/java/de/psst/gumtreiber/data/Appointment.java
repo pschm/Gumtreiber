@@ -4,7 +4,6 @@ package de.psst.gumtreiber.data;
 
 import android.util.Log;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,10 +12,11 @@ import de.psst.gumtreiber.location.Room;
 
 public class Appointment {
 
-    private static final String FORMAT = "yyyyMMddHHmmss";
-
     //Appointment should use a complete Date
-    private static DateFormat dateFormat = new SimpleDateFormat(FORMAT);
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static final SimpleDateFormat sdfReadableDate = new SimpleDateFormat("dd.MM.yyyy");
+    private static final SimpleDateFormat sdfReadableTime = new SimpleDateFormat("HH:mm");
+
     private Calendar startDate;
     private Calendar endDate;
     private Room room;
@@ -92,6 +92,35 @@ public class Appointment {
 
 
     //Methods to show the date & time in the Ui
+
+    /**
+     * @return The start date of this appointment in a common calender date format (dd.MM.yyyy).
+     */
+    public String getReadableStartDate() {
+        return sdfReadableDate.format(startDate.getTime());
+    }
+
+    /**
+     * @return The end date of this appointment in a common calender date format (dd.MM.yyyy).
+     */
+    public String getReadableEndDate() {
+        return sdfReadableDate.format(endDate.getTime());
+    }
+
+    /**
+     * @return The start time of this appointment in a common time format (HH:mm).
+     */
+    public String getReadableStartTime() {
+        return sdfReadableTime.format(startDate.getTime());
+    }
+
+    /**
+     * @return The end time of this appointment in a common time format (HH:mm).
+     */
+    public String getReadableEndTime() {
+        return sdfReadableTime.format(endDate.getTime());
+    }
+
 
     /**
      * Formats a Date given as long "YYYYMMDDHHMMSS" to a nicely readable String
