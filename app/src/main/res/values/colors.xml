@@ -5,9 +5,9 @@
     <color name="colorAccent">#B43092</color>
     <color name="colorGrayFont">#C8C8C8</color>
 
-    <color name="colorBuildingNbr1">#618F32</color>
-    <color name="colorBuildingNbr2">#328F41</color>
-    <color name="colorBuildingNbr3">#328F87</color>
-    <color name="colorBuildingNbr4">#32528F</color>
-    <color name="colorBuildingNbr5">#4E328F</color>
+    <color name="colorBuildingNbr1">#806820</color>
+    <color name="colorBuildingNbr2">#1A6126</color>
+    <color name="colorBuildingNbr3">#1C555E</color>
+    <color name="colorBuildingNbr4">#1B3572</color>
+    <color name="colorBuildingNbr5">#412979</color>
 </resources>
