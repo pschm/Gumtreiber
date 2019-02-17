@@ -126,10 +126,6 @@ public class AppointmentFragment extends Fragment {
         tvStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                int hourOfDay = c.get(GregorianCalendar.HOUR_OF_DAY);
-                int minute = c.get(GregorianCalendar.MINUTE);
-
                 TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
@@ -139,7 +135,7 @@ public class AppointmentFragment extends Fragment {
                                 Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
                                 tvStartTime.setText(timeFormat.format(calendar.getTime()));
                             }
-                        }, hourOfDay, minute, true);
+                        }, 12, 00, true);
                 timePickerDialog.show();
             }
         });
@@ -171,14 +167,9 @@ public class AppointmentFragment extends Fragment {
 
         TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
         tvEndTime.setText("13:00");
-
         tvEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                int hourOfDay = c.get(GregorianCalendar.HOUR_OF_DAY);
-                int minute = c.get(GregorianCalendar.MINUTE);
-
                 TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
@@ -188,7 +179,7 @@ public class AppointmentFragment extends Fragment {
                                 Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
                                 tvEndTime.setText(timeFormat.format(calendar.getTime()));
                             }
-                        }, hourOfDay, minute, true);
+                        }, 13, 00, true);
                 timePickerDialog.show();
             }
         });
