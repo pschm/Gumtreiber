@@ -33,6 +33,7 @@ import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
 public class CalendarFragment extends Fragment {
 
+    private MainActivity activity;
     private CalendarViewModel model;
 
     //RecyclerView
@@ -44,26 +45,28 @@ public class CalendarFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        activity = (MainActivity) getActivity();
         return inflater.inflate(R.layout.fragment_calendar, container, false);
     }
 
     @Override
     public void onDestroyView() {
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+        activity.getSupportActionBar().setTitle(R.string.app_name);
         super.onDestroyView();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Termin Übersicht");
+        activity.getSupportActionBar().setTitle("Termin Übersicht");
 
         //Init ViewModel
         model = new CalendarViewModel(getActivity().getApplication());
 
 
         recyclerView = getActivity().findViewById(R.id.calendar_recycler_view);
+
+        //recyclerView.setItemAnimator(new ); //TODO
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView

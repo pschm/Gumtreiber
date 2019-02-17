@@ -4,10 +4,10 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -57,6 +57,8 @@ public class AppointmentFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        activity.getToolbarDoneBTN().setOnMenuItemClickListener(null);
+        activity.getToolbarDoneBTN().setVisible(false);
         activity.getSupportActionBar().setTitle(R.string.app_name);
         super.onDestroyView();
     }
@@ -66,19 +68,20 @@ public class AppointmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        activity.getSupportActionBar().setTitle("Termin erstellen");
-        initViews();
-
-        Button btnSubmitAppointment = activity.findViewById(R.id.btn_submit_appointment);
-        btnSubmitAppointment.setOnClickListener(new View.OnClickListener() {
+        activity.getToolbarDoneBTN().setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onMenuItemClick(MenuItem item) {
                 //TODO Termin Speichern
                 CalendarViewModel.saveAppointment(new Appointment(20190124140500L, 20190124140500L, Room.R1400));
 
                 activity.onBackPressed();
+                return true;
             }
         });
+        activity.getToolbarDoneBTN().setVisible(true);
+        activity.getSupportActionBar().setTitle("Termin erstellen");
+
+        initViews();
     }
 
     //TODO In mehrere Metohden unterteilen
@@ -187,14 +190,6 @@ public class AppointmentFragment extends Fragment {
                             }
                         }, hourOfDay, minute, true);
                 timePickerDialog.show();
-            }
-        });
-
-        Button btnSave = activity.findViewById(R.id.btn_submit_appointment);
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveAppointment();
             }
         });
     }

@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MainViewModel model;
     private Boolean locationState;
     private MenuItem drawerNavSwitch;
+    private MenuItem toolbarDoneBTN;
     private LocationHandler locationHandler;
 
     //Firebase UserID
@@ -125,6 +126,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    public MenuItem getToolbarDoneBTN() {
+        return toolbarDoneBTN;
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -139,7 +144,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        toolbarDoneBTN = menu.findItem(R.id.btn_action_done);
+        toolbarDoneBTN.setVisible(false);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
