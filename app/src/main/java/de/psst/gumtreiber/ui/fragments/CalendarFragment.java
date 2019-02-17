@@ -66,8 +66,6 @@ public class CalendarFragment extends Fragment {
 
         recyclerView = getActivity().findViewById(R.id.calendar_recycler_view);
 
-        //recyclerView.setItemAnimator(new ); //TODO
-
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);

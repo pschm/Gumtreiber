@@ -20,7 +20,7 @@
         android:id="@+id/nav_calendar"
         android:icon="@drawable/ic_calendar_24dp"
         android:title="@string/navigation_drawer_appointments" />
-    <!--
+
     <item
         android:id="@+id/nav_friendList"
         android:icon="@drawable/ic_friends_24dp"
@@ -30,5 +30,5 @@
         android:id="@+id/nav_settings"
         android:icon="@drawable/ic_settings_24dp"
         android:title="@string/navigation_drawer_settings" />
-    -->
+
 </menu>

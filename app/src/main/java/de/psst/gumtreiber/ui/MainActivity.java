@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawer(GravityCompat.START);
                 break;
 
-            /*
+
             case (R.id.nav_friendList):
 
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FriendListFragment()).addToBackStack(null).commit();
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 drawer.closeDrawer(GravityCompat.START);
                 break;
-            */
+
         }
 
         return true;
