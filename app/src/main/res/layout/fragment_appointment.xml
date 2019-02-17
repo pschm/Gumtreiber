@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:text="Raum"
         android:textSize="20sp"
+        android:textColor="@color/colorGrayFont"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,7 +30,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#FFF"
+        android:background="@color/colorGrayFont"
         android:layout_marginTop="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinn_room"/>
@@ -41,6 +42,7 @@
         android:layout_marginTop="25dp"
         android:text="VON"
         android:textSize="16sp"
+        android:textColor="@color/colorGrayFont"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinn_room" />
 
@@ -58,7 +60,7 @@
     <ImageView
         android:layout_width="200dp"
         android:layout_height="1dp"
-        android:background="#FFF"
+        android:background="@color/colorGrayFont"
         android:layout_marginTop="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_start_date"/>
@@ -78,7 +80,7 @@
     <ImageView
         android:layout_width="200dp"
         android:layout_height="1dp"
-        android:background="#FFF"
+        android:background="@color/colorGrayFont"
         android:layout_marginTop="2dp"
         android:layout_marginStart="10dp"
         app:layout_constraintStart_toEndOf="@+id/tv_start_date"
@@ -91,6 +93,7 @@
         android:layout_marginTop="25dp"
         android:text="BIS"
         android:textSize="16sp"
+        android:textColor="@color/colorGrayFont"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_start_date" />
 
@@ -108,7 +111,7 @@
     <ImageView
         android:layout_width="200dp"
         android:layout_height="1dp"
-        android:background="#FFF"
+        android:background="@color/colorGrayFont"
         android:layout_marginTop="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_end_date"/>
@@ -128,7 +131,7 @@
     <ImageView
         android:layout_width="200dp"
         android:layout_height="1dp"
-        android:background="#FFF"
+        android:background="@color/colorGrayFont"
         android:layout_marginTop="2dp"
         android:layout_marginStart="10dp"
         app:layout_constraintStart_toEndOf="@+id/tv_end_date"
