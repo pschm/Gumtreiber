@@ -75,35 +75,30 @@
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgRegLine"
-        android:layout_marginTop="25dp"/>
+        android:layout_marginTop="20dp"/>
 
     <Spinner
         android:id="@+id/spnRegCourse"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="32dp"
 
         android:dropDownWidth="match_parent"
         android:spinnerMode="dropdown"
         android:visibility="visible"
-
-        android:textColor="@color/colorAuthFont"
-        android:textColorHint="@color/colorAuthFont"
+        android:popupBackground="#D2C8A3"
 
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtRegNickname"
-        android:layout_marginStart="102dp"
-        android:layout_marginEnd="102dp" />
+        android:layout_marginTop="5dp"/>
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="1dp"
         android:src="#FFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spnRegCourse"
-        android:layout_marginTop="0dp"
-        android:layout_marginStart="102dp"
-        android:layout_marginEnd="102dp"/>
+        android:layout_marginTop="0dp"/>
 
 
     <!-- Register Button with Image-->

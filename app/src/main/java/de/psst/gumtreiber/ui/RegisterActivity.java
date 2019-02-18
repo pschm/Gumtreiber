@@ -47,8 +47,8 @@ public class RegisterActivity extends AppCompatActivity {
         txtPwdRpt = findViewById(R.id.txtRegPasswordRpt);
         spnCourse = findViewById(R.id.spnRegCourse);
 
-        String[] tmp = {"AI-TODO","MI-TODO","TI-TODO"}; //TODO Studiengang
-        spnCourse.setAdapter(new ArrayAdapter<>(this, R.layout.spinner_item, tmp));
+        String[] tmp = {"Studiengang","AI-TODO","MI-TODO","TI-TODO"}; //TODO Studiengang
+        spnCourse.setAdapter(new ArrayAdapter<>(this, R.layout.auth_spinner_item, tmp));
 
         btnCompleteRegister = findViewById(R.id.btnCompleteRegister);
         btnCompleteRegister.setOnClickListener(new View.OnClickListener() {
