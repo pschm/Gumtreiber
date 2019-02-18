@@ -311,7 +311,7 @@ public class CalendarFragment extends ListFragment {
 
 
         /*
-        //Wenn Recaycler View wieder genutzt werden soll -> Layout.xml anpassen !!!
+        //Wenn Recycler View wieder genutzt werden soll -> Layout.xml + vererbung anpassen !!!
         //Init RecyclerView
         recyclerView = activity.findViewById(R.id.rv_calendar);
 
@@ -327,7 +327,6 @@ public class CalendarFragment extends ListFragment {
         */
 
 /*
-
 
         //Init Floating Action Button
         FloatingActionButton btnAdd = activity.findViewById(R.id.fab_add_appointment);

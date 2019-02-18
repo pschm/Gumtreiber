@@ -18,6 +18,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Vector2;
 
@@ -25,6 +26,11 @@ import de.psst.gumtreiber.data.Vector2;
  * Visualisation for a point (Footstep) on an activity.
  */
 public class MovableMarker {
+
+    /**
+     * Representation of different color compositions for the MovableMarker.
+     */
+    public enum Look {DEFAULT, FRIEND, BOT}
 
     private static final int LEFT_PRINT_RES_ID = R.drawable.footstep_left;
     private static final int RIGHT_PRINT_RES_ID = R.drawable.footstep_right;
@@ -56,16 +62,16 @@ public class MovableMarker {
      * @param label Name label on top of the marker.
      */
     public MovableMarker(Activity activity, String label) {
-        this(activity, label, false);
+        this(activity, label, Look.DEFAULT);
     }
 
     /**
      * Creates a new movable marker.
      * @param activity The Activity on witch all ImageViews will be added to display them.
      * @param label Name label on top of the marker.
-     * @param markAsFriend Set to true to change the color appearance of the marker.
+     * @param look The color composition to change to. See {@link Look}.
      */
-    public MovableMarker(final Activity activity, final String label, final boolean markAsFriend) {
+    public MovableMarker(final Activity activity, final String label, final Look look) {
 
         this.activity = activity;
         this.curPos = new Vector2();
@@ -75,8 +81,8 @@ public class MovableMarker {
             public void run() {
                 ConstraintLayout layout = activity.findViewById(R.id.mapConstraintLayout);
 
-                initAnimationImages(layout, markAsFriend);
-                initLabel(label, markAsFriend);
+                initAnimationImages(layout, look);
+                initLabel(label, look);
 
                 layout.addView(nameImg);
                 //activity.addContentView(nameImg, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -105,7 +111,7 @@ public class MovableMarker {
 
     }
 
-    private void initAnimationImages(ConstraintLayout layout, boolean markAsFriend) {
+    private void initAnimationImages(ConstraintLayout layout, Look look) {
         leftPrints = new ArrayList<>(4);
         rightPrints = new ArrayList<>(4);
         for(int i = 0; i < 8; i++) {
@@ -113,7 +119,9 @@ public class MovableMarker {
             image.setAdjustViewBounds(true);
             image.setMaxWidth(DEFAULT_SIZE);
 
-            //TODO friend: to be continued
+            if(look == Look.FRIEND) image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsFriend));
+            else if(look == Look.BOT) image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsBot));
+            else image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsDefault));
 
             if(i == 3 || i == 7) image.setVisibility(View.VISIBLE);
             else image.setVisibility(View.GONE);
@@ -131,12 +139,14 @@ public class MovableMarker {
         }
     }
 
-    private void initLabel(String label, boolean markAsFriend) {
+    private void initLabel(String label, Look look) {
         nameImg = new FadingImage(activity);
         nameImg.setAdjustViewBounds(true);
         nameImg.setMaxWidth(DEFAULT_SIZE * 2);
 
-        //TODO friend: to be continued
+        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend));
+        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot));
+        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault));
 
         changeLabel(label);
     }
@@ -178,10 +188,24 @@ public class MovableMarker {
 
     /**
      * Changes the color appearance.
-     * @param markAsFriend Set true if the marker symbols a friend.
+     * @param look The color composition to change to. See {@link Look}.
      */
-    public void markAsFriend(boolean markAsFriend) {
-        //TODO to be continued
+    public void changeLook(Look look) {
+        for(FadingImage image : leftPrints) {
+            if(look == Look.FRIEND) image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsFriend));
+            else if(look == Look.BOT) image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsBot));
+            else image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsDefault));
+        }
+
+        for(FadingImage image : rightPrints) {
+            if(look == Look.FRIEND) image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsFriend));
+            else if(look == Look.BOT) image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsBot));
+            else image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsDefault));
+        }
+
+        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend));
+        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot));
+        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault));
     }
 
 

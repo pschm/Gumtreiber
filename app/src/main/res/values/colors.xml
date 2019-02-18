@@ -11,4 +11,14 @@
     <color name="colorBuildingNbr3">#1C555E</color>
     <color name="colorBuildingNbr4">#1B3572</color>
     <color name="colorBuildingNbr5">#412979</color>
+
+    <!-- MovableMarker -->
+    <color name="colorStepsDefault">#ba6748</color>
+    <color name="colorLabelDefault">#ef6c00</color>
+
+    <color name="colorStepsFriend">#6eba48</color>
+    <color name="colorLabelFriend">#76ff03</color>
+
+    <color name="colorStepsBot">#4872BA</color>
+    <color name="colorLabelBot">#035FFF</color>
 </resources>
