@@ -23,11 +23,10 @@ import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.ui.fragments.CalendarFragment;
+import de.psst.gumtreiber.ui.fragments.FriendListFragment;
 import de.psst.gumtreiber.ui.fragments.MapFragment;
+import de.psst.gumtreiber.ui.fragments.SettingsFragment;
 import de.psst.gumtreiber.viewmodels.MainViewModel;
-
-//import de.psst.gumtreiber.ui.fragments.FriendListFragment;
-//import de.psst.gumtreiber.ui.fragments.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -158,7 +157,7 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
                 break;
 
-            /*
+
             case (R.id.nav_friendList):
 
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FriendListFragment()).addToBackStack(null).commit();
@@ -172,7 +171,7 @@ public class MainActivity extends AppCompatActivity
 
                 drawer.closeDrawer(GravityCompat.START);
                 break;
-            */
+
         }
 
         return true;

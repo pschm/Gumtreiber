@@ -3,7 +3,6 @@ package de.psst.gumtreiber.viewmodels;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -34,7 +33,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     /**
-     * Returns the LocationState
+     * Returns the saved LocationState
      *
      * @return LocationState
      */
@@ -50,7 +49,6 @@ public class MainViewModel extends AndroidViewModel {
     public void setLocationState(Boolean newLocationState) {
         getPreferences().edit().putBoolean(LOCATION_STATE_KEY, newLocationState).apply();
         fetchLocationStatus();
-        Log.v("LOCATIONSTAET VIEWMODEL", locationState.toString());
     }
 
 }

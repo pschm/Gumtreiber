@@ -1,5 +1,6 @@
 package de.psst.gumtreiber.ui.fragments;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,8 +14,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
@@ -28,7 +31,7 @@ public class FriendListFragment extends ListFragment {
 
     private FriendsViewModel model;
     private ArrayAdapter<String> adapter;
-    //private Activity activity;
+    private Activity activity;
 
     @Nullable
     @Override
@@ -36,15 +39,15 @@ public class FriendListFragment extends ListFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_friendlist, container, false);
 
-        //activity = getActivity();
+        activity = getActivity();
 
-        model = ViewModelProviders.of(getActivity()).get(FriendsViewModel.class);
-        model.getFriends().observe(getActivity(), new Observer<List<String>>() {
+        model = ViewModelProviders.of((FragmentActivity) activity).get(FriendsViewModel.class);
+        model.getFriends().observe((FragmentActivity) activity, new Observer<List<String>>() {
 
             @Override
             public void onChanged(List<String> friends) {
 
-                adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, friends);
+                adapter = new ArrayAdapter<>(activity, android.R.layout.simple_list_item_1, friends);
                 setListAdapter(adapter);
             }
         });
@@ -52,22 +55,24 @@ public class FriendListFragment extends ListFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //Button der uns zu der Auswahl möglich Freunde bringt
-        FloatingActionButton btnAdd = getActivity().findViewById(R.id.fab_add_friends);
+        FloatingActionButton btnAdd = activity.findViewById(R.id.fab_add_friends);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new FindFriendsFragment()).addToBackStack(null).commit();
+                if (fragmentManager != null) {
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, new FindFriendsFragment()).addToBackStack(null).commit();
+                }
             }
         });
     }
 
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
         TextView clickedTextView = v.findViewById(android.R.id.text1);
@@ -76,7 +81,7 @@ public class FriendListFragment extends ListFragment {
         //TODO Über die ID's Gehen!
 
         //AltertDialog für Abfrage ob wirklich gelösht werden soll
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder.setTitle("\"" + name + "\" aus Freundesliste entfernen ?");
 
         alertDialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {

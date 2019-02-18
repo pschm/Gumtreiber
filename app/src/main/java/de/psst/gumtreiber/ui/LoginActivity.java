@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -21,12 +23,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.viewmodels.LoginViewModel;
 
 public class LoginActivity extends AppCompatActivity {
 
-
+    private LoginViewModel model;
     private FirebaseAuth auth;
     private EditText txtName, txtEmail, txtPwd;
+    private CheckBox checkbox;
     private Button btnLogin, btnRegister;
 
     @Override
@@ -34,14 +38,40 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        auth = FirebaseAuth.getInstance();
+        model = new LoginViewModel(getApplication());
 
-        txtName = findViewById(R.id.txtName);
         txtEmail = findViewById(R.id.txtEmail);
         txtPwd = findViewById(R.id.txtPassword);
+
+        checkbox = findViewById(R.id.cb_login_data_save);
+
+        prepareTextViews();
+
+        auth = FirebaseAuth.getInstance();
+
+        //TODO Auslagern in separaten Screen
+        txtName = findViewById(R.id.txtName);
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
 
+
+        checkbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    model.setEmail(txtEmail.getText().toString());
+                    model.setPassword(txtPwd.getText().toString());
+                    model.setSaveState(b);
+                    Toast.makeText(LoginActivity.this, "Password und Email werden gespeichert", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    model.removeEmail();
+                    model.removePassword();
+                    model.setSaveState(b);
+                    Toast.makeText(LoginActivity.this, "Passwort und Email werden nicht mehr gespeichert", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +86,9 @@ public class LoginActivity extends AppCompatActivity {
                 signIn(txtEmail.getText().toString(), txtPwd.getText().toString());
             }
         });
-        signOut(); //For test purposes
+
+        //TODO Schätze das gehört zum Test ?
+        signOut();
     }
 
     @Override
@@ -74,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
     //                    Authentication                           //
     /////////////////////////////////////////////////////////////////
     //TODO Manage User (e.g. displayname, passwd reset, etc.): https://firebase.google.com/docs/auth/android/manage-users
+    //TODO Mach das im Settings Fragment !!!
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
@@ -244,5 +277,15 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e("getAuthErrMsg", "Unhandled case: " + msg);
                 return getString(R.string.auth_unhandled_error);
         }
+    }
+
+    /**
+     * Filling the TextViews for password and email with the
+     * values from the ViewModel
+     */
+    private void prepareTextViews() {
+        checkbox.setChecked(model.getSaveState());
+        txtEmail.setText(model.getEmail());
+        txtPwd.setText(model.getPassword());
     }
 }

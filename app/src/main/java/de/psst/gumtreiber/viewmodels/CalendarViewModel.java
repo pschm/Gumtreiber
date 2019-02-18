@@ -15,14 +15,39 @@ import de.psst.gumtreiber.data.UserDataSync;
 public class CalendarViewModel extends AndroidViewModel {
 
     private ArrayList<Appointment> appointments;
+    private String uid;
 
     public CalendarViewModel(@NonNull Application application) {
         super(application);
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fetchAppointments();
     }
 
+    /**
+     * Fetches a lilst of appointments from Firebase into the appointments variable
+     */
     private void fetchAppointments() {
-        appointments = Firebase.getAppointments(FirebaseAuth.getInstance().getCurrentUser().getUid(), UserDataSync.getUserToken());
+        appointments = Firebase.getAppointments(uid, UserDataSync.getUserToken());
+    }
+
+    /**
+     * Saves a new Appointment in the Firebase
+     *
+     * @param appointment
+     */
+    public void saveAppointment(Appointment appointment) {
+        Firebase.addAppointmentToSchedule(uid, appointment);
+        fetchAppointments();
+    }
+
+    /**
+     * Removes an Appointment from Firebase
+     *
+     * @param appointment
+     */
+    public void removeAppointment(Appointment appointment) {
+        Firebase.deleteAppointment(uid, appointment);
+        fetchAppointments();
     }
 
 
@@ -30,16 +55,5 @@ public class CalendarViewModel extends AndroidViewModel {
         return appointments;
     }
 
-    //TODO
-    public void saveAppointment(Appointment appointment) {
-        Firebase.deleteAppointment(FirebaseAuth.getInstance().getCurrentUser().getUid(), appointment);
-
-    }
-
-    //TODO
-    public void removeAppointment(Appointment appointment) {
-        Firebase.addAppointmentToSchedule(FirebaseAuth.getInstance().getCurrentUser().getUid(), appointment);
-
-    }
 
 }

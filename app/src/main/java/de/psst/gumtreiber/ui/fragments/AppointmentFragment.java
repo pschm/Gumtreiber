@@ -96,7 +96,7 @@ public class AppointmentFragment extends Fragment {
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                                 TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
-                                tvStartDate.setText(getFancyDate(day, month, year));
+                                tvStartDate.setText(getReadableDate(day, month, year));
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -117,7 +117,7 @@ public class AppointmentFragment extends Fragment {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                                 TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
-                                tvStartTime.setText(getFancyTime(hourOfDay, minute));
+                                tvStartTime.setText(getReadableTime(hourOfDay, minute));
                             }
                         }, hourOfDay, minute, true);
                 timePickerDialog.show();
@@ -140,7 +140,7 @@ public class AppointmentFragment extends Fragment {
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                                 TextView tvStartDate = activity.findViewById(R.id.tv_end_date);
-                                tvStartDate.setText(getFancyDate(day, month, year));
+                                tvStartDate.setText(getReadableDate(day, month, year));
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -161,7 +161,7 @@ public class AppointmentFragment extends Fragment {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                                 TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
-                                tvEndTime.setText(getFancyTime(hourOfDay, minute));
+                                tvEndTime.setText(getReadableTime(hourOfDay, minute));
                             }
                         }, hourOfDay, minute, true);
                 timePickerDialog.show();
@@ -188,7 +188,7 @@ public class AppointmentFragment extends Fragment {
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        return getFancyDate(day, month, year);
+        return getReadableDate(day, month, year);
 
     }
 
@@ -200,7 +200,7 @@ public class AppointmentFragment extends Fragment {
      * @param year
      * @return Formatted date String
      */
-    private String getFancyDate(int day, int month, int year) {
+    private String getReadableDate(int day, int month, int year) {
 
         month += 1;
         String sDay = Integer.toString(day);
@@ -223,7 +223,7 @@ public class AppointmentFragment extends Fragment {
         int hour = c.get(GregorianCalendar.HOUR);
         int minute = c.get(GregorianCalendar.MINUTE);
 
-        return getFancyTime(hour, minute);
+        return getReadableTime(hour, minute);
 
     }
 
@@ -234,7 +234,7 @@ public class AppointmentFragment extends Fragment {
      * @param minute
      * @return Formatted time String
      */
-    private String getFancyTime(int hour, int minute) {
+    private String getReadableTime(int hour, int minute) {
 
         String sHour = Integer.toString(hour);
         String sMinute = Integer.toString(minute);
@@ -265,7 +265,7 @@ public class AppointmentFragment extends Fragment {
         String endDate = tvEndDate.getText().toString();
         String endTime = tvEndTime.getText().toString();
 
-
+        //TODO in ViewModel auslagern
         Appointment appointment = new Appointment(formatDate(startDate, startTime), formatDate(endDate, endTime), room);
         Firebase.addAppointmentToSchedule(uid, appointment);
 
