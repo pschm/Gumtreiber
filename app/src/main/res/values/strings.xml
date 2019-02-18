@@ -36,6 +36,7 @@
     <string name="gain_access">Zugang erlangen</string>
     <string name="open_map">Karte öffnen</string>
     <string name="nickname">Nickname</string>
+    <string name="safe_credentials">Anmeldedaten merken</string>
 
 
 </resources>
