@@ -15,6 +15,8 @@ public class User {
     public double longitude;
     public double altitude;
 
+    private Course course;
+
     //After this date the location data becomes invalid
     public Calendar expirationDate;
     DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -57,6 +59,14 @@ public class User {
 
     public void setMarker(MovableMarker marker) {
         this.marker = marker;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public Course getCourse() {
+        return course;
     }
 }
 
