@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -144,9 +145,9 @@ public class MovableMarker {
         nameImg.setAdjustViewBounds(true);
         nameImg.setMaxWidth(DEFAULT_SIZE * 2);
 
-        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend));
-        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot));
-        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault));
+        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend), PorterDuff.Mode.MULTIPLY);
+        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot), PorterDuff.Mode.MULTIPLY);
+        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault), PorterDuff.Mode.MULTIPLY);
 
         changeLabel(label);
     }
@@ -203,9 +204,9 @@ public class MovableMarker {
             else image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsDefault));
         }
 
-        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend));
-        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot));
-        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault));
+        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend), PorterDuff.Mode.MULTIPLY);
+        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot), PorterDuff.Mode.MULTIPLY);
+        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault), PorterDuff.Mode.MULTIPLY);
     }
 
 
