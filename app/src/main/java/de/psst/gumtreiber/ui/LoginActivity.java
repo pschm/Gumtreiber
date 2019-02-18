@@ -22,7 +22,6 @@ import com.google.firebase.auth.FirebaseUser;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import de.psst.gumtreiber.R;
-import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.viewmodels.LoginViewModel;
 
 public class LoginActivity extends AppCompatActivity {
@@ -45,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtEmail);
         txtPwd = findViewById(R.id.txtPassword);
 
-        checkbox = findViewById(R.id.cb_login_data_save);
+        checkbox = findViewById(R.id.cbxSaveCredentials);
 
         prepareTextViews();
         auth = FirebaseAuth.getInstance();
