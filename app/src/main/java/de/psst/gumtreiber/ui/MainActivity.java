@@ -1,11 +1,13 @@
 package de.psst.gumtreiber.ui;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +33,9 @@ import de.psst.gumtreiber.viewmodels.MainViewModel;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    //Fragment Tags
+    String MAP_FRAGMENT_TAG = "MAP_FRAGMENT";
+
     //LocationState stuff
     private MainViewModel model;
     private Boolean locationState;
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity
 
     //Fragment Manager
     private FragmentManager fragmentManager = getSupportFragmentManager();
+
+    private Toast backtoast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +63,7 @@ public class MainActivity extends AppCompatActivity
 
         //Setting Layout and MapFragment
         setContentView(R.layout.activity_main);
-        fragmentManager.beginTransaction().add(R.id.content_frame, new MapFragment()).commit();
+        fragmentManager.beginTransaction().add(R.id.content_frame, new MapFragment(), MAP_FRAGMENT_TAG).commit();
 
 
         //Setting Uid
@@ -117,12 +124,29 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        MapFragment mapFragment = (MapFragment) fragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG);
+
+        //If the drawer is Open a click on the back button will close it
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            fragmentManager.popBackStackImmediate();
         }
+        //If the Map is Visible the next back button double tap will close the app
+        else if (mapFragment != null && mapFragment.isVisible()) {
+            if (backtoast != null && backtoast.getView().getWindowToken() != null) {
+                //Getting back to Homescreen Screen
+                Intent startMain = new Intent(Intent.ACTION_MAIN);
+                startMain.addCategory(Intent.CATEGORY_HOME);
+                startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(startMain);
+            } else {
+                backtoast = Toast.makeText(this, "Doppelklicken um App zu beenden", Toast.LENGTH_SHORT);
+                backtoast.show();
+            }
+        }
+        //In any other case the last first fragment from the backStack will show
+        else fragmentManager.popBackStackImmediate();
     }
 
     @Override
