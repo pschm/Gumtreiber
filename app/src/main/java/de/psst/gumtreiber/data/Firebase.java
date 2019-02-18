@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -535,6 +536,54 @@ public class Firebase {
 
         return userList;
     }
+
+    /**
+     * Adds the UID of your friend to your friendlist in firebase.
+     * @param myUID UID of the friendlist's owner
+     * @param friendsUID UID of the user to be added to the friendlist
+     */
+    public static void addUserToFriendlist(String myUID, String friendsUID) {
+        database.child("friendlists").child(myUID).child(friendsUID).setValue(true);
+    }
+
+    /**
+     * Deletes the UID of your friend from your friendlist in firebase.
+     * @param myUID UID of the friendlist's owner
+     * @param friendsUID UID of the user to be deleted from the friendlist
+     */
+    public static void deleteUserFromFriendlist(String myUID, String friendsUID) {
+        database.child("friendlists").child(myUID).child(friendsUID).removeValue();
+
+    }
+
+    /**
+     * Returns a String Array with all UIDs of your friends.
+     * @param uid UID of the friendlist's owner
+     * @param authToken token of the friendlist's owner
+     * @return
+     */
+    public static String[] getFriendlist(String uid, String authToken){
+        String jsonString = getJSON(firebaseURL + "/friendlists/" + uid + ".json"  + "?auth=" + authToken);
+        String[] friendlist = {""};
+
+
+        try {
+            JSONObject reader = new JSONObject(jsonString);
+            JSONArray allUIDs = reader.names();
+            friendlist = new String[allUIDs.length()];
+
+            for (int i = 0; i < friendlist.length; i++){
+                friendlist[i] = allUIDs.getString(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return friendlist;
+
+    }
+
+
 
     /**
      * Makes a GET request to Firebase and returns a JSON
