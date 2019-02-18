@@ -3,4 +3,14 @@
     <color name="colorPrimary">#ea5800</color>
     <color name="colorPrimaryDark">#c81e0f</color>
     <color name="colorAccent">#b43092</color>
+
+    <!-- MovableMarker -->
+    <color name="colorStepsDefault">#ba6748</color>
+    <color name="colorLabelDefault">#ef6c00</color>
+
+    <color name="colorStepsFriend">#6eba48</color>
+    <color name="colorLabelFriend">#76ff03</color>
+
+    <color name="colorStepsBot">#4872BA</color>
+    <color name="colorLabelBot">#035FFF</color>
 </resources>
