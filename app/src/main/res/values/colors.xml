@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#c81e0f</color>
     <color name="colorAccent">#B43092</color>
     <color name="colorGrayFont">#C8C8C8</color>
+    <color name="colorAuthFont">#4D3D2F</color>
 
     <color name="colorBuildingNbr1">#806820</color>
     <color name="colorBuildingNbr2">#1A6126</color>
