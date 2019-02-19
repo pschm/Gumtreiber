@@ -15,6 +15,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.MainActivity;
+import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorCourse;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorEmail;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorNickname;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorPwd;
@@ -82,7 +83,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorNickname()).addToBackStack(null).commit();
                 break;
             case "course":
-
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorCourse()).addToBackStack(null).commit();
                 break;
 
             //Filter
