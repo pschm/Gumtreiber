@@ -163,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private Task<Void> updateDisplayName(FirebaseUser user, String displayName) {
+    public static Task<Void> updateDisplayName(FirebaseUser user, String displayName) {
         UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
                 .build();
