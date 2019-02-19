@@ -16,6 +16,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.MainActivity;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorEmail;
+import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorPwd;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -74,7 +75,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorEmail()).addToBackStack(null).commit();
                 break;
             case "password":
-
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorPwd()).addToBackStack(null).commit();
                 break;
             case "nickname":
 
