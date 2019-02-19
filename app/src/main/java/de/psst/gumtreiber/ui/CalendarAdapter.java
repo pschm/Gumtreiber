@@ -42,8 +42,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
         holder.rv_room.setText(appointments.get(position).getRoom().getName());
-        holder.rv_endDate.setText(appointments.get(position).getStringDate(appointments.get(position).getFormatedEndDate()));
-        holder.rv_startDate.setText(appointments.get(position).getStringDate(appointments.get(position).getFormatedStartDate()));
+        holder.rv_endDate.setText(appointments.get(position).getReadableEndDate());
+        holder.rv_startDate.setText(appointments.get(position).getReadableStartDate());
 
     }
 

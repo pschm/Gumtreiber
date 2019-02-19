@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity
         //Setting Uid
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-
-        //TODO Hier das Icon für den Standort setzen
         //Init Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

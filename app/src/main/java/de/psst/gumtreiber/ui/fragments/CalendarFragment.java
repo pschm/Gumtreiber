@@ -93,16 +93,15 @@ public class CalendarFragment extends ListFragment {
         });
     }
 
-
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
         Appointment clickedAppointment = model.getAppointments().get(position);
 
 
         //AlertDialog asking if the user really want to remove the Appointment
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder.setTitle("Termin entfernen ?");
 
         alertDialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
@@ -121,6 +120,7 @@ public class CalendarFragment extends ListFragment {
         });
         alertDialogBuilder.show();
     }
+
 
     private void startAppointmentFragment() {
         FragmentManager fragmentManager = getFragmentManager();
@@ -176,11 +176,11 @@ class CalendarListAdapter extends ArrayAdapter<Appointment> {
             }
 
             if (startDate != null) {
-                startDate.setText(p.getStringDate(p.getFormatedStartDate()));
+                startDate.setText(p.getReadableStartDate());
             }
 
             if (endDate != null) {
-                endDate.setText(p.getStringDate(p.getFormatedEndDate()));
+                endDate.setText(p.getReadableEndDate());
             }
         }
 
