@@ -40,7 +40,7 @@ public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
             public boolean onMenuItemClick(MenuItem item) {
                 String newName = txtUserInput1.getText().toString();
                 //Wenn inputfeld leer, abbruch
-                if(TextUtils.isEmpty(newName)) {
+                if(TextUtils.isEmpty(newName)) { //TODO Nickname restriktionen anwenden!
                     txtUserInput1.setError("Pflichtfeld!");
                     return false;
                 }
