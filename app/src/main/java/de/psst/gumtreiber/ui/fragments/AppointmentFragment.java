@@ -27,7 +27,6 @@ import de.psst.gumtreiber.data.Appointment;
 import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.location.Room;
 import de.psst.gumtreiber.ui.MainActivity;
-import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
 
 public class AppointmentFragment extends Fragment {
@@ -72,7 +71,6 @@ public class AppointmentFragment extends Fragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 //TODO Termin Speichern
-                CalendarViewModel.saveAppointment(new Appointment(20190124140500L, 20190124140500L, Room.R1400));
 
                 activity.onBackPressed();
                 return true;
