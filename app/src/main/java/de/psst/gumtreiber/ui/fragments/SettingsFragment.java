@@ -15,6 +15,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.MainActivity;
+import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorEmail;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -70,7 +71,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switch(pref.getKey()) {
             //Account
             case "email":
-
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorEmail()).addToBackStack(null).commit();
                 break;
             case "password":
 
