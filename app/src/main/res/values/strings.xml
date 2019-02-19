@@ -38,5 +38,11 @@
     <string name="nickname">Nickname</string>
     <string name="safe_credentials">Anmeldedaten merken</string>
 
+    <!-- Toolbar Überschriften -->
+    <string name="title_create_appointment">Termin erstellen</string>
+    <string name="title_appointment_overview">Termin Übersicht</string>
+    <string name="title_add_friends">Freunde hinzufügen</string>
+    <string name="title_my_friends">Meine Freunde</string>
+
 
 </resources>

@@ -77,7 +77,7 @@ public class AppointmentFragment extends Fragment {
             }
         });
         activity.getToolbarDoneBTN().setVisible(true);
-        activity.setActionBarTitle("Termin erstellen");
+        activity.setActionBarTitle(getString(R.string.title_create_appointment));
 
         initViews();
     }

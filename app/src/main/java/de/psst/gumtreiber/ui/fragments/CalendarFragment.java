@@ -58,7 +58,7 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        activity.setActionBarTitle("Termin Übersicht");
+        activity.setActionBarTitle(getString(R.string.title_appointment_overview));
 
         //Init ViewModel
         model = new CalendarViewModel(activity.getApplication());

@@ -54,7 +54,7 @@ public class FriendListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        activity.setActionBarTitle("Meine Freunde");
+        activity.setActionBarTitle(getString(R.string.title_my_friends));
 
         //Init ViewModel
         model = new FriendsViewModel(getActivity().getApplication());
