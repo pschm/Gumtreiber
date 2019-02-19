@@ -61,23 +61,22 @@ public class CalendarFragment extends Fragment {
         activity.getSupportActionBar().setTitle("Termin Übersicht");
 
         //Init ViewModel
-        model = new CalendarViewModel(getActivity().getApplication());
+        model = new CalendarViewModel(activity.getApplication());
 
 
-        recyclerView = getActivity().findViewById(R.id.calendar_recycler_view);
+        recyclerView = activity.findViewById(R.id.calendar_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(activity);
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
         adapter = new RecyclerAdapter(this, model.getAppointments());
         recyclerView.setAdapter(adapter);
-
 
 
         //Init Floating Action Button
@@ -100,7 +99,7 @@ public class CalendarFragment extends Fragment {
     }
 
 
-    void deleteAppointmentConfirmation(final Appointment appointment) {
+    private void deleteAppointmentConfirmation(final Appointment appointment) {
         //TODO Über die ID's Gehen!
         //AltertDialog für Abfrage ob wirklich gelösht werden soll
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -122,120 +121,119 @@ public class CalendarFragment extends Fragment {
         });
         alertDialogBuilder.show();
     }
-}
 
 
+    /**
+     * Recycle-bin-Adapter
+     */
+    private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+
+        private CalendarFragment fragment;
+        private ArrayList<Appointment> dataset;
+
+        public RecyclerAdapter(CalendarFragment fragment, ArrayList<Appointment> dataset) {
+            this.fragment = fragment; //used for popup on deletion
+            this.dataset = dataset;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem_appointment, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            final Appointment ap = dataset.get(position);
+
+            holder.txtRoomNbr.setText(ap.getRoom().getNumberDot());
+            holder.txtRoomName.setText(ap.getRoom().getName());
+            tintRoomCircle(holder.imgRoomCircle, ap.getRoom());
+
+            holder.txtStartDay.setText("VON " + ap.getStartDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()));
+            holder.txtStartTime.setText(ap.getReadableStartDate() + "\n" + ap.getReadableStartTime() + " Uhr");
+
+            holder.txtEndDay.setText("BIS " + ap.getEndDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()));
+            holder.txtEndTime.setText(ap.getReadableEndDate() + "\n" + ap.getReadableEndTime() + " Uhr");
 
 
+            holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("RecyclerAdapter", "Delete appointment in room '" + dataset.get(position).getRoom().name() + "'.");
+                    fragment.deleteAppointmentConfirmation(ap);
+                    //TODO delete Appointment stuff
+                }
+            });
+        }
 
-class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
+        private void tintRoomCircle(ImageView imageView, Room room) {
+            int colorResId;
+            switch (room.getBuildingNumber()) {
+                case "1":
+                    colorResId = R.color.colorBuildingNbr1;
+                    break;
 
-    private CalendarFragment fragment;
-    private ArrayList<Appointment> dataset;
+                case "2":
+                    colorResId = R.color.colorBuildingNbr2;
+                    break;
 
-    public RecyclerAdapter(CalendarFragment fragment, ArrayList<Appointment> dataset) {
-        this.fragment = fragment; //used for popup on deletion
-        this.dataset = dataset;
-    }
+                case "3":
+                    colorResId = R.color.colorBuildingNbr3;
+                    break;
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem_appointment, parent, false);
-        return new ViewHolder(view);
-    }
+                case "4":
+                    colorResId = R.color.colorBuildingNbr4;
+                    break;
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Appointment ap = dataset.get(position);
+                case "5":
+                    colorResId = R.color.colorBuildingNbr5;
+                    break;
 
-        holder.txtRoomNbr.setText(ap.getRoom().getNumberDot());
-        holder.txtRoomName.setText(ap.getRoom().getName());
-        tintRoomCircle(holder.imgRoomCircle, ap.getRoom());
-
-        holder.txtStartDay.setText("VON " + ap.getStartDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault() ));
-        holder.txtStartTime.setText(ap.getReadableStartDate() + "\n" + ap.getReadableStartTime() + " Uhr");
-
-        holder.txtEndDay.setText("BIS " +ap.getEndDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault() ));
-        holder.txtEndTime.setText(ap.getReadableEndDate() + "\n" + ap.getReadableEndTime() + " Uhr");
-
-
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("RecyclerAdapter", "Delete appointment in room '" + dataset.get(position).getRoom().name() + "'.");
-                fragment.deleteAppointmentConfirmation(ap);
-                //TODO delete Appointment stuff
+                default:
+                    colorResId = R.color.colorPrimary;
+                    break;
             }
-        });
-    }
 
-    private void tintRoomCircle(ImageView imageView, Room room) {
-        int colorResId;
-        switch(room.getBuildingNumber()) {
-            case "1":
-                colorResId = R.color.colorBuildingNbr1;
-                break;
-
-            case "2":
-                colorResId = R.color.colorBuildingNbr2;
-                break;
-
-            case "3":
-                colorResId = R.color.colorBuildingNbr3;
-                break;
-
-            case "4":
-                colorResId = R.color.colorBuildingNbr4;
-                break;
-
-            case "5":
-                colorResId = R.color.colorBuildingNbr5;
-                break;
-
-            default:
-                colorResId = R.color.colorPrimary;
-                break;
+            imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), colorResId));
         }
 
-        imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), colorResId));
-    }
-
-    @Override
-    public int getItemCount() {
-        return dataset.size();
-    }
-
-    public void refresh() {
-        notifyDataSetChanged();
-    }
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView txtRoomNbr, txtRoomName, txtStartDay, txtStartTime, txtEndDay, txtEndTime;
-        private Button btnDelete;
-        private ImageView imgRoomCircle;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            txtRoomNbr = itemView.findViewById(R.id.txtRoomNbr);
-            txtRoomName = itemView.findViewById(R.id.txtRoomName);
-            btnDelete = itemView.findViewById(R.id.btnDeleteAppointment);
-            imgRoomCircle = itemView.findViewById(R.id.circle_image);
-
-            txtStartDay = itemView.findViewById(R.id.txtStartName);
-            txtStartTime = itemView.findViewById(R.id.txtStartTime);
-
-            txtEndDay = itemView.findViewById(R.id.txtEndName);
-            txtEndTime = itemView.findViewById(R.id.txtEndTime);
+        @Override
+        public int getItemCount() {
+            return dataset.size();
         }
+
+        public void refresh() {
+            notifyDataSetChanged();
+        }
+
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            private TextView txtRoomNbr, txtRoomName, txtStartDay, txtStartTime, txtEndDay, txtEndTime;
+            private Button btnDelete;
+            private ImageView imgRoomCircle;
+
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+
+                txtRoomNbr = itemView.findViewById(R.id.txtRoomNbr);
+                txtRoomName = itemView.findViewById(R.id.txtRoomName);
+                btnDelete = itemView.findViewById(R.id.btnDeleteAppointment);
+                imgRoomCircle = itemView.findViewById(R.id.circle_image);
+
+                txtStartDay = itemView.findViewById(R.id.txtStartName);
+                txtStartTime = itemView.findViewById(R.id.txtStartTime);
+
+                txtEndDay = itemView.findViewById(R.id.txtEndName);
+                txtEndTime = itemView.findViewById(R.id.txtEndTime);
+            }
+        }
+
     }
 
 }
-
-
 
 
 
