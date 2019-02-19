@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle(R.string.app_name);
+        resetActionBarTitle();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(getSupportActionBar() == null) return;
 
         FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
-        if(u != null) getSupportActionBar().setTitle(u.getDisplayName());
+        if(u != null) getSupportActionBar().setTitle(getString(R.string.title_greeting_1, u.getDisplayName()));
         else getSupportActionBar().setTitle("");
     }
 

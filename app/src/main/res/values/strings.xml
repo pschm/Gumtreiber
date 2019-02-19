@@ -39,6 +39,7 @@
     <string name="safe_credentials">Anmeldedaten merken</string>
 
     <!-- Toolbar Überschriften -->
+    <string name="title_greeting_1">Hallo, %1$s!</string>
     <string name="title_create_appointment">Termin erstellen</string>
     <string name="title_appointment_overview">Termin Übersicht</string>
     <string name="title_add_friends">Freunde hinzufügen</string>
