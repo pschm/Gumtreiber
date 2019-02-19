@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import de.psst.gumtreiber.location.LocationHandler;
-import de.psst.gumtreiber.map.MapView;
+import de.psst.gumtreiber.map.MapControl;
 
 /**
  * Sends repeatedly the current users location to the server and
@@ -34,7 +34,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
     private Activity activity;
     private LocationHandler locationHandler;
-    private MapView mapView;
+    private MapControl mapControl;
 
     private static String userToken;
 
@@ -46,12 +46,12 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
      * Creates a new instance of UserDataSync.
      * @param activity Activity on which the ActivityLifecycleCallbacks are registered.
      * @param locationHandler LocationHandler from which this sync will receive the location data.
-     * @param mapView MapView on which the server data will transferred to.
+     * @param mapControl MapView on which the server data will transferred to.
      */
-    public UserDataSync(Activity activity, LocationHandler locationHandler, MapView mapView) {
+    public UserDataSync(Activity activity, LocationHandler locationHandler, MapControl mapControl) {
         this.activity = activity;
         this.locationHandler = locationHandler;
-        this.mapView = mapView;
+        this.mapControl = mapControl;
 
         activity.getApplication().registerActivityLifecycleCallbacks(this);
     }
@@ -105,7 +105,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
             if(!TextUtils.isEmpty(userToken)) {
                 Firebase.updateUserList(userToken, userList);
-                mapView.setUserList(new ArrayList<>(userList.values()));
+                mapControl.updateUsers(new ArrayList<>(userList.values()));
             } else {
                 Log.w("UserDataSync","Cannot get all users, Auth-Token is not available yet!");
             }
