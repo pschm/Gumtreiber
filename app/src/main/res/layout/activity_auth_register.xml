@@ -85,7 +85,7 @@
         android:dropDownWidth="match_parent"
         android:spinnerMode="dropdown"
         android:visibility="visible"
-        android:popupBackground="#D2C8A3"
+        android:popupBackground="@color/colorLightBrown"
 
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toEndOf="parent"
