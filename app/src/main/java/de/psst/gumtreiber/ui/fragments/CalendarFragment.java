@@ -18,8 +18,10 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.ListFragment;
+import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
 import de.psst.gumtreiber.viewmodels.CalendarViewModel;
@@ -33,6 +35,7 @@ public class CalendarFragment extends ListFragment {
     private Activity activity;
     private CalendarViewModel model;
     private CalendarListAdapter adapter;
+
     //RecyclerView
     //private RecyclerView recyclerView;
     //private RecyclerView.Adapter adapter;
@@ -46,6 +49,9 @@ public class CalendarFragment extends ListFragment {
 
         activity = getActivity();
 
+        //Init ViewModel
+        model = ViewModelProviders.of((FragmentActivity) activity).get(CalendarViewModel.class);
+
         return inflater.inflate(R.layout.fragment_calendar, container, false);
     }
 
@@ -53,8 +59,6 @@ public class CalendarFragment extends ListFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //Init ViewModel
-        model = new CalendarViewModel(activity.getApplication());
 
         //ListView
         adapter = new CalendarListAdapter(activity, R.layout.recycler_view_calendar_row_layout, model.getAppointments());
@@ -89,16 +93,15 @@ public class CalendarFragment extends ListFragment {
         });
     }
 
-
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
         Appointment clickedAppointment = model.getAppointments().get(position);
 
-        //TODO Über die ID's Gehen!
-        //AltertDialog für Abfrage ob wirklich gelösht werden soll
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+        //AlertDialog asking if the user really want to remove the Appointment
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder.setTitle("Termin entfernen ?");
 
         alertDialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
@@ -117,6 +120,7 @@ public class CalendarFragment extends ListFragment {
         });
         alertDialogBuilder.show();
     }
+
 
     private void startAppointmentFragment() {
         FragmentManager fragmentManager = getFragmentManager();
@@ -172,11 +176,11 @@ class CalendarListAdapter extends ArrayAdapter<Appointment> {
             }
 
             if (startDate != null) {
-                startDate.setText(p.getStringDate(p.getFormatedStartDate()));
+                startDate.setText(p.getReadableStartDate());
             }
 
             if (endDate != null) {
-                endDate.setText(p.getStringDate(p.getFormatedEndDate()));
+                endDate.setText(p.getReadableEndDate());
             }
         }
 

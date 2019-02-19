@@ -20,7 +20,6 @@ import de.psst.gumtreiber.R;
 
 public class FindFriendsFragment extends Fragment {
 
-    private View fragmentView;
     private LinearLayout llPeopleList;
     private Set<String> def = new TreeSet<>();
     private Set<String> friendlist;
@@ -33,7 +32,7 @@ public class FindFriendsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        fragmentView = inflater.inflate(R.layout.fragment_find_friends, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_find_friends, container, false);
         //TODO ERNTFERNEN -> BEISPIEL
         userList.add("Der fast kopflose Kohls");
         userList.add("Yggi der Elf");

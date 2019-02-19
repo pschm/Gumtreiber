@@ -14,8 +14,7 @@ public class Appointment {
 
     //Appointment should use a complete Date
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-    private static final SimpleDateFormat sdfReadableDate = new SimpleDateFormat("dd.MM.yyyy");
-    private static final SimpleDateFormat sdfReadableTime = new SimpleDateFormat("HH:mm");
+    private static final SimpleDateFormat sdfReadableDate = new SimpleDateFormat("dd.MM.yyyy - HH:mm");
 
     private Calendar startDate;
     private Calendar endDate;
@@ -32,6 +31,8 @@ public class Appointment {
 
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
+
+
         try {
             start.setTime(dateFormat.parse(""+formatedStartDate ));
             end.setTime(dateFormat.parse(""+formatedEndDate ));
@@ -42,14 +43,14 @@ public class Appointment {
         this.startDate = start;
         this.endDate = end;
         this.room = room;
+
     }
 
-    //TODO Christopher fragen warum nicht getFormatetDate(Date date) {...} ???
     /**
      * Returns the start date of the appointment in the form of yyyyMMddHHmmss as a long value
      * @return start date in the form of a long value
      */
-    public long getFormatedStartDate() {
+    public long getFormattedStartDate() {
         long date = Long.parseLong( dateFormat.format(startDate.getTime()) );
         return date;
     }
@@ -58,7 +59,7 @@ public class Appointment {
      * Returns the end date of the appointment in the form of yyyyMMddHHmmss as a long value
      * @return end date in the form of a long value
      */
-    public long getFormatedEndDate() {
+    public long getFormattedEndDate() {
         long date = Long.parseLong( dateFormat.format(endDate.getTime()) );
         Log.v("DATE", date + "");
         return date;
@@ -87,7 +88,7 @@ public class Appointment {
     }
 
     public String toString() {
-        return getFormatedStartDate() + " - " + getFormatedEndDate() + " at " + room.name();
+        return getFormattedStartDate() + " - " + getFormattedEndDate() + " at " + room.name();
     }
 
 
@@ -107,70 +108,8 @@ public class Appointment {
         return sdfReadableDate.format(endDate.getTime());
     }
 
-    /**
-     * @return The start time of this appointment in a common time format (HH:mm).
-     */
-    public String getReadableStartTime() {
-        return sdfReadableTime.format(startDate.getTime());
-    }
 
-    /**
-     * @return The end time of this appointment in a common time format (HH:mm).
-     */
-    public String getReadableEndTime() {
-        return sdfReadableTime.format(endDate.getTime());
-    }
-
-
-    /**
-     * Formats a Date given as long "YYYYMMDDHHMMSS" to a nicely readable String
-     *
-     * @param unreadableDate a formatet date as used in the Database
-     * @return a Sting with the format "DD.MM.YYYY"
-     */
-    public String getReadableDate(long unreadableDate) {
-
-        String stringDate = Long.toString(unreadableDate);
-
-        String year = stringDate.substring(0, 4);
-        String month = stringDate.substring(4, 6);
-        String day = stringDate.substring(6, 8);
-
-        return day + "." + month + "." + year;
-    }
-
-    /**
-     * * Formats a date/time given as long "YYYYMMDDHHMMSS" to a nicely readable String
-     *
-     * @param unreadableDate a formatet date/time as used in the Database
-     * @return a String with the Format "HH:MM"
-     */
-    public String getReadableTime(long unreadableDate) {
-
-        String stringDate = Long.toString(unreadableDate);
-
-        String hour = stringDate.substring(8, 10);
-        String minute = stringDate.substring(10, 12);
-
-
-        return hour + ":" + minute;
-    }
-
-    //TODO SVEN fragen wie die Annotation richtig geht !
-
-    /**
-     * Formats a Date given as long "YYYYMMDDHHMMSS" to a nicely readable String
-     * by combining the use of #getReadableTime and #getReadableDate
-     *
-     * @param unreadableDate a formatet date as used in the Database
-     * @return a String with the Format "DD.MM.YYYY - HH:MM"
-     */
-    public String getStringDate(long unreadableDate) {
-        return getReadableDate(unreadableDate) + " - " + getReadableTime(unreadableDate);
-    }
-
-
-    //Various getters and setters
+    //Various getter and setters
 
     public Calendar getStartDate() {
         return startDate;

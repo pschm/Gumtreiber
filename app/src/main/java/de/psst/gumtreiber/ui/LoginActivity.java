@@ -21,6 +21,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.viewmodels.LoginViewModel;
@@ -38,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        model = new LoginViewModel(getApplication());
+        model = ViewModelProviders.of(this).get(LoginViewModel.class);
 
         txtEmail = findViewById(R.id.txtEmail);
         txtPwd = findViewById(R.id.txtPassword);

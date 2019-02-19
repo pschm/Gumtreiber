@@ -2,7 +2,6 @@ package de.psst.gumtreiber.data;
 
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -120,8 +119,8 @@ public class Firebase {
         //int start = appointment.getFormatedStartTime();
         //int end = appointment.getFormatedEndTime();
 
-        long start = appointment.getFormatedStartDate();
-        long end = appointment.getFormatedEndDate();
+        long start = appointment.getFormattedStartDate();
+        long end = appointment.getFormattedEndDate();
 
         database.child("schedules").child(uid).child("" + start).child("startDate").setValue(start);
         database.child("schedules").child(uid).child("" + start).child("endDate").setValue(end);
@@ -135,7 +134,7 @@ public class Firebase {
      * @param appointment
      */
     public static void deleteAppointment(String uid, Appointment appointment) {
-        long start = appointment.getFormatedStartDate();
+        long start = appointment.getFormattedStartDate();
 
         database.child("schedules").child(uid).child("" + start).removeValue();
     }
@@ -366,8 +365,8 @@ public class Firebase {
         Appointment currentAppointment = null;
         long currentDate = generateCurrentDate();
         for (Appointment each : appointments) {
-            if (each.getFormatedStartDate() <= currentDate &&
-                    each.getFormatedEndDate() >= currentDate) {
+            if (each.getFormattedStartDate() <= currentDate &&
+                    each.getFormattedEndDate() >= currentDate) {
                 currentAppointment = each;
                 break;
             }
@@ -501,8 +500,8 @@ public class Firebase {
                 Appointment currentAppointment = null;
                 long currentDate = generateCurrentDate();
                 for (Appointment each : appointments) {
-                    if (each.getFormatedStartDate() <= currentDate &&
-                            each.getFormatedEndDate() >= currentDate) {
+                    if (each.getFormattedStartDate() <= currentDate &&
+                            each.getFormattedEndDate() >= currentDate) {
                         currentAppointment = each;
                         break;
                     }
