@@ -51,14 +51,14 @@ public class CalendarFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        activity.getSupportActionBar().setTitle(R.string.app_name);
+        activity.resetActionBarTitle();
         super.onDestroyView();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        activity.getSupportActionBar().setTitle("Termin Übersicht");
+        activity.setActionBarTitle("Termin Übersicht");
 
         //Init ViewModel
         model = new CalendarViewModel(activity.getApplication());

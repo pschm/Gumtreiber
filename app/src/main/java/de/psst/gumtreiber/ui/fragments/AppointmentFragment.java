@@ -58,7 +58,7 @@ public class AppointmentFragment extends Fragment {
     public void onDestroyView() {
         activity.getToolbarDoneBTN().setOnMenuItemClickListener(null);
         activity.getToolbarDoneBTN().setVisible(false);
-        activity.getSupportActionBar().setTitle(R.string.app_name);
+        activity.resetActionBarTitle();
         super.onDestroyView();
     }
 
@@ -77,7 +77,7 @@ public class AppointmentFragment extends Fragment {
             }
         });
         activity.getToolbarDoneBTN().setVisible(true);
-        activity.getSupportActionBar().setTitle("Termin erstellen");
+        activity.setActionBarTitle("Termin erstellen");
 
         initViews();
     }

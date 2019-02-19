@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
@@ -86,12 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         //Setting Uid
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        uid = user.getUid();
-
-        TextView txtNavHeader = navigationView.getHeaderView(0).findViewById(R.id.nav_header);
-        txtNavHeader.setText(user.getDisplayName());
-
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         //Listener for the location switch
         drawerNavSwitch = navigationView.getMenu().findItem(R.id.nav_location);
@@ -128,6 +122,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+    }
+
+    public void setActionBarTitle(String s) {
+        if(getSupportActionBar() != null) getSupportActionBar().setTitle(s);
+    }
+
+    public void resetActionBarTitle() {
+        if(getSupportActionBar() == null) return;
+
+        FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
+        if(u != null) getSupportActionBar().setTitle(u.getDisplayName());
+        else getSupportActionBar().setTitle("");
     }
 
     public MenuItem getToolbarDoneBTN() {

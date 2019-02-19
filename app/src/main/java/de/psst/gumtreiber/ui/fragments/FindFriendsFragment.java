@@ -37,14 +37,14 @@ public class FindFriendsFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        activity.getSupportActionBar().setTitle(R.string.app_name);
+        activity.resetActionBarTitle();
         super.onDestroyView();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        activity.getSupportActionBar().setTitle("Freunde hinzufügen");
+        activity.setActionBarTitle("Freunde hinzufügen");
 
         recyclerView = getActivity().findViewById(R.id.friends_recycler_view);
 

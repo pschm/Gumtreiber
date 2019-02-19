@@ -47,14 +47,14 @@ public class FriendListFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        activity.getSupportActionBar().setTitle(R.string.app_name);
+        activity.resetActionBarTitle();
         super.onDestroyView();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        activity.getSupportActionBar().setTitle("Meine Freunde");
+        activity.setActionBarTitle("Meine Freunde");
 
         //Init ViewModel
         model = new FriendsViewModel(getActivity().getApplication());
