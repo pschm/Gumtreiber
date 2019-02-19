@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Gumtreiber</string>
+    <string name="app_version">0.1</string>
+
     <string name="no_location_title">Keine Ortung möglich!</string>
     <string name="no_location_msg">Damit du dich und andere auf der Karte sehen kannst, müssen wir deinen Standort abfragen.\nBitte überprüfe deine Einstellungen, ob wir auf deinen Standort zugrifen dürfen.</string>
     <string name="settings">Einstellungen</string>
@@ -44,6 +46,7 @@
     <string name="title_appointment_overview">Termin Übersicht</string>
     <string name="title_add_friends">Freunde hinzufügen</string>
     <string name="title_my_friends">Meine Freunde</string>
+    <string name="title_settings">Einstellungen</string>
 
 
 </resources>
