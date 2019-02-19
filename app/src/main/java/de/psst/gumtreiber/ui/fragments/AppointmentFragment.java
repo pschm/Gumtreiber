@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,18 +15,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
-import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.location.Room;
+import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
 
 public class AppointmentFragment extends Fragment {
@@ -34,7 +35,7 @@ public class AppointmentFragment extends Fragment {
     //TODO Kontrolle auf Zeitpunkte -> Zeitreisen sind nicht möglich
     //TODO Zeugs nach ViewModel auslagern
 
-    private String uid;
+    private CalendarViewModel model;
     private GregorianCalendar c = new GregorianCalendar();
     private Activity activity;
     private Spinner spinner;
@@ -45,7 +46,7 @@ public class AppointmentFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_appointment, container, false);
         activity = getActivity();
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        model = ViewModelProviders.of((FragmentActivity) activity).get(CalendarViewModel.class);
         return fragmentView;
 
     }
@@ -55,14 +56,18 @@ public class AppointmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Spinner aka DropDownMenu for the Rooms
+        spinner = activity.findViewById(R.id.spinn_room);
+        spinner.setAdapter(new ArrayAdapter<>(activity.getApplicationContext(), R.layout.spinner_item, Room.values()));
+
         initViews();
 
+        //Save Button
         Button btnSubmitAppointment = activity.findViewById(R.id.btn_submit_appointment);
         btnSubmitAppointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO Termin Speichern
-
+                saveAppointment();
                 activity.onBackPressed();
             }
         });
@@ -72,14 +77,23 @@ public class AppointmentFragment extends Fragment {
     /**
      * Initiates the TextViews with Date & Time Pickers in a barbaric kind of way
      */
-    public void initViews() {
+    private void initViews() {
 
-        //Spinner for the Rooms
-        spinner = activity.findViewById(R.id.spinn_room);
-        spinner.setAdapter(new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item, Room.values()));
+        initStartDatePicker();
+
+        initEndDatePicker();
+
+        Button btnSave = activity.findViewById(R.id.btn_submit_appointment);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveAppointment();
+            }
+        });
+    }
 
 
-
+    private void initStartDatePicker() {
 
         //Termin Anfang
         TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
@@ -103,6 +117,7 @@ public class AppointmentFragment extends Fragment {
             }
         });
 
+
         TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
         tvStartTime.setText(getCurrentTime());
         tvStartTime.setOnClickListener(new View.OnClickListener() {
@@ -123,8 +138,10 @@ public class AppointmentFragment extends Fragment {
                 timePickerDialog.show();
             }
         });
+    }
 
 
+    private void initEndDatePicker() {
         //Termin Ende
         TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
         tvEndDate.setText(getCurrentDate());
@@ -165,14 +182,6 @@ public class AppointmentFragment extends Fragment {
                             }
                         }, hourOfDay, minute, true);
                 timePickerDialog.show();
-            }
-        });
-
-        Button btnSave = activity.findViewById(R.id.btn_submit_appointment);
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveAppointment();
             }
         });
     }
@@ -265,9 +274,9 @@ public class AppointmentFragment extends Fragment {
         String endDate = tvEndDate.getText().toString();
         String endTime = tvEndTime.getText().toString();
 
-        //TODO in ViewModel auslagern
+
         Appointment appointment = new Appointment(formatDate(startDate, startTime), formatDate(endDate, endTime), room);
-        Firebase.addAppointmentToSchedule(uid, appointment);
+        model.saveAppointment(appointment);
 
     }
 
@@ -285,9 +294,9 @@ public class AppointmentFragment extends Fragment {
         String year = date.substring(6, 10);
 
         String hours = time.substring(0, 2);
-        String minutes = date.substring(3, 5);
+        String minutes = time.substring(3, 5);
 
-        //Long.valueOf(year+month+day+hours+minutes+"00").longValue();
+        Log.v("FORMATED DATE", Long.valueOf(year + month + day + hours + minutes + "00").longValue() + "");
 
         return Long.valueOf(year + month + day + hours + minutes + "00");
 

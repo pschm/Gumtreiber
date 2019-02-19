@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.location.LocationHandler;
@@ -48,14 +49,14 @@ public class MainActivity extends AppCompatActivity
     //Fragment Manager
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
-    private Toast backtoast;
+    private Toast backToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //Getting the locationState from the ViewModel
-        model = new MainViewModel(getApplication());
+        model = ViewModelProviders.of(this).get(MainViewModel.class);
         locationState = model.getLocationState();
 
         //Creating a new LocationHandler
@@ -134,15 +135,15 @@ public class MainActivity extends AppCompatActivity
         }
         //If the Map is Visible the next back button double tap will close the app
         else if (mapFragment != null && mapFragment.isVisible()) {
-            if (backtoast != null && backtoast.getView().getWindowToken() != null) {
+            if (backToast != null && backToast.getView().getWindowToken() != null) {
                 //Getting back to Homescreen Screen
                 Intent startMain = new Intent(Intent.ACTION_MAIN);
                 startMain.addCategory(Intent.CATEGORY_HOME);
                 startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(startMain);
             } else {
-                backtoast = Toast.makeText(this, "Doppelklicken um App zu beenden", Toast.LENGTH_SHORT);
-                backtoast.show();
+                backToast = Toast.makeText(this, "Doppelklicken um App zu beenden", Toast.LENGTH_SHORT);
+                backToast.show();
             }
         }
         //In any other case the last first fragment from the backStack will show
