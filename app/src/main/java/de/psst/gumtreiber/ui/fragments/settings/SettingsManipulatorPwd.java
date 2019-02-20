@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.LoginActivity;
 
 public class SettingsManipulatorPwd extends SettingsManipulatorFragment {
@@ -30,11 +31,11 @@ public class SettingsManipulatorPwd extends SettingsManipulatorFragment {
     }
 
     private void initLabels() {
-        txtTitle.setText("Passwort ändern");
-        txtUserInput1.setHint("Neues Passwort");
+        txtTitle.setText(getString(R.string.change_password));
+        txtUserInput1.setHint(getString(R.string.new_password));
         txtUserInput1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
-        txtUserInput2.setHint("Neues Passwort wiederholen");
+        txtUserInput2.setHint(getString(R.string.new_password_rpt));
         txtUserInput2.setVisibility(View.VISIBLE);
         txtUserInput2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
     }
@@ -46,16 +47,16 @@ public class SettingsManipulatorPwd extends SettingsManipulatorFragment {
         String pwd2 = txtUserInput2.getText().toString();
 
         if(TextUtils.isEmpty(pwd1)) {
-            txtUserInput1.setError("Pflichtfeld!");
+            txtUserInput1.setError(getString(R.string.required_field));
             valid = false;
         }
 
         if(TextUtils.isEmpty(pwd2)) {
-            txtUserInput2.setError("Pflichtfeld!");
+            txtUserInput2.setError(getString(R.string.required_field));
             valid = false;
 
         } else if(!pwd2.equals(pwd1)) {
-            txtUserInput2.setError("Keine Übereinstimmung!");
+            txtUserInput2.setError(getString(R.string.no_match));
             valid = false;
         }
 
@@ -99,7 +100,7 @@ public class SettingsManipulatorPwd extends SettingsManipulatorFragment {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     //Wenn Änderung erfolgreich, alles supi. Zurück zum vorherigem Menü
                                                     if(task.isSuccessful()) {
-                                                        Toast.makeText(activity, "Update erfolgreich!", Toast.LENGTH_SHORT).show(); //TODO neues pwd bei App-Neustart in feld
+                                                        Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show(); //TODO neues pwd bei App-Neustart in feld
                                                         activity.onBackPressed();
 
                                                     } else {

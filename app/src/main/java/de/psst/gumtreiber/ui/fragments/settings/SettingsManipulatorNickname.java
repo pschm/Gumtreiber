@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.LoginActivity;
 import de.psst.gumtreiber.ui.RegisterActivity;
 
@@ -28,8 +29,8 @@ public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
     }
 
     private void initLabels() {
-        txtTitle.setText("Nicknamen ändern");
-        txtUserInput1.setHint("Neuer Nickname");
+        txtTitle.setText(getString(R.string.change_nickname));
+        txtUserInput1.setHint(getString(R.string.new_nickname));
         txtUserInput1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
     }
 
@@ -41,7 +42,7 @@ public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
                 String newName = txtUserInput1.getText().toString();
                 //Wenn inputfeld leer, abbruch
                 if(TextUtils.isEmpty(newName)) { //TODO Nickname restriktionen anwenden!
-                    txtUserInput1.setError("Pflichtfeld!");
+                    txtUserInput1.setError(getString(R.string.required_field));
                     return false;
                 }
 
@@ -51,7 +52,7 @@ public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
                     public void onComplete(@NonNull Task<Void> task) {
                         //Wenn Änderung erfolgreich, alles supi. Zurück zum vorherigem Menü
                         if(task.isSuccessful()) {
-                            Toast.makeText(activity, "Update erfolgreich!", Toast.LENGTH_SHORT).show(); //TODO updated das auch bei anderen nutzern "sofort"
+                            Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show(); //TODO updated das auch bei anderen nutzern "sofort"
                             activity.onBackPressed();
 
                         } else {

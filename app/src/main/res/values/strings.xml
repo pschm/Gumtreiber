@@ -40,6 +40,9 @@
     <string name="nickname">Nickname</string>
     <string name="safe_credentials">Anmeldedaten merken</string>
 
+    <string name="required_field">Pflichtfeld!</string>
+    <string name="no_match">Keine Übereinstimmung!</string>
+
     <!-- Toolbar Überschriften -->
     <string name="title_greeting_1">Hallo, %1$s!</string>
     <string name="title_create_appointment">Termin erstellen</string>
@@ -47,6 +50,24 @@
     <string name="title_add_friends">Freunde hinzufügen</string>
     <string name="title_my_friends">Meine Freunde</string>
     <string name="title_settings">Einstellungen</string>
+
+    <!-- Einstellungen ändern -->
+    <string name="popup_reauth_title">Identität bestätigen</string>
+    <string name="popup_reauth_incomplete">Anmeldedaten unvollständig - Aktion abgebrochen</string>
+    <string name="popup_ok">OK</string>
+    <string name="popup_abort">Abbruch</string>
+
+    <string name="change_email">Email ändern</string>
+    <string name="change_password">Passwort ändern</string>
+    <string name="change_nickname">Nicknamen ändern</string>
+    <string name="change_course">Studiengang ändern</string>
+
+    <string name="new_email">Neue Email</string>
+    <string name="new_password">Neues Passwort</string>
+    <string name="new_password_rpt">Neues Passwort wiederholen</string>
+    <string name="new_nickname">Neuer Nickname</string>
+
+    <string name="update_successful">Update erfolgreich!</string>
 
 
 </resources>

@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.LoginActivity;
 
 public class SettingsManipulatorEmail extends SettingsManipulatorFragment {
@@ -30,8 +31,8 @@ public class SettingsManipulatorEmail extends SettingsManipulatorFragment {
     }
 
     private void initLabels() {
-        txtTitle.setText("Email ändern");
-        txtUserInput1.setHint("Neue Email");
+        txtTitle.setText(getString(R.string.change_email));
+        txtUserInput1.setHint(getString(R.string.new_email));
         txtUserInput1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
     }
 
@@ -42,7 +43,7 @@ public class SettingsManipulatorEmail extends SettingsManipulatorFragment {
             public boolean onMenuItemClick(MenuItem item) {
                 //Wenn inputfeld leer, abbruch
                 if(TextUtils.isEmpty(txtUserInput1.getText().toString())) {
-                    txtUserInput1.setError("Pflichtfeld!");
+                    txtUserInput1.setError(getString(R.string.required_field));
                     return false;
                 }
 
@@ -75,7 +76,7 @@ public class SettingsManipulatorEmail extends SettingsManipulatorFragment {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     //Wenn Änderung erfolgreich, alles supi. Zurück zum vorherigem Menü
                                                     if(task.isSuccessful()) {
-                                                        Toast.makeText(activity, "Update erfolgreich!", Toast.LENGTH_SHORT).show(); //TODO neue Email bei App-Neustart in feld
+                                                        Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show(); //TODO neue Email bei App-Neustart in feld
                                                         activity.onBackPressed();
 
                                                     } else {

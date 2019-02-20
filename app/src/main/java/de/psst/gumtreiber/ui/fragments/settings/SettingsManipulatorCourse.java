@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import de.psst.gumtreiber.R;
 
 public class SettingsManipulatorCourse extends SettingsManipulatorFragment {
 
@@ -19,7 +20,7 @@ public class SettingsManipulatorCourse extends SettingsManipulatorFragment {
     }
 
     private void initLabels() {
-        txtTitle.setText("Studiengang ändern");
+        txtTitle.setText(getString(R.string.change_course));
         txtUserInput1.setHint("TODO");
         //TODO Liste mit verfügbaren Studiengängen anzeigen
     }
@@ -37,7 +38,7 @@ public class SettingsManipulatorCourse extends SettingsManipulatorFragment {
                     //TODO Studiengang entsprechend der Auswahl ändern
 
 
-                    Toast.makeText(activity, "Update erfolgreich!", Toast.LENGTH_SHORT).show(); //TODO updated das auch bei anderen nutzern "sofort"
+                    Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show(); //TODO updated das auch bei anderen nutzern "sofort"
                     activity.onBackPressed();
                 }
 

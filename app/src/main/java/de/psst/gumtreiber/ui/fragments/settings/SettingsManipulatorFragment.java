@@ -67,7 +67,7 @@ public abstract class SettingsManipulatorFragment extends Fragment {
 
         //AltertDialog für re-login
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
-        alertDialogBuilder.setTitle("Identität bestätigen");
+        alertDialogBuilder.setTitle(getString(R.string.popup_reauth_title));
 
         // Set prompt layout to get user input
         View view = getLayoutInflater().inflate(R.layout.layout_reauth_prompt, null);
@@ -77,14 +77,14 @@ public abstract class SettingsManipulatorFragment extends Fragment {
         alertDialogBuilder.setView(view);
 
 
-        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setPositiveButton(getString(R.string.popup_ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String email = inputEmail.getText().toString();
                 String pwd = inputPwd.getText().toString();
 
                 if(TextUtils.isEmpty(email) || TextUtils.isEmpty(pwd)) {
-                    Toast.makeText(activity, "Anmeldedaten unvollständig - Aktion abgebrochen", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, getString(R.string.popup_reauth_incomplete), Toast.LENGTH_LONG).show();
                     listener.onComplete(null);
 
                 } else {
@@ -94,7 +94,7 @@ public abstract class SettingsManipulatorFragment extends Fragment {
             }
         });
 
-        alertDialogBuilder.setNegativeButton("Abbruch", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(getString(R.string.popup_abort), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
