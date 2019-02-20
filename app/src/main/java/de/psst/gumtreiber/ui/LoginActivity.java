@@ -43,14 +43,11 @@ public class LoginActivity extends AppCompatActivity {
 
         txtEmail = findViewById(R.id.txtEmail);
         txtPwd = findViewById(R.id.txtPassword);
-
         checkbox = findViewById(R.id.cbxSaveCredentials);
 
         prepareTextViews();
         auth = FirebaseAuth.getInstance();
 
-        //TODO Auslagern in separaten Screen
-        //txtName = findViewById(R.id.txtName);
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
 
@@ -62,13 +59,13 @@ public class LoginActivity extends AppCompatActivity {
                     model.setEmail(txtEmail.getText().toString());
                     model.setPassword(txtPwd.getText().toString());
                     model.setSaveState(b);
-                    Toast.makeText(LoginActivity.this, "Password und Email werden gespeichert", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.credentials_now_saved), Toast.LENGTH_SHORT).show();
 
                 } else {
                     model.removeEmail();
                     model.removePassword();
                     model.setSaveState(b);
-                    Toast.makeText(LoginActivity.this, "Passwort und Email werden nicht mehr gespeichert", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.credentials_no_longer_saved), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -93,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //TODO Schätze das gehört zum Test ?
         signOut();
     }
 
@@ -141,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
 
         String email = txtEmail.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            txtEmail.setError("Pflichtfeld!");
+            txtEmail.setError(getString(R.string.required_field));
             valid = false;
         } else {
             txtEmail.setError(null);
@@ -149,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
 
         String password = txtPwd.getText().toString();
         if (TextUtils.isEmpty(password)) {
-            txtPwd.setError("Pflichtfeld!");
+            txtPwd.setError(getString(R.string.required_field));
             valid = false;
         } else {
             txtPwd.setError(null);

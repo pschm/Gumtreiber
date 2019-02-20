@@ -53,13 +53,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void initSummaries(FirebaseUser user) {
 
-        if(user == null) findPreference("email").setSummary("INVALID");
+        if(user == null) findPreference("email").setSummary(R.string.invalid);
         else findPreference("email").setSummary(user.getEmail());
 
-        if(user == null) findPreference("nickname").setSummary("INVALID");
+        if(user == null) findPreference("nickname").setSummary(R.string.invalid);
         else findPreference("nickname").setSummary(user.getDisplayName());
 
-        if(user == null) findPreference("course").setSummary("INVALID");
+        if(user == null) findPreference("course").setSummary(R.string.invalid);
         else findPreference("course").setSummary("TODO"); //TODO
 
 

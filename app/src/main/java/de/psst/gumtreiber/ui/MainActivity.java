@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(startMain);
             } else {
-                backtoast = Toast.makeText(this, "Doppelklicken um App zu beenden", Toast.LENGTH_SHORT);
+                backtoast = Toast.makeText(this, getString(R.string.double_tap_close), Toast.LENGTH_SHORT);
                 backtoast.show();
             }
         }

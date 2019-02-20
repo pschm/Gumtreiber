@@ -183,6 +183,9 @@ public class AppointmentFragment extends Fragment {
         });
     }
 
+
+    //TODO alte Methoden, werden nicht mehr genutzt.
+
     /**
      * Getting the current date as a String
      *

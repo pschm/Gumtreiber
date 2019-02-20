@@ -2,11 +2,14 @@
     <string name="app_name">Gumtreiber</string>
     <string name="app_version">0.1</string>
 
+    <string name="title_activity_login">Gumtreiber</string>
+    <string name="double_tap_close">Doppelklicken um App zu beenden</string>
+
+    <!-- LocationHandler -->
     <string name="no_location_title">Keine Ortung möglich!</string>
     <string name="no_location_msg">Damit du dich und andere auf der Karte sehen kannst, müssen wir deinen Standort abfragen.\nBitte überprüfe deine Einstellungen, ob wir auf deinen Standort zugrifen dürfen.</string>
     <string name="settings">Einstellungen</string>
     <string name="continue_limited">Eingeschränkt Fortfahren</string>
-    <string name="title_activity_login">Gumtreiber</string>
 
     <!-- NaigationDrawer Menueunterpunkte -->
     <string name="navigation_drawer_visibility">Sichtbarkeit</string>
@@ -15,13 +18,8 @@
     <string name="navigation_drawer_friendList">Freunde</string>
     <string name="navigation_drawer_settings">Einstellungen</string>
 
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <!-- Login_context zeugs -->
-    <string name="login_context_btn_los">Los!</string>
-    <string name="login_context_edt_name">Name</string>
 
     <!-- Firebase-Auth Fehlermeldungen -->
     <string name="auth_unknown_error">Unbekannter Fehler!</string>
@@ -42,6 +40,8 @@
 
     <string name="required_field">Pflichtfeld!</string>
     <string name="no_match">Keine Übereinstimmung!</string>
+    <string name="credentials_now_saved">Password und Email werden gespeichert</string>
+    <string name="credentials_no_longer_saved">Passwort und Email werden nicht mehr gespeichert</string>
 
     <!-- Toolbar Überschriften -->
     <string name="title_greeting_1">Hallo, %1$s!</string>
@@ -68,6 +68,20 @@
     <string name="new_nickname">Neuer Nickname</string>
 
     <string name="update_successful">Update erfolgreich!</string>
+
+    <!-- Termine -->
+    <string name="popup_yes">Ja</string>
+    <string name="popup_no">Nein</string>
+    <string name="popup_rem_appo_title">Termin entfernen?</string>
+
+    <string name="appo_from_dayname">VON %1$s</string>
+    <string name="appo_from_datetime">%1$s \n %2$s Uhr</string>
+    <string name="appo_to_dayname">BIS %1$s</string>
+    <string name="appo_to_datetime">%1$s \n %2$s Uhr</string>
+
+    <!-- Freunde -->
+    <string name="popup_del_friend">Du bist dabei "%1$s" aus deiner Freundesliste zu entfernen!</string>
+    <string name="invalid">INVALID</string>
 
 
 </resources>

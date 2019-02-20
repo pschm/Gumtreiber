@@ -103,16 +103,16 @@ public class FriendListFragment extends Fragment {
 
         //AltertDialog für Abfrage ob wirklich gelösht werden soll
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
-        alertDialogBuilder.setTitle("\"" + user.name + "\" aus Freundesliste entfernen ?");
+        alertDialogBuilder.setTitle( getString(R.string.popup_del_friend,user.name) );
 
-        alertDialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setPositiveButton(getString(R.string.popup_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 model.deleteFriend(user.name);
             }
         });
 
-        alertDialogBuilder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(getString(R.string.popup_abort), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -161,7 +161,7 @@ public class FriendListFragment extends Fragment {
         private void tintStatusCircle(ImageView imageView, User user) {
             int colorResId;
             /*
-            switch (user.expirationDate) { //TODO
+            switch (user.expirationDate) { //TODO Kreis enfärben wenn Freund online/offline ist
                 case "1":
                     colorResId = R.color.colorBuildingNbr1;
                     break;

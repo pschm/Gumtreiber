@@ -47,7 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
         txtPwdRpt = findViewById(R.id.txtRegPasswordRpt);
         spnCourse = findViewById(R.id.spnRegCourse);
 
-        String[] tmp = {"Studiengang","AI-TODO","MI-TODO","TI-TODO"}; //TODO Studiengang
+        String[] tmp = {"Studiengang","AI-TODO","MI-TODO","TI-TODO"}; //TODO Studiengang-List init
         spnCourse.setAdapter(new ArrayAdapter<>(this, R.layout.auth_spinner_item, tmp));
 
         btnCompleteRegister = findViewById(R.id.btnCompleteRegister);
@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String email = txtEmail.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            txtEmail.setError("Pflichtfeld!");
+            txtEmail.setError(getString(R.string.required_field));
             valid = false;
         } else {
             txtEmail.setError(null);
@@ -81,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String password = txtPwd.getText().toString();
         if (TextUtils.isEmpty(password)) {
-            txtPwd.setError("Pflichtfeld!");
+            txtPwd.setError(getString(R.string.required_field));
             valid = false;
         } else {
             txtPwd.setError(null);
@@ -89,12 +89,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         String passwordRpt = txtPwdRpt.getText().toString();
         if (TextUtils.isEmpty(passwordRpt)) {
-            txtPwdRpt.setError("Pflichtfeld!");
+            txtPwdRpt.setError(getString(R.string.required_field));
             valid = false;
         } else {
 
             if(!passwordRpt.equals(password)) {
-                txtPwdRpt.setError("Keine Übereinstimmung!");
+                txtPwdRpt.setError(getString(R.string.no_match));
                 valid = false;
             } else {
                 txtPwdRpt.setError(null);
@@ -104,7 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String nickname = txtName.getText().toString();
         if (TextUtils.isEmpty(nickname)) {
-            txtName.setError("Pflichtfeld!");
+            txtName.setError(getString(R.string.required_field));
             valid = false;
         } else {
             txtName.setError(null);

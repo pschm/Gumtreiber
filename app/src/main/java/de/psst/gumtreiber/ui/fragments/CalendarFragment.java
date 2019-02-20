@@ -103,9 +103,9 @@ public class CalendarFragment extends Fragment {
         //TODO Über die ID's Gehen!
         //AltertDialog für Abfrage ob wirklich gelösht werden soll
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setTitle("Termin entfernen?");
+        alertDialogBuilder.setTitle(getString(R.string.popup_rem_appo_title));
 
-        alertDialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setPositiveButton(getString(R.string.popup_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 model.removeAppointment(appointment);
@@ -113,7 +113,7 @@ public class CalendarFragment extends Fragment {
             }
         });
 
-        alertDialogBuilder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(getString(R.string.popup_no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -151,11 +151,11 @@ public class CalendarFragment extends Fragment {
             holder.txtRoomName.setText(ap.getRoom().getName());
             tintRoomCircle(holder.imgRoomCircle, ap.getRoom());
 
-            holder.txtStartDay.setText("VON " + ap.getStartDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()));
-            holder.txtStartTime.setText(ap.getReadableStartDate() + "\n" + ap.getReadableStartTime() + " Uhr");
+            holder.txtStartDay.setText(getString(R.string.appo_from_dayname, ap.getStartDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())) );
+            holder.txtStartTime.setText(getString(R.string.appo_from_datetime, ap.getReadableStartDate(), ap.getReadableStartTime()) );
 
-            holder.txtEndDay.setText("BIS " + ap.getEndDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()));
-            holder.txtEndTime.setText(ap.getReadableEndDate() + "\n" + ap.getReadableEndTime() + " Uhr");
+            holder.txtEndDay.setText(getString(R.string.appo_to_dayname, ap.getEndDate().getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())) );
+            holder.txtEndTime.setText(getString(R.string.appo_to_datetime, ap.getReadableEndDate(), ap.getReadableEndTime()) );
 
 
             holder.btnDelete.setOnClickListener(new View.OnClickListener() {
