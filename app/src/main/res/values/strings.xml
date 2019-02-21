@@ -55,6 +55,7 @@
 
     <!-- Einstellungen ändern -->
     <string name="popup_reauth_title">Identität bestätigen</string>
+    <string name="popup_reauth_msg">Bitte erneut mit bestehenden, alten Anmeldeinformationen anmelden:</string>
     <string name="popup_reauth_incomplete">Anmeldedaten unvollständig - Aktion abgebrochen</string>
     <string name="popup_ok">OK</string>
     <string name="popup_abort">Abbruch</string>
