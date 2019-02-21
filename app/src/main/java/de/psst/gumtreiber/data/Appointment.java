@@ -135,5 +135,4 @@ public class Appointment {
         this.startDate = startDate;
     }
 
-
 }

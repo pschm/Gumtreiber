@@ -86,38 +86,7 @@ public class MainActivity extends AppCompatActivity
 
         //Listener for the location switch
         drawerNavSwitch = navigationView.getMenu().findItem(R.id.nav_location);
-        ((SwitchCompat) drawerNavSwitch.getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if (locationState) {
-                    //Changing Icon
-                    drawerNavSwitch.setIcon(ContextCompat.getDrawable(buttonView.getContext(), R.drawable.ic_location_off_24dp));
-                    //disable GPS
-                    locationHandler.disableUpdates();
-                    //activate TimeSchedule on Firebase
-                    Firebase.activateSchedule(uid);
-                    //changing the shared preference
-                    model.setLocationState(false);
-                    locationState = model.getLocationState();
-                    Log.v("LOCATION STATE", locationState.toString());
-
-
-                } else {
-                    //Changing Icon
-                    drawerNavSwitch.setIcon(ContextCompat.getDrawable(buttonView.getContext(), R.drawable.ic_location_on_24dp));
-                    //disable GPS
-                    locationHandler.enableUpdates();
-                    //activate TimeSchedule on Firebase
-                    Firebase.deactivateSchedule(uid);
-                    //changing the shared preference
-                    model.setLocationState(true);
-                    locationState = model.getLocationState();
-                    Log.v("LOCATION STATE", locationState.toString());
-
-                }
-            }
-        });
+        initDrawerSwitch();
 
     }
 
@@ -153,6 +122,11 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -205,4 +179,44 @@ public class MainActivity extends AppCompatActivity
         return locationHandler;
     }
 
+    public void initDrawerSwitch() {
+
+        //Setting initial icon & Switch state 
+        ((SwitchCompat) drawerNavSwitch.getActionView()).setChecked(locationState);
+        if (!locationState)
+            drawerNavSwitch.setIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_location_off_24dp));
+
+        ((SwitchCompat) drawerNavSwitch.getActionView()).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (locationState) {
+                    //Changing Icon
+                    drawerNavSwitch.setIcon(ContextCompat.getDrawable(buttonView.getContext(), R.drawable.ic_location_off_24dp));
+                    //disable GPS
+                    locationHandler.disableUpdates();
+                    //activate TimeSchedule on Firebase
+                    Firebase.activateSchedule(uid);
+                    //changing the shared preference
+                    model.setLocationState(false);
+                    locationState = model.getLocationState();
+                    Log.v("LOCATION STATE", locationState.toString());
+
+
+                } else {
+                    //Changing Icon
+                    drawerNavSwitch.setIcon(ContextCompat.getDrawable(buttonView.getContext(), R.drawable.ic_location_on_24dp));
+                    //disable GPS
+                    locationHandler.enableUpdates();
+                    //activate TimeSchedule on Firebase
+                    Firebase.deactivateSchedule(uid);
+                    //changing the shared preference
+                    model.setLocationState(true);
+                    locationState = model.getLocationState();
+                    Log.v("LOCATION STATE", locationState.toString());
+
+                }
+            }
+        });
+    }
 }
