@@ -72,6 +72,10 @@
     <string name="update_successful">Update erfolgreich!</string>
 
     <!-- Termine -->
+    <string name="room">Raum</string>
+    <string name="from">VON</string>
+    <string name="to">BIS</string>
+
     <string name="popup_yes">Ja</string>
     <string name="popup_no">Nein</string>
     <string name="popup_rem_appo_title">Termin entfernen?</string>
