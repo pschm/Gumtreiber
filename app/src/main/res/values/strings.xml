@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Gumtreiber</string>
+    <string name="version">Version</string>
     <string name="app_version">0.1</string>
 
     <string name="title_activity_login">Gumtreiber</string>
@@ -36,6 +37,7 @@
     <string name="gain_access">Zugang erlangen</string>
     <string name="open_map">Karte öffnen</string>
     <string name="nickname">Nickname</string>
+    <string name="course">Studiengang</string>
     <string name="safe_credentials">Anmeldedaten merken</string>
 
     <string name="required_field">Pflichtfeld!</string>
