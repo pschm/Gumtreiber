@@ -1,7 +1,6 @@
 package de.psst.gumtreiber.ui.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.text.SimpleDateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -45,8 +43,10 @@ public class AppointmentFragment extends Fragment {
     private CalendarViewModel model;
     private Spinner spinner;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("E, dd. MMM yyyy");
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    @SuppressLint("SimpleDateFormat")
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("E, dd. MMM yyyy");
+    @SuppressLint("SimpleDateFormat")
+    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
 
     @Nullable
     @Override
@@ -122,7 +122,7 @@ public class AppointmentFragment extends Fragment {
 
         //Termin Anfang
         TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
-        tvStartDate.setText(dateFormat.format(c.getTime()));
+        tvStartDate.setText(DATE_FORMAT.format(c.getTime()));
         tvStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,7 +137,7 @@ public class AppointmentFragment extends Fragment {
                                 TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
 
                                 Calendar calendar = new GregorianCalendar(year, month, day);
-                                tvStartDate.setText(dateFormat.format(calendar.getTime()));
+                                tvStartDate.setText(DATE_FORMAT.format(calendar.getTime()));
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -157,7 +157,7 @@ public class AppointmentFragment extends Fragment {
                                 TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
 
                                 Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
-                                tvStartTime.setText(timeFormat.format(calendar.getTime()));
+                                tvStartTime.setText(TIME_FORMAT.format(calendar.getTime()));
                             }
                         }, 12, 00, true);
                 timePickerDialog.show();
@@ -171,7 +171,7 @@ public class AppointmentFragment extends Fragment {
     private void initEndDatePickers() {
         //Termin Ende
         TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
-        tvEndDate.setText(dateFormat.format(c.getTime()));
+        tvEndDate.setText(DATE_FORMAT.format(c.getTime()));
         tvEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,7 +186,7 @@ public class AppointmentFragment extends Fragment {
                                 TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
 
                                 Calendar calendar = new GregorianCalendar(year, month, day);
-                                tvEndDate.setText(dateFormat.format(calendar.getTime()));
+                                tvEndDate.setText(DATE_FORMAT.format(calendar.getTime()));
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -205,7 +205,7 @@ public class AppointmentFragment extends Fragment {
                                 TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
 
                                 Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
-                                tvEndTime.setText(timeFormat.format(calendar.getTime()));
+                                tvEndTime.setText(TIME_FORMAT.format(calendar.getTime()));
                             }
                         }, 13, 00, true);
                 timePickerDialog.show();
@@ -213,25 +213,6 @@ public class AppointmentFragment extends Fragment {
         });
     }
 
-
-    //TODO alte Methoden, werden nicht mehr genutzt.
-/*
-    /**
-     * Getting the current date as a String
-     *
-     * @return dd.mm.yyyy String of the Current Date
-     */
-/*    private String getCurrentDate() {
-
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-
-        return getReadableDate(day, month, year);
-
-    }
-
-*/
     //Appointment building and saving
 
     /**
@@ -291,37 +272,5 @@ public class AppointmentFragment extends Fragment {
 
         return Long.valueOf(year + month + day + hours + minutes + "00");
     }
-/*
-    /**
-     * Formats a date given as integers (day,month,year) to a String with the dd.mm.yyyy format
-     * @param day day
-     * @param month month
-     * @param year year a
-     * @return Formatted date String
-     */
-/*    private String getReadableDate(int day, int month, int year) {
-
-        Calendar pickedDate = Calendar.getInstance();
-        pickedDate.set(year, month, day);
-
-        return READABLE_DATE_FORMAT.format(pickedDate.getTime());
-    }
-
-    /**
-     * Formats a time given as integers (hour,minutes) to a String with the hh:mm format
-     * @param hour hour
-     * @param minute minute
-     * @return Formatted time String
-     */
-/*    private String getReadableTime(int hour, int minute) {
-
-        Calendar pickedDate = Calendar.getInstance();
-        //Leaving the date values as they are - we are only interested in the hours and minutes
-        pickedDate.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), hour, minute);
-
-        return READABLE_TIME_FORMAT.format(pickedDate.getTime());
-    }
-
-*/
 
 }
