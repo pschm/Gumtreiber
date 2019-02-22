@@ -86,7 +86,7 @@ public class AppointmentFragment extends Fragment {
 
                 Appointment appointment = buildAppointment();
 
-                if (appointment.getFormattedStartDate() > appointment.getFormattedEndDate()) {
+                if (appointment.getFormatedStartDate() > appointment.getFormatedEndDate()) {
                     Toast checkDate = Toast.makeText(activity, "Zeitreisen sind unmöglich", Toast.LENGTH_SHORT);
                     checkDate.show();
                 } else {

@@ -119,8 +119,8 @@ public class Firebase {
         //int start = appointment.getFormatedStartTime();
         //int end = appointment.getFormatedEndTime();
 
-        long start = appointment.getFormattedStartDate();
-        long end = appointment.getFormattedEndDate();
+        long start = appointment.getFormatedStartDate();
+        long end = appointment.getFormatedEndDate();
 
         database.child("schedules").child(uid).child("" + start).child("startDate").setValue(start);
         database.child("schedules").child(uid).child("" + start).child("endDate").setValue(end);
@@ -134,7 +134,7 @@ public class Firebase {
      * @param appointment
      */
     public static void deleteAppointment(String uid, Appointment appointment) {
-        long start = appointment.getFormattedStartDate();
+        long start = appointment.getFormatedStartDate();
 
         database.child("schedules").child(uid).child("" + start).removeValue();
     }
@@ -365,8 +365,8 @@ public class Firebase {
         Appointment currentAppointment = null;
         long currentDate = generateCurrentDate();
         for (Appointment each : appointments) {
-            if (each.getFormattedStartDate() <= currentDate &&
-                    each.getFormattedEndDate() >= currentDate) {
+            if (each.getFormatedStartDate() <= currentDate &&
+                    each.getFormatedEndDate() >= currentDate) {
                 currentAppointment = each;
                 break;
             }
@@ -500,8 +500,8 @@ public class Firebase {
                 Appointment currentAppointment = null;
                 long currentDate = generateCurrentDate();
                 for (Appointment each : appointments) {
-                    if (each.getFormattedStartDate() <= currentDate &&
-                            each.getFormattedEndDate() >= currentDate) {
+                    if (each.getFormatedStartDate() <= currentDate &&
+                            each.getFormatedEndDate() >= currentDate) {
                         currentAppointment = each;
                         break;
                     }
