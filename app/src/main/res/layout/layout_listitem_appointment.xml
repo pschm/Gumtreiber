@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/AppTheme"
+    android:padding="0dp">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/circle_image2"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:srcCompat="@drawable/circle"
+            android:tint="#868686"/>
+
+        <ImageView
+            android:id="@+id/circle_image"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_width="74dp"
+            android:layout_height="74dp"
+            app:srcCompat="@drawable/circle"
+            android:tint="@color/colorBuildingNbr3"/>
+
+        <TextView
+            android:id="@+id/txtR"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+
+            android:text="R"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:layout_marginTop="6dp"/>
+
+        <TextView
+            android:id="@+id/txtRoomNbr"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+
+            android:text="3.100"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:layout_below="@+id/txtR"
+            android:layout_marginTop="-9dp"/>
+
+        <TextView
+            android:id="@+id/txtRoomName"
+            android:layout_width="255dp"
+            android:layout_height="wrap_content"
+
+            android:text="Mensa Essensausgabe"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:textStyle="italic|bold"
+            android:textColor="@color/colorPrimary"
+
+            android:layout_toEndOf="@+id/circle_image"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="-2dp"/>
+
+
+        <TextView
+            android:id="@+id/txtStartName"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/txtRoomName"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/circle_image"
+            android:text="VON Donnerstag"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/txtEndName"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/txtRoomName"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/txtStartName"
+            android:text="BIS Donnerstag"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/txtStartTime"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+
+            android:text="15.02.2019
+16:45 Uhr"
+            android:textSize="15sp"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:layout_toEndOf="@+id/circle_image"
+            android:layout_marginStart="8dp"
+            android:layout_below="@+id/txtStartName"
+            android:layout_marginTop="-2dp"/>
+
+        <TextView
+            android:id="@+id/txtEndTime"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+
+            android:text="16.02.2019
+13:13 Uhr"
+            android:textSize="15sp"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:layout_toEndOf="@+id/txtStartTime"
+            android:layout_marginStart="5dp"
+            android:layout_below="@+id/txtEndName"
+            android:layout_marginTop="-2dp"/>
+
+
+        <Button
+            android:id="@+id/btnDeleteAppointment"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="3dp"
+            android:background="#7A3131"
+            android:text="X"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorGrayFont"
+            android:textAlignment="center" />
+
+
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#868686"
+        android:layout_marginTop="112dp"/>
+
+
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

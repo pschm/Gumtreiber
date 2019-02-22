@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ea5800</color>
+    <color name="colorPrimary">#EA5800</color>
     <color name="colorPrimaryDark">#c81e0f</color>
-    <color name="colorAccent">#b43092</color>
+    <color name="colorAccent">#B43092</color>
+    <color name="colorGrayFont">#C8C8C8</color>
+    <color name="colorAuthFont">#4D3D2F</color>
+    <color name="colorLightBrown">#D2C8A3</color>
+
+    <color name="colorBuildingNbr1">#806820</color>
+    <color name="colorBuildingNbr2">#1A6126</color>
+    <color name="colorBuildingNbr3">#1C555E</color>
+    <color name="colorBuildingNbr4">#1B3572</color>
+    <color name="colorBuildingNbr5">#412979</color>
 
     <!-- MovableMarker -->
     <color name="colorStepsDefault">#ba6748</color>

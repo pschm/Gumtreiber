@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Account">
+        <Preference
+            android:key="email"
+            android:title="@string/e_mail"
+            android:summary="geschaeftsfuehrung@mannibusse.de" />
+        <Preference
+            android:key="password"
+            android:title="@string/password"
+            android:summary="******" />
+        <Preference
+            android:key="nickname"
+            android:title="@string/nickname"
+            android:summary="Manni" />
+        <Preference
+            android:key="course"
+            android:title="@string/course"
+            android:summary="Informatik" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Kartenfilter - TODO (ggf. auch anders als so)">
+        <CheckBoxPreference
+            android:key="check_box_preference_1"
+            android:defaultValue="true"
+            android:title="Informatiker/innen" />
+        <CheckBoxPreference
+            android:key="check_box_preference_2"
+            android:defaultValue="false"
+            android:title="Maschienenbauer/innen" />
+        <CheckBoxPreference
+            android:key="check_box_preference_3"
+            android:defaultValue="false"
+            android:title="Andere" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Info">
+        <Preference
+            android:key="version"
+            android:title="@string/version"
+            android:summary="Version: 0.1" />
+
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

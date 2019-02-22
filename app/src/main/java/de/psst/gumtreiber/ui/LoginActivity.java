@@ -1,5 +1,6 @@
 package de.psst.gumtreiber.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,41 +18,37 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
-import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.viewmodels.LoginViewModel;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
+
     private LoginViewModel model;
     private FirebaseAuth auth;
-    private EditText txtName, txtEmail, txtPwd;
+    private EditText txtEmail, txtPwd;
     private CheckBox checkbox;
     private Button btnLogin, btnRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_authentication);
+        setContentView(R.layout.activity_auth_login);
 
         model = ViewModelProviders.of(this).get(LoginViewModel.class);
 
         txtEmail = findViewById(R.id.txtEmail);
         txtPwd = findViewById(R.id.txtPassword);
-
-        checkbox = findViewById(R.id.cb_login_data_save);
+        checkbox = findViewById(R.id.cbxSaveCredentials);
 
         prepareTextViews();
-
         auth = FirebaseAuth.getInstance();
 
-        //TODO Auslagern in separaten Screen
-        txtName = findViewById(R.id.txtName);
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
 
@@ -63,13 +60,13 @@ public class LoginActivity extends AppCompatActivity {
                     model.setEmail(txtEmail.getText().toString());
                     model.setPassword(txtPwd.getText().toString());
                     model.setSaveState(b);
-                    Toast.makeText(LoginActivity.this, "Password und Email werden gespeichert", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.credentials_now_saved), Toast.LENGTH_SHORT).show();
 
                 } else {
                     model.removeEmail();
                     model.removePassword();
                     model.setSaveState(b);
-                    Toast.makeText(LoginActivity.this, "Passwort und Email werden nicht mehr gespeichert", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.credentials_no_longer_saved), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -77,18 +74,23 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createAccount(txtName.getText().toString(), txtEmail.getText().toString(), txtPwd.getText().toString());
+                Intent intent = new Intent(btnRegister.getContext(), RegisterActivity.class);
+                startActivity(intent);
             }
         });
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!inputsValid()) return;
+
+                btnLogin.setClickable(false); //Disable buttons to avoid double clicking
+                btnRegister.setClickable(false);
+
                 signIn(txtEmail.getText().toString(), txtPwd.getText().toString());
             }
         });
 
-        //TODO Schätze das gehört zum Test ?
         signOut();
     }
 
@@ -127,16 +129,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Checks if the required input fields for signing in or registering are filled.
+     * Checks if the required input fields for signing in are filled.
      *
      * @return true if everything is filled in.
      */
-    private boolean validateForm(boolean checkNameField) {
+    private boolean inputsValid() {
         boolean valid = true;
 
         String email = txtEmail.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            txtEmail.setError("Pflichtfeld!");
+            txtEmail.setError(getString(R.string.required_field));
             valid = false;
         } else {
             txtEmail.setError(null);
@@ -144,78 +146,14 @@ public class LoginActivity extends AppCompatActivity {
 
         String password = txtPwd.getText().toString();
         if (TextUtils.isEmpty(password)) {
-            txtPwd.setError("Pflichtfeld!");
+            txtPwd.setError(getString(R.string.required_field));
             valid = false;
         } else {
             txtPwd.setError(null);
         }
-
-
-        String displayName = txtName.getText().toString();
-        if (checkNameField && TextUtils.isEmpty(displayName)) {
-            txtName.setError("Pflichtfeld!");
-            valid = false;
-        } else {
-            txtName.setError(null);
-        }
-
-
         return valid;
     }
 
-    /**
-     * Create a new account by passing the new user's email address and password.
-     * <br>
-     * If the new account was created, the user is also signed in.
-     *
-     * @param name     Users display name.
-     * @param email    Users email.
-     * @param password Users password.
-     */
-    private void createAccount(final String name, String email, String password) {
-        Log.d("Auth", "createAccount:" + email);
-        if (!validateForm(true)) {
-            return;
-        }
-        btnLogin.setClickable(false); //Disable buttons to avoid double clicking
-        btnRegister.setClickable(false);
-
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Auth", "createUserWithEmail:success");
-                            final FirebaseUser user = auth.getCurrentUser();
-
-                            //After successfully created the user, update its display name
-                            updateDisplayName(user, name).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        //When name update request is done, create the user node in the database
-                                        Firebase.createUser(user.getUid(), user.getDisplayName());
-                                        updateUI(user);
-                                    } else {
-                                        task.getException().printStackTrace();
-                                    }
-                                }
-                            });
-
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("Auth", "createUserWithEmail:failure", task.getException());
-
-                            String msg = getFirebaseAuthErrorMsg((FirebaseAuthException)task.getException());
-                            Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-
-                    }
-                });
-    }
 
     /**
      * Sign in a user by passing the new user's email address and password.
@@ -223,12 +161,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param password Users password.
      */
     private void signIn(String email, String password) {
-        Log.d("Auth", "signIn:" + email);
-        if (!validateForm(false)) {
-            return;
-        }
-        btnLogin.setClickable(false); //Disable buttons to avoid double clicking
-        btnRegister.setClickable(false);
+        Log.d(TAG, "signIn: " + email);
 
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -236,14 +169,14 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("Auth", "signInWithEmail:success");
+                            Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = auth.getCurrentUser();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("Auth", "signInWithEmail:failure", task.getException());
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
 
-                            String msg = getFirebaseAuthErrorMsg((FirebaseAuthException)task.getException());
+                            String msg = getFirebaseAuthErrorMsg(btnLogin.getContext(), (FirebaseAuthException)task.getException());
                             Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
@@ -253,30 +186,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private Task<Void> updateDisplayName(FirebaseUser user, String displayName) {
-        UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
-                .setDisplayName(displayName)
-                .build();
 
-        return user.updateProfile(profileUpdate);
-    }
-
-
-    private String getFirebaseAuthErrorMsg(FirebaseAuthException ae) {
-        if(ae == null) return getString(R.string.auth_unknown_error);
+    public static String getFirebaseAuthErrorMsg(Context context, FirebaseAuthException ae) {
+        if(ae == null) return context.getString(R.string.auth_unknown_error);
 
         //Codes: https://stackoverflow.com/questions/37859582/how-to-catch-a-firebase-auth-specific-exceptions
         switch(ae.getErrorCode()) {
-            case "ERROR_EMAIL_ALREADY_IN_USE": return getString(R.string.auth_email_taken);
-            case "ERROR_INVALID_EMAIL": return getString(R.string.auth_invalid_email);
-            case "ERROR_WRONG_PASSWORD": return getString(R.string.auth_wrong_pwd);
-            case "ERROR_USER_NOT_FOUND": return getString(R.string.auth_user_not_found);
-            case "ERROR_WEAK_PASSWORD": return getString(R.string.auth_weak_pwd);
+            case "ERROR_EMAIL_ALREADY_IN_USE": return context.getString(R.string.auth_email_taken);
+            case "ERROR_INVALID_EMAIL": return context.getString(R.string.auth_invalid_email);
+            case "ERROR_WRONG_PASSWORD": return context.getString(R.string.auth_wrong_pwd);
+            case "ERROR_USER_NOT_FOUND": return context.getString(R.string.auth_user_not_found);
+            case "ERROR_WEAK_PASSWORD": return context.getString(R.string.auth_weak_pwd);
 
             default:
                 String msg = ae.getErrorCode() + ": '" + ae.getMessage() + "'";
                 Log.e("getAuthErrMsg", "Unhandled case: " + msg);
-                return getString(R.string.auth_unhandled_error);
+                return context.getString(R.string.auth_unhandled_error);
         }
     }
 

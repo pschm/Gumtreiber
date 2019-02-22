@@ -43,6 +43,20 @@ public enum Room {
         this.altitude = altitude;
     }
 
+
+    public static String[] getAllRooms() {
+        Room[] rooms = Room.values();
+
+        String[] allRooms = new String[rooms.length];
+        for(int i = 0; i < allRooms.length; i++) {
+            allRooms[i] = "R" + rooms[i].getNumberDot() + " (" + rooms[i].getName() + ")";
+        }
+
+        return allRooms;
+    }
+
+
+
     /**
      * @return Number of this room without the leading R.
      */

@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -31,8 +32,7 @@ import de.psst.gumtreiber.ui.fragments.MapFragment;
 import de.psst.gumtreiber.ui.fragments.SettingsFragment;
 import de.psst.gumtreiber.viewmodels.MainViewModel;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //Fragment Tags
     String MAP_FRAGMENT_TAG = "MAP_FRAGMENT";
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     private MainViewModel model;
     private Boolean locationState;
     private MenuItem drawerNavSwitch;
+    private MenuItem toolbarDoneBTN;
     private LocationHandler locationHandler;
 
     //Firebase UserID
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity
         //Init Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        resetActionBarTitle();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -84,10 +87,29 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
+        //Setting Uid
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         //Listener for the location switch
         drawerNavSwitch = navigationView.getMenu().findItem(R.id.nav_location);
         initDrawerSwitch();
 
+    }
+
+    public void setActionBarTitle(String s) {
+        if(getSupportActionBar() != null) getSupportActionBar().setTitle(s);
+    }
+
+    public void resetActionBarTitle() {
+        if(getSupportActionBar() == null) return;
+
+        FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
+        if(u != null) getSupportActionBar().setTitle(getString(R.string.title_greeting_1, u.getDisplayName()));
+        else getSupportActionBar().setTitle("");
+    }
+
+    public MenuItem getToolbarDoneBTN() {
+        return toolbarDoneBTN;
     }
 
     @Override
@@ -111,6 +133,8 @@ public class MainActivity extends AppCompatActivity
             } else {
                 backToast = Toast.makeText(this, "Doppelklicken um App zu beenden", Toast.LENGTH_SHORT);
                 backToast.show();
+                backtoast = Toast.makeText(this, getString(R.string.double_tap_close), Toast.LENGTH_SHORT);
+                backtoast.show();
             }
         }
         //In any other case the last first fragment from the backStack will show
@@ -121,7 +145,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        toolbarDoneBTN = menu.findItem(R.id.btn_action_done);
+        toolbarDoneBTN.setVisible(false);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -181,7 +207,7 @@ public class MainActivity extends AppCompatActivity
 
     public void initDrawerSwitch() {
 
-        //Setting initial icon & Switch state 
+        //Setting initial icon & Switch state
         ((SwitchCompat) drawerNavSwitch.getActionView()).setChecked(locationState);
         if (!locationState)
             drawerNavSwitch.setIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_location_off_24dp));

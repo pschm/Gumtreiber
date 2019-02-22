@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="vertical"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp"
+    android:theme="@style/AppTheme">
+
+
+    <ImageView
+        android:id="@+id/imgOutlineCircle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:tint="#868686"
+        app:srcCompat="@drawable/circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgStatusCircle"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:tint="@color/colorBuildingNbr2"
+        app:srcCompat="@drawable/circle"
+        app:layout_constraintBottom_toBottomOf="@+id/imgOutlineCircle"
+        app:layout_constraintEnd_toEndOf="@+id/imgOutlineCircle"
+        app:layout_constraintStart_toStartOf="@+id/imgOutlineCircle"
+        app:layout_constraintTop_toTopOf="@+id/imgOutlineCircle"/>
+
+
+    <TextView
+        android:id="@+id/txtFriendName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manni"
+        android:textSize="22sp"
+        android:textColor="@color/colorGrayFont"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imgStatusCircle"
+        android:layout_marginStart="15dp"/>
+
+
+    <Button
+        android:id="@+id/btnRemoveFriend"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+
+        android:background="#7A3131"
+        android:text="X"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorGrayFont"
+        android:textAlignment="center"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">Gumtreiber</string>
+    <string name="version">Version</string>
+    <string name="app_version">0.1</string>
+
+    <string name="title_activity_login">Gumtreiber</string>
+    <string name="double_tap_close">Doppelklicken um App zu beenden</string>
+
+    <!-- LocationHandler -->
     <string name="no_location_title">Keine Ortung möglich!</string>
     <string name="no_location_msg">Damit du dich und andere auf der Karte sehen kannst, müssen wir deinen Standort abfragen.\nBitte überprüfe deine Einstellungen, ob wir auf deinen Standort zugrifen dürfen.</string>
     <string name="settings">Einstellungen</string>
     <string name="continue_limited">Eingeschränkt Fortfahren</string>
-    <string name="title_activity_login">Gumtreiber</string>
 
     <!-- NaigationDrawer Menueunterpunkte -->
     <string name="navigation_drawer_visibility">Sichtbarkeit</string>
@@ -13,13 +19,8 @@
     <string name="navigation_drawer_friendList">Freunde</string>
     <string name="navigation_drawer_settings">Einstellungen</string>
 
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <!-- Login_context zeugs -->
-    <string name="login_context_btn_los">Los!</string>
-    <string name="login_context_edt_name">Name</string>
 
     <!-- Firebase-Auth Fehlermeldungen -->
     <string name="auth_unknown_error">Unbekannter Fehler!</string>
@@ -29,6 +30,65 @@
     <string name="auth_user_not_found">Account existiert nicht!</string>
     <string name="auth_weak_pwd">Zu schwaches Passwort!</string>
     <string name="auth_unhandled_error">Autentifizierung fehlgeschlagen!</string>
+
+    <!-- Login und Registrierung -->
+    <string name="e_mail">E-Mail</string>
+    <string name="password">Passwort</string>
+    <string name="gain_access">Zugang erlangen</string>
+    <string name="open_map">Karte öffnen</string>
+    <string name="nickname">Nickname</string>
+    <string name="course">Studiengang</string>
+    <string name="safe_credentials">Anmeldedaten merken</string>
+
+    <string name="required_field">Pflichtfeld!</string>
+    <string name="no_match">Keine Übereinstimmung!</string>
+    <string name="credentials_now_saved">Password und Email werden gespeichert</string>
+    <string name="credentials_no_longer_saved">Passwort und Email werden nicht mehr gespeichert</string>
+
+    <!-- Toolbar Überschriften -->
+    <string name="title_greeting_1">Hallo, %1$s!</string>
+    <string name="title_create_appointment">Termin erstellen</string>
+    <string name="title_appointment_overview">Termin Übersicht</string>
+    <string name="title_add_friends">Freunde hinzufügen</string>
+    <string name="title_my_friends">Meine Freunde</string>
+    <string name="title_settings">Einstellungen</string>
+
+    <!-- Einstellungen ändern -->
+    <string name="popup_reauth_title">Identität bestätigen</string>
+    <string name="popup_reauth_msg">Bitte erneut mit bestehenden, alten Anmeldeinformationen anmelden:</string>
+    <string name="popup_reauth_incomplete">Anmeldedaten unvollständig - Aktion abgebrochen</string>
+    <string name="popup_ok">OK</string>
+    <string name="popup_abort">Abbruch</string>
+
+    <string name="change_email">Email ändern</string>
+    <string name="change_password">Passwort ändern</string>
+    <string name="change_nickname">Nicknamen ändern</string>
+    <string name="change_course">Studiengang ändern</string>
+
+    <string name="new_email">Neue Email</string>
+    <string name="new_password">Neues Passwort</string>
+    <string name="new_password_rpt">Neues Passwort wiederholen</string>
+    <string name="new_nickname">Neuer Nickname</string>
+
+    <string name="update_successful">Update erfolgreich!</string>
+
+    <!-- Termine -->
+    <string name="room">Raum</string>
+    <string name="from">VON</string>
+    <string name="to">BIS</string>
+
+    <string name="popup_yes">Ja</string>
+    <string name="popup_no">Nein</string>
+    <string name="popup_rem_appo_title">Termin entfernen?</string>
+
+    <string name="appo_from_dayname">VON %1$s</string>
+    <string name="appo_from_datetime">%1$s \n %2$s Uhr</string>
+    <string name="appo_to_dayname">BIS %1$s</string>
+    <string name="appo_to_datetime">%1$s \n %2$s Uhr</string>
+
+    <!-- Freunde -->
+    <string name="popup_del_friend">Du bist dabei "%1$s" aus deiner Freundesliste zu entfernen!</string>
+    <string name="invalid">INVALID</string>
 
 
 </resources>
