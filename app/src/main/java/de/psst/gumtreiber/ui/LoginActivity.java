@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -173,11 +174,23 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = auth.getCurrentUser();
                             updateUI(user);
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Exception taskException = task.getException();
 
-                            String msg = getFirebaseAuthErrorMsg(btnLogin.getContext(), (FirebaseAuthException)task.getException());
-                            Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", taskException);
+
+                            String msg = getString(R.string.auth_unknown_error);
+                            if(taskException instanceof FirebaseAuthException) {
+                                msg = getFirebaseAuthErrorMsg(btnLogin.getContext(), (FirebaseAuthException) taskException);
+
+                            } else if(taskException instanceof FirebaseNetworkException) {
+                                msg = getString(R.string.auth_no_internet);
+
+                            } else {
+                                taskException.printStackTrace();
+                            }
+
+                            Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG).show();
                             updateUI(null);
                         }
 

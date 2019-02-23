@@ -31,6 +31,8 @@
     <string name="auth_weak_pwd">Zu schwaches Passwort!</string>
     <string name="auth_unhandled_error">Autentifizierung fehlgeschlagen!</string>
 
+    <string name="auth_no_internet">Netzwerkfehler! Bitte überprüfe deine Internetverbindung!</string>
+
     <!-- Login und Registrierung -->
     <string name="e_mail">E-Mail</string>
     <string name="password">Passwort</string>
