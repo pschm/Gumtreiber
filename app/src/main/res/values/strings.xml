@@ -44,6 +44,8 @@
 
     <string name="required_field">Pflichtfeld!</string>
     <string name="no_match">Keine Übereinstimmung!</string>
+    <string name="no_course_selected">Kein Studiengang ausgewählt!</string>
+
     <string name="credentials_now_saved">Password und Email werden gespeichert</string>
     <string name="credentials_no_longer_saved">Passwort und Email werden nicht mehr gespeichert</string>
 

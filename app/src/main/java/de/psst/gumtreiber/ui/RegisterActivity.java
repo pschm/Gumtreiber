@@ -20,10 +20,14 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.data.Course;
 import de.psst.gumtreiber.data.Firebase;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -46,10 +50,14 @@ public class RegisterActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtRegEmail);
         txtPwd = findViewById(R.id.txtRegPassword);
         txtPwdRpt = findViewById(R.id.txtRegPasswordRpt);
+
         spnCourse = findViewById(R.id.spnRegCourse);
 
-        String[] tmp = {"Studiengang","AI-TODO","MI-TODO","TI-TODO"}; //TODO Studiengang-List init
-        spnCourse.setAdapter(new ArrayAdapter<>(this, R.layout.auth_spinner_item, tmp));
+        ArrayList<String> spnCourseList = new ArrayList<>();
+        spnCourseList.add(getString(R.string.course));
+        spnCourseList.add("");
+        spnCourseList.addAll( Arrays.asList(Course.getAllCourses()) );
+        spnCourse.setAdapter(new ArrayAdapter<>(this, R.layout.auth_spinner_item, spnCourseList )); //TODO ggf an neuer Enum anpassen
 
         btnCompleteRegister = findViewById(R.id.btnCompleteRegister);
         btnCompleteRegister.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if(!inputsValid()) return;
                 btnCompleteRegister.setClickable(false); //Disable buttons to avoid double clicking
 
-                createAccount(txtName.getText().toString(), txtEmail.getText().toString(), txtPwd.getText().toString());
+                createAccount(txtName.getText().toString(), txtEmail.getText().toString(), txtPwd.getText().toString(), (Course) spnCourse.getSelectedItem());
             }
         });
 
@@ -111,6 +119,12 @@ public class RegisterActivity extends AppCompatActivity {
             txtName.setError(null);
         }
 
+
+        if(spnCourse.getSelectedItemPosition() < 2) {
+            Toast.makeText(this, getString(R.string.no_course_selected), Toast.LENGTH_SHORT).show();
+            valid = false;
+        }
+
         return valid;
     }
 
@@ -124,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
      * @param email    Users email.
      * @param password Users password.
      */
-    private void createAccount(final String name, String email, String password) { //TODO Course
+    private void createAccount(final String name, String email, String password, final Course course) {
         Log.d(TAG, "createAccount: " + email);
 
         auth.createUserWithEmailAndPassword(email, password)
@@ -143,6 +157,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         //When name update request is done, create the user node in the database
                                         Firebase.createUser(user.getUid(), user.getDisplayName());
+                                        Firebase.setCourse(user.getUid(), course);
                                         updateUI(user);
                                     } else {
                                         task.getException().printStackTrace();
