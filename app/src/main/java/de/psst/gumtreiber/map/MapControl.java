@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
+import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.data.Vector2;
 
 public class MapControl {
@@ -25,6 +26,7 @@ public class MapControl {
     private Activity activity;
     private PrisonControl prisonControl;
     private ArrayList<User> users = new ArrayList<>();
+    private UserFilter filter = new UserFilter();
 
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.map = map;
@@ -43,14 +45,25 @@ public class MapControl {
         return map;
     }
 
-    public void updateUsers(ArrayList<User> users) {
-        this.users = users;
+    /**
+     * @return the UserFilter used to filter all users before shown
+     */
+    public UserFilter getFilter() {
+        return filter;
+    }
 
+    /**
+     * Update the user list and show the new filtered users on the map
+     * @param users new user list
+     */
+    public void updateUsers(ArrayList<User> users) {
+        // filter users according to the selected filters
+        this.users = filter.filterUsers(users);
 
         // filter users not on the map
-        this.users = prisonControl.updateInmates(users);
+        this.users = prisonControl.updateInmates(this.users);
 
-        // merge close users
+        // merge close users in Groups
         buildUserGroups(BOX_SIZE);
 
         // show users on the map
