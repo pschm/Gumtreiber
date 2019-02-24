@@ -39,6 +39,7 @@ public class UserFilter {
      * @return true, if the course flag is set
      */
     private boolean isFiltered(Course course) {
+        if (course == null) return true; // TODO delete later
         switch (course) {
             case AI: if (AI) return true;
             case MI: if (MI) return true;
