@@ -164,16 +164,16 @@ public class MapControl {
      */
     public Vector2 gpsToMap(Coordinate pos) {
         // limit gps to the relevant ares
-        pos.latitude = (pos.latitude - MIN_LAT) * 1000000; // value between 0-4917
-        pos.longitude = (pos.longitude - MIN_LONG) * 1000000; // value between 0-6596
+        pos.setLatitude((pos.getLatitude() - MIN_LAT) * 1000000); // value between 0-4917
+        pos.setLongitude((pos.getLongitude() - MIN_LONG) * 1000000); // value between 0-6596
 
         // invert y-Axis (other coordinate system)
-        pos.latitude = DELTA_LAT - pos.latitude;
+        pos.setLatitude(DELTA_LAT - pos.getLatitude());
 
         // calc x,y values according to screen size
         Vector2 mapPos = new Vector2();
-        mapPos.x = (float) (pos.longitude * (map.getWidth() / DELTA_LONG));
-        mapPos.y = (float) (pos.latitude * (map.getHeight() / DELTA_LAT));
+        mapPos.x = (float) (pos.getLongitude() * (map.getWidth() / DELTA_LONG));
+        mapPos.y = (float) (pos.getLatitude() * (map.getHeight() / DELTA_LAT));
 
         return mapPos;
     }

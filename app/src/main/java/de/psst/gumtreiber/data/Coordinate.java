@@ -1,8 +1,8 @@
 package de.psst.gumtreiber.data;
 
 public class Coordinate {
-    public double latitude;
-    public double longitude;
+    private double latitude;
+    private double longitude;
 
     public Coordinate() {
         this.latitude  = 0;
