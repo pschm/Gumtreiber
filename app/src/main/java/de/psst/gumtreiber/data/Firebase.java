@@ -2,6 +2,7 @@ package de.psst.gumtreiber.data;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -563,11 +564,12 @@ public class Firebase {
      * @return
      */
     public static ArrayList<String> getFriendlist(String uid, String authToken){
-        String jsonString = getJSON(firebaseURL + "/friendlists/" + uid + ".json"  + "?auth=" + authToken);
+
         ArrayList<String> friendlist = new ArrayList<String>();
 
 
         try {
+            String jsonString = getJSON(firebaseURL + "/friendlists/" + uid + ".json"  + "?auth=" + authToken);
             JSONObject reader = new JSONObject(jsonString);
             JSONArray allUIDs = reader.names();
 
@@ -606,7 +608,7 @@ public class Firebase {
                     conn.setRequestProperty("Accept", "application/json");
 
                     if (conn.getResponseCode() != 200) {
-                        throw new RuntimeException("Failed 'getUserJSON': HTTP error code: " + conn.getResponseCode());
+                        throw new RuntimeException("Failed 'getJSON': HTTP error code: " + conn.getResponseCode());
                     }
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
