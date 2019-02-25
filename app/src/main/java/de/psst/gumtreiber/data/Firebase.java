@@ -578,6 +578,8 @@ public class Firebase {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
 
         return friendlist;
