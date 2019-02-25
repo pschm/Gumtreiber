@@ -4,33 +4,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import de.psst.gumtreiber.map.MovableMarker;
+public class User extends AbstractUser {
 
-public class User {
-
-    public String uid;
-    public String name;
-
-    public double latitude;
-    public double longitude;
-    public double altitude;
-
-    private Course course;
-
-    //After this date the location data becomes invalid
-    public Calendar expirationDate;
-    DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-
-    //true, if the user uses a Schedule
-    public boolean usingSchedule;
-
-    //marker to show the position on the map
-    private MovableMarker marker;
+    private final static DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    private boolean usingSchedule;
 
 
     public User(String uid, String name) {
-        this.uid = uid;
-        this.name = name;
+        super(uid, name);
     }
 
     public boolean isExpired() {
@@ -39,34 +20,28 @@ public class User {
         cal.getTime();
 
         long now = Long.parseLong(dateFormat.format(cal.getTime()));
-        long expiration = Long.parseLong(dateFormat.format(expirationDate.getTime()));
+        long expiration = Long.parseLong(dateFormat.format(getExpirationDate().getTime()));
 
         boolean isExpired = expiration < now;
 
         return isExpired;
     }
 
+    public boolean isUsingSchedule() {
+        return usingSchedule;
+    }
+
+    public void setUsingSchedule(boolean usingSchedule) {
+        this.usingSchedule = usingSchedule;
+    }
+
+    /*
     public String toString() {
 
         String s = dateFormat.format(expirationDate.getTime());
 
         return uid + ": " + name + " "+ altitude+ " " + longitude + " " + latitude + " "+ s;
     }
-
-    public MovableMarker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(MovableMarker marker) {
-        this.marker = marker;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
+    */
 }
 

@@ -78,8 +78,8 @@ public class PrisonControl {
         for (int i = users.size() - 1; i >= 0; i--) {
             User u = users.get(i);
 
-            if (u.latitude > MAX_LAT || u.latitude < MIN_LAT
-                    || u.longitude > MAX_LONG || u.longitude < MIN_LONG) {
+            if (u.getLatitude() > MAX_LAT || u.getLatitude() < MIN_LAT
+                    || u.getLongitude() > MAX_LONG || u.getLongitude() < MIN_LONG) {
                 inmates.add(u);
 
                 if (u.getMarker() != null) {
@@ -102,11 +102,11 @@ public class PrisonControl {
 
         // add at most #PRISON_COUNT people to the shownInmates list
         if (inmates.size() < PRISON_COUNT)
-            for (User u : inmates) shownInmates.add(u.name);
+            for (User u : inmates) shownInmates.add(u.getName());
         else {
             // only show the first nine users TODO maybe pic unique random users
             for (int i = 0; i < PRISON_COUNT - 1; i++) {
-                shownInmates.add(inmates.get(i).name);
+                shownInmates.add(inmates.get(i).getName());
             }
         }
 

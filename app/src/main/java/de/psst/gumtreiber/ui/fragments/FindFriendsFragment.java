@@ -94,7 +94,7 @@ public class FindFriendsFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             final User user = dataset.get(position);
 
-            holder.txtUserName.setText(user.name);
+            holder.txtUserName.setText(user.getName());
 
             holder.btnAdd.setOnClickListener(new View.OnClickListener() {
                 @Override

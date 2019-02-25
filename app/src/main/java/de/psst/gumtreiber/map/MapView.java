@@ -184,7 +184,7 @@ public class MapView extends AppCompatImageView {
             marker = u.getMarker();
 
             // save user position
-            pos.setLocation(u.latitude, u.longitude);
+            pos.setLocation(u.getLatitude(), u.getLongitude());
 
             // map the coordinate according to the Gumtreiber area
             mapPos = mapControl.gpsToMap(pos);
@@ -197,7 +197,7 @@ public class MapView extends AppCompatImageView {
 //            if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", u.name + " ZoomedCoords - " + mapPos);
 
             if (marker == null) {
-                Log.w("MapView", "WARNING: User without markers detected! (" + u.name + ")");
+                Log.w("MapView", "WARNING: User without markers detected! (" + u.getName() + ")");
                 return;
             }
 
