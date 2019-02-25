@@ -6,7 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-public class Bots {
+public class BotsMethods {
 
     private static final String firebaseURL = "https://gumtreiber-1fb84.firebaseio.com";
     private static final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
@@ -27,6 +27,8 @@ public class Bots {
         database.child("bots").child(botID).child("routines").child(""+startTime).child("longitude").setValue(longitude);
         database.child("bots").child(botID).child("routines").child(""+startTime).child("altitude").setValue(altitude);
     }
+
+
 
 
 }

@@ -562,18 +562,17 @@ public class Firebase {
      * @param authToken token of the friendlist's owner
      * @return
      */
-    public static String[] getFriendlist(String uid, String authToken){
+    public static ArrayList<String> getFriendlist(String uid, String authToken){
         String jsonString = getJSON(firebaseURL + "/friendlists/" + uid + ".json"  + "?auth=" + authToken);
-        String[] friendlist = {""};
+        ArrayList<String> friendlist = new ArrayList<String>();
 
 
         try {
             JSONObject reader = new JSONObject(jsonString);
             JSONArray allUIDs = reader.names();
-            friendlist = new String[allUIDs.length()];
 
-            for (int i = 0; i < friendlist.length; i++){
-                friendlist[i] = allUIDs.getString(i);
+            for (int i = 0; i < allUIDs.length(); i++){
+                friendlist.add( allUIDs.getString(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -590,7 +589,7 @@ public class Firebase {
      *
      * @return JSON-String
      */
-    private static String getJSON(final String urlGet) {
+    public static String getJSON(final String urlGet) {
         final Semaphore sem = new Semaphore(0);
         final StringBuilder json = new StringBuilder();
 

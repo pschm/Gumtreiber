@@ -10,6 +10,7 @@ public abstract class AbstractUser {
     private String uid;
     private String name;
 
+    //Location Data
     private double latitude;
     private double longitude;
     private double altitude;
@@ -19,14 +20,31 @@ public abstract class AbstractUser {
     //After this date the location data becomes invalid
     private Calendar expirationDate;
 
+    //Flag for checking if the user should be drawn on the map
+    private boolean isVisible = true;
+
     //marker to show the position on the map
     private MovableMarker marker;
+
+    private final static DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
     public AbstractUser(String uid, String name) {
         this.uid = uid;
         this.name = name;
     }
 
+    public boolean isExpired() {
+
+        Calendar cal = Calendar.getInstance();
+        cal.getTime();
+
+        long now = Long.parseLong(dateFormat.format(cal.getTime()));
+        long expiration = Long.parseLong(dateFormat.format(getExpirationDate().getTime()));
+
+        boolean isExpired = expiration < now;
+
+        return isExpired;
+    }
 
     public String getUid() {
         return uid;
@@ -90,5 +108,13 @@ public abstract class AbstractUser {
 
     public void setMarker(MovableMarker marker) {
         this.marker = marker;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 }
