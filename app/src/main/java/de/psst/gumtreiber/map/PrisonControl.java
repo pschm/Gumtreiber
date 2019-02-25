@@ -4,8 +4,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.Coordinate;
-import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.Vector2;
 
 import static de.psst.gumtreiber.map.MapControl.MAX_LAT;
@@ -24,8 +24,8 @@ public class PrisonControl {
 
     private final TextView view;
     private MapControl mapControl;
-    private ArrayList<User> inmates = new ArrayList<>();
-    private ArrayList<User> freeFolk = new ArrayList<>();
+    private ArrayList<AbstractUser> inmates = new ArrayList<>();
+    private ArrayList<AbstractUser> freeFolk = new ArrayList<>();
     private ArrayList<String> shownInmates = new ArrayList<>();
 
     public PrisonControl(TextView view) {
@@ -43,7 +43,7 @@ public class PrisonControl {
      * @param users ArrayList to filter
      * @return userList without inmates
      */
-    public ArrayList<User> updateInmates(ArrayList<User> users) {
+    public ArrayList<AbstractUser> updateInmates(ArrayList<AbstractUser> users) {
         filterList(users);
         updateView();
 
@@ -73,10 +73,10 @@ public class PrisonControl {
      *
      * @param users ArrayList to filter
      */
-    private void filterList(ArrayList<User> users) {
+    private void filterList(ArrayList<AbstractUser> users) {
         inmates.clear();
         for (int i = users.size() - 1; i >= 0; i--) {
-            User u = users.get(i);
+            AbstractUser u = users.get(i);
 
             if (u.getLatitude() > MAX_LAT || u.getLatitude() < MIN_LAT
                     || u.getLongitude() > MAX_LONG || u.getLongitude() < MIN_LONG) {
@@ -102,7 +102,7 @@ public class PrisonControl {
 
         // add at most #PRISON_COUNT people to the shownInmates list
         if (inmates.size() < PRISON_COUNT)
-            for (User u : inmates) shownInmates.add(u.getName());
+            for (AbstractUser u : inmates) shownInmates.add(u.getName());
         else {
             // only show the first nine users TODO maybe pic unique random users
             for (int i = 0; i < PRISON_COUNT - 1; i++) {

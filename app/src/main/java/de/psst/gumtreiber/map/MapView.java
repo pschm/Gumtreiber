@@ -11,8 +11,8 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import androidx.appcompat.widget.AppCompatImageView;
+import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.Coordinate;
-import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.Vector2;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -23,7 +23,7 @@ public class MapView extends AppCompatImageView {
     private static float defaultMatrixError = 1.5827f;
 
     // Users that are drawn on the map
-    private ArrayList<User> markers;
+    private ArrayList<AbstractUser> markers;
 
     // PhotoViewAttacher which holds this ImageView and enables zoom
     private PhotoViewAttacher zoomControl;
@@ -55,6 +55,7 @@ public class MapView extends AppCompatImageView {
     private Vector2 markerPos = new Vector2();
     private Vector2 mapPos = new Vector2(-50f, -50f);
     private Vector2 markerPoint = new Vector2();
+    private Vector2 oldPosition = new Vector2();
 
     // all constructors needed for Android to build the ImageView correctly
     public MapView(Context context) {
@@ -79,7 +80,7 @@ public class MapView extends AppCompatImageView {
     /**
      * @param markers users to be drawn of the map
      */
-    public void setMarkers(ArrayList<User> markers) {
+    public void setMarkers(ArrayList<AbstractUser> markers) {
         this.markers = markers;
         invalidate(); // repaint the map
     }
@@ -179,7 +180,7 @@ public class MapView extends AppCompatImageView {
         paint.setTextSize(35);
 
         // draw all users on the map
-        for (User u : markers) {
+        for (AbstractUser u : markers) {
             marker = u.getMarker();
 
             // save user position
@@ -208,65 +209,56 @@ public class MapView extends AppCompatImageView {
             if (firstDraw || !marker.isAlreadyDrawn()) {
                 marker.setPosition(mapPos.x, mapPos.y);
                 marker.setAlreadyDrawn(true);
-//                if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "FIRST");
+                printDebug(u, "First draw");
             } else if (!zoomControl.getDrawMatrix().equals(oldTransformation)) {
-                // TODO smooth movable markers while zoomin
-
-//                markerPos = u.getMarker().getPosition();
-//                markerPoint.x = markerPos.x;
-//                markerPoint.y = markerPos.y;
-////                Log.v("MapView", "Marker: OLD ++" + markerPoint);
-//
-//                Matrix m = substracMatrix(zoomControl.getDisplayMatrix(), oldTransformation);
-////                Log.v("MapView", "Matrix a: " + zoomControl.getDrawMatrix());
-////                Log.v("MapView", "Matrix b: " + oldTransformation);
-////                Log.v("MapView", "Matrix m: " + m);
-//                adjustPosToZoom(markerPoint);
-//                adjustPosToZoom(markerPoint, m);
-////                Log.v("MapView", "Marker: NEW --" + markerPoint);
-//                u.getMarker().setPosition(markerPoint.x, markerPoint.y);
-////                u.getMarker().moveTo(mapPos.x - 17, mapPos.y - 150);
-////                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
-
-//                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150 + getActionbarHeight());
-
-//                if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "NEW MAT");
+                printDebug(u, "new trans. mat -> zoom detected");
+                // TODO smooth movable markers while zooming
                 if (marker.isMoving()) {
-//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "IS MOVING");
-//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " OldPos - " +marker.getPosition());
-//
-//                    oldTransformation.invert(inverse);
-//                    adjustPosToZoom(marker.getPosition(), inverse);
-//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " invers - " +marker.getPosition());
-//
-//                    adjustPosToZoom(marker.getPosition());
-//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " zoomed - " +marker.getPosition());
-//
-//                    marker.setPosition(marker.getPosition());
-//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " curPos - " + marker.getPosition());
+                    printDebug(u, "marker is moving");
+                    printDebug(u, "current user position: " + marker.getPosition());
 
+                    // invert old trans. matrix
+                    oldTransformation.invert(inverse);
+
+                    // copy current marker position
+                    copyVector(oldPosition, marker.getPosition());
+
+                    // calc old map position (excluding zoom)
+                    adjustPosToZoom(oldPosition, inverse);
+                    printDebug(u, "Old Position (without zoom): " + oldPosition);
+
+                    // calc old position with new zoom
+                    adjustPosToZoom(oldPosition);
+                    printDebug(u, "Old Position (with new zoom): " + oldPosition);
+
+                    // set the marker to the calc position
+                    marker.setPosition(50, 500); // should be oldPosition
+                    printDebug(u, "User now positioned at: " + marker.getPosition());
+
+                    // move the marker to the new target position
                     marker.moveTo(mapPos.x, mapPos.y);
-//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " moveTo - " + marker.getPosition());
+                    printDebug(u, "Target position (moveTo): " + mapPos);
                 }
                 else {
-//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "NOT MOVING");
+                    // marker is not moving, just adjust to new zoom
                     marker.setPosition(mapPos.x, mapPos.y);
-//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " setPos - " + marker.getPosition());
+                    printDebug(u, "marker is NOT moving");
+                    printDebug(u, "marker is set to new pos: " + marker.getPosition());
                 }
             }
             else {
-//                if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "OLD MAT");
                 // smoothly move the markers to the new position
                 marker.moveTo(mapPos.x, mapPos.y);
+                printDebug(u, "marker moving to new position (no zoom detected)");
             }
 
+            printDebug(u, "----------------------------------------");
             // scale the markers according to the zoom
             calcScaling();
             marker.setScale((float) scale);
 
             // draw user on the map
             canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
-//            canvas.drawText(u.name, mapPos.x, mapPos.y + 47.5f, paint);
         }
 
         // translate prison
@@ -278,10 +270,15 @@ public class MapView extends AppCompatImageView {
     }
 
 
-    // some Matrix Utility
+    // some Matrix/Vector Utility
     private void copyMatix(Matrix dest, Matrix src) {
         src.getValues(matrixValues);
         dest.setValues(matrixValues);
+    }
+
+    private void copyVector(Vector2 dest, Vector2 src) {
+        dest.x = src.x;
+        dest.y = src.y;
     }
 
     private Matrix substracMatrix(Matrix a, Matrix b) {
@@ -294,5 +291,15 @@ public class MapView extends AppCompatImageView {
         }
         a.setValues(aA);
         return a;
+    }
+
+    /**
+     * Cleaner debuging of the jumping user on zoom bug
+     *
+     * @param msg to display in Log.d
+     * @param u   currently calc user
+     */
+    private void printDebug(AbstractUser u, String msg) {
+//        if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", msg);
     }
 }

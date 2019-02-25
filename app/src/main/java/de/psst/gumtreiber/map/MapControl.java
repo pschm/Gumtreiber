@@ -1,10 +1,11 @@
 package de.psst.gumtreiber.map;
 
 import android.app.Activity;
-import android.util.Log;
 
 import java.util.ArrayList;
 
+import de.psst.gumtreiber.data.AbstractUser;
+import de.psst.gumtreiber.data.Bot;
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserFilter;
@@ -23,9 +24,10 @@ public class MapControl {
     private final static int BOX_SIZE = 200;
 
     private MapView map;
+    private ArrayList<String> friends = new ArrayList<>();
     private Activity activity;
     private PrisonControl prisonControl;
-    private ArrayList<User> users = new ArrayList<>();
+    private ArrayList<AbstractUser> users = new ArrayList<>();
 
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.map = map;
@@ -49,8 +51,9 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<User> users) {
-        // filter users according to the selected filters
-        this.users = UserFilter.filterUsers(users);
+        // filter users according to the selected filters TODO Change back to normal assignment
+        this.users.clear();
+        this.users.addAll(UserFilter.filterUsers(users));
 
         // filter users not on the map
         this.users = prisonControl.updateInmates(this.users);
@@ -75,18 +78,18 @@ public class MapControl {
         double x, y;
 
         // create a grid to detect close users
-        User[][] map = new User[xSize / boxSize][ySize / boxSize];
+        AbstractUser[][] map = new User[xSize / boxSize][ySize / boxSize];
 
         // list for all merged users
         ArrayList<User> mergedUserList = new ArrayList<>();
 
         // sort all users in the grid
         for (int i = 0; i < users.size(); i++) {
-            User u = users.get(i);
+            AbstractUser u = users.get(i);
 
             // transform user coordinates to the area
-            x = (u.getLongitude() - MIN_LONG) * 1000000; // min/max: 0268-6864 -> 0-6596
-            y = (u.getLatitude() - MIN_LAT) * 1000000; // min/max: 1335-6252 -> 0-4917
+            x = (u.getLongitude() - MIN_LONG) * 1000000;
+            y = (u.getLatitude() - MIN_LAT) * 1000000;
             y = DELTA_LAT - y; // invert y-Axis
 
             // calc grid position
@@ -94,15 +97,17 @@ public class MapControl {
             y /= boxSize;
 
             // load possible users already in this grid sector
-            User sector = map[(int) x][(int) y];
+            AbstractUser sector = map[(int) x][(int) y];
 
             if (sector == null) {
                 // u is the first user in this sector
-                if (u.getMarker() == null) {
-                    if (activity == null) Log.w("MapView", "Activity not given");
-                    u.setMarker(new MovableMarker(activity, u.getName()));
-                }
+                if (u.getMarker() == null) u.setMarker(new MovableMarker(activity, u.getName()));
                 u.getMarker().changeLabel(u.getName()); // needed if a user moves out of a group
+                // change the look of the marker, if the user is a friend or bot
+                if (u instanceof Bot) u.getMarker().changeLook(MovableMarker.Look.BOT);
+                if (friends.contains(u.getUid()))
+                    u.getMarker().changeLook(MovableMarker.Look.FRIEND);
+
                 map[(int) x][(int) y] = u;
             } else if (sector.getUid() != null) {
                 // u is the second user in this sector
@@ -120,6 +125,7 @@ public class MapControl {
                 User mergedUsers = new User(null, "2");
                 mergedUsers.setMarker(sector.getMarker());
                 mergedUsers.getMarker().changeLabel("2");
+                mergedUsers.getMarker().changeLook(MovableMarker.Look.DEFAULT);
                 mergedUsers.setLatitude(u.getLatitude());
                 mergedUsers.setLongitude(u.getLongitude());
 
@@ -150,6 +156,7 @@ public class MapControl {
     }
 
 
+
     /**
      * Calculates the given coordinate from GPS Position to map coordinates
      * and returns it
@@ -168,5 +175,9 @@ public class MapControl {
         mapPos.y = (float) (pos.getLatitude() * (map.getHeight() / DELTA_LAT));
 
         return mapPos;
+    }
+
+    public void updateFriends(ArrayList<String> friendlist) {
+        friends = friendlist;
     }
 }
