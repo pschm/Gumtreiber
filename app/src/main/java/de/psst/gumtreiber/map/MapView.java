@@ -39,7 +39,7 @@ public class MapView extends AppCompatImageView {
     private Matrix inverse = new Matrix();
 
     private double scale = 1.0;
-    private boolean firstDraw = true; // TODO maybe move to init function
+    private boolean firstDraw = true;
 
     // painter used to draw the map TODO could be deleted, if all problems with MovableMarkers are fixed
     private Paint paint = new Paint();
@@ -175,10 +175,6 @@ public class MapView extends AppCompatImageView {
             defaultMatrixError = 1f / defaultMatrix[0];
         }
 
-        // the paint color and size TODO maybe move to init function
-        paint.setColor(Color.CYAN);
-        paint.setTextSize(35);
-
         // draw all users on the map
         for (AbstractUser u : markers) {
             marker = u.getMarker();
@@ -253,12 +249,17 @@ public class MapView extends AppCompatImageView {
             }
 
             printDebug(u, "----------------------------------------");
+
             // scale the markers according to the zoom
             calcScaling();
             marker.setScale((float) scale);
 
+            // TODO delete paint & circle as soon as markers work correctly
+            // the paint color and size
+            paint.setColor(Color.WHITE);
+
             // draw user on the map
-            canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
+            canvas.drawCircle(mapPos.x, mapPos.y, 15f, paint);
         }
 
         // translate prison
