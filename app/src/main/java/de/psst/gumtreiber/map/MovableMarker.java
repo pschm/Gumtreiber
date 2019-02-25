@@ -271,7 +271,7 @@ public class MovableMarker {
         getRightFixPrint().makeVisible();
     }
 
-    private void setPosition(Vector2 position) {
+    public void setPosition(Vector2 position) {
         setPosition(position.x, position.y);
     }
 
@@ -323,6 +323,13 @@ public class MovableMarker {
     }
 
     /**
+     * @return true if the marker is moving
+     */
+    public boolean isMoving() {
+        return moveThread != null && moveThread.isAlive();
+    }
+
+    /**
      * Moves the marker to the given position on the activity. It will slowly transition to this position.
      * If called while a transition is running, it will override the old target position and will
      * start transition to the new given position from its current position.
@@ -332,7 +339,7 @@ public class MovableMarker {
      */
     public void moveTo(float x, float y) {
         targetPos = new Vector2(x, y);
-        if(moveThread != null && moveThread.isAlive()) return;
+        if(isMoving()) return;
         if(curPos.equals(targetPos)) return;
 
         allowMovingThread = true;
