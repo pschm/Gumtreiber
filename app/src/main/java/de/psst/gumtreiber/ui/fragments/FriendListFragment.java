@@ -103,12 +103,12 @@ public class FriendListFragment extends Fragment {
 
         //AltertDialog für Abfrage ob wirklich gelösht werden soll
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
-        alertDialogBuilder.setTitle( getString(R.string.popup_del_friend,user.name) );
+        alertDialogBuilder.setTitle( getString(R.string.popup_del_friend,user.getName()) );
 
         alertDialogBuilder.setPositiveButton(getString(R.string.popup_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                model.deleteFriend(user.name);
+                model.deleteFriend(user.getName());
             }
         });
 
@@ -147,7 +147,7 @@ public class FriendListFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             final User user = dataset.get(position);
 
-            holder.txtFriendName.setText(user.name);
+            holder.txtFriendName.setText(user.getName());
             tintStatusCircle(holder.imgStatusCircle, user);
 
             holder.btnRemove.setOnClickListener(new View.OnClickListener() {

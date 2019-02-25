@@ -93,8 +93,8 @@ public class MapControl {
             User u = users.get(i);
 
             // transform user coordinates to the area
-            x = (u.longitude - MIN_LONG) * 1000000; // min/max: 0268-6864 -> 0-6596
-            y = (u.latitude - MIN_LAT) * 1000000; // min/max: 1335-6252 -> 0-4917
+            x = (u.getLongitude() - MIN_LONG) * 1000000; // min/max: 0268-6864 -> 0-6596
+            y = (u.getLatitude() - MIN_LAT) * 1000000; // min/max: 1335-6252 -> 0-4917
             y = DELTA_LAT - y; // invert y-Axis
 
             // calc grid position
@@ -108,11 +108,11 @@ public class MapControl {
                 // u is the first user in this sector
                 if (u.getMarker() == null) {
                     if (activity == null) Log.w("MapView", "Activity not given");
-                    u.setMarker(new MovableMarker(activity, u.name));
+                    u.setMarker(new MovableMarker(activity, u.getName()));
                 }
-                u.getMarker().changeLabel(u.name); // needed if a user moves out of a group
+                u.getMarker().changeLabel(u.getName()); // needed if a user moves out of a group
                 map[(int) x][(int) y] = u;
-            } else if (sector.uid != null) {
+            } else if (sector.getUid() != null) {
                 // u is the second user in this sector
                 // delete both users from list and build a group
                 users.remove(sector);
@@ -128,8 +128,8 @@ public class MapControl {
                 User mergedUsers = new User(null, "2");
                 mergedUsers.setMarker(sector.getMarker());
                 mergedUsers.getMarker().changeLabel("2");
-                mergedUsers.latitude = u.latitude;
-                mergedUsers.longitude = u.longitude;
+                mergedUsers.setLatitude(u.getLatitude());
+                mergedUsers.setLongitude(u.getLongitude());
 
                 // save merge user to the grid
                 map[(int) x][(int) y] = mergedUsers;
@@ -147,8 +147,8 @@ public class MapControl {
                 i--;
 
                 // increase the user counter
-                String label = "" + (Integer.parseInt(sector.name) + 1);
-                sector.name = label;
+                String label = "" + (Integer.parseInt(sector.getName()) + 1);
+                sector.setName(label);
                 sector.getMarker().changeLabel(label);
             }
         }

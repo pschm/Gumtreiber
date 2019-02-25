@@ -251,14 +251,14 @@ public class Firebase {
                 }
 
 
-                myUser.altitude = userJSON.getDouble("altitude");
-                myUser.latitude = userJSON.getDouble("latitude");
-                myUser.longitude = userJSON.getDouble("longitude");
-                myUser.usingSchedule = userJSON.getBoolean("usingSchedule");
+                myUser.setAltitude(userJSON.getDouble("altitude"));
+                myUser.setLatitude(userJSON.getDouble("latitude"));
+                myUser.setLongitude(userJSON.getDouble("longitude"));
+                myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(dateFormat.parse(userJSON.getString("expirationDate")));
-                myUser.expirationDate = cal;
+                myUser.setExpirationDate(cal);
 
                 if (userJSON.has("course")){
                     String courseString = userJSON.getString("course");
@@ -278,24 +278,25 @@ public class Firebase {
 
         for (User each : allUser) {
             User myUser;
-            if (userList.containsKey(each.uid)) {
-                myUser = userList.get(each.uid);
+            if (userList.containsKey(each.getUid())) {
+                myUser = userList.get(each.getUid());
 
                 //Update Data, that may has changed.
-                myUser.usingSchedule = each.usingSchedule;
-                myUser.name = each.name;
+                myUser.setUsingSchedule(each.isUsingSchedule());
+
+                myUser.setName(each.getName());
                 myUser.setCourse(each.getCourse());
 
-                if (myUser.usingSchedule) {
+                if (myUser.isUsingSchedule()) {
                     //User uses his schedule:
-                    Appointment currentAppointment = getCurrentAppointment(myUser.uid, authToken);
+                    Appointment currentAppointment = getCurrentAppointment(myUser.getUid(), authToken);
 
                     if (currentAppointment != null) {
                         if (myUser.getMarker() != null) myUser.getMarker().setVisibility(true);
-                        myUser.altitude = currentAppointment.getRoom().getAltitude();
-                        myUser.latitude = currentAppointment.getRoom().getLatitude();
-                        myUser.longitude = currentAppointment.getRoom().getLongitude();
-                        myUser.expirationDate = currentAppointment.getEndDate();
+                        myUser.setAltitude(currentAppointment.getRoom().getAltitude());
+                        myUser.setLatitude(currentAppointment.getRoom().getLatitude());
+                        myUser.setLongitude(currentAppointment.getRoom().getLongitude());
+                        myUser.setExpirationDate(currentAppointment.getEndDate());
 
                     } else {
                         //User has no current Appointment
@@ -313,28 +314,28 @@ public class Firebase {
                         //Make User visible if he is not expired and update user data:
                         if (myUser.getMarker() != null) myUser.getMarker().setVisibility(true);
 
-                        myUser.altitude = each.altitude;
-                        myUser.latitude = each.latitude;
-                        myUser.longitude = each.longitude;
-                        myUser.expirationDate = each.expirationDate;
+                        myUser.setAltitude(each.getAltitude());
+                        myUser.setLatitude(each.getLatitude());
+                        myUser.setLongitude(each.getLongitude());
+                        myUser.setExpirationDate(each.getExpirationDate());
 
                     }
                 }
 
 
             } else {
-                if(each.usingSchedule) {
+                if(each.isUsingSchedule()) {
                     //User uses his schedule:
-                    Appointment currentAppointment = getCurrentAppointment(each.uid, authToken);
+                    Appointment currentAppointment = getCurrentAppointment(each.getUid(), authToken);
 
                     if(currentAppointment != null) {
 
-                        each.altitude = currentAppointment.getRoom().getAltitude();
-                        each.latitude = currentAppointment.getRoom().getLatitude();
-                        each.longitude = currentAppointment.getRoom().getLongitude();
-                        each.expirationDate = currentAppointment.getEndDate();
+                        each.setAltitude(currentAppointment.getRoom().getAltitude());
+                        each.setLatitude(currentAppointment.getRoom().getLatitude());
+                        each.setLongitude(currentAppointment.getRoom().getLongitude());
+                        each.setExpirationDate(currentAppointment.getEndDate());
 
-                        userList.put(each.uid, each);
+                        userList.put(each.getUid(), each);
 
                     } else {
                         //User has no current Appointment
@@ -350,7 +351,7 @@ public class Firebase {
                         //User is ignored
                     } else {
                         //Make User visible if he is not expired and update user data:
-                        userList.put(each.uid, each);
+                        userList.put(each.getUid(), each);
                     }
                 }
             }
@@ -399,10 +400,10 @@ public class Firebase {
                 JSONObject userJSON = reader.getJSONObject(userUid);
 
                 User myUser = new User(userUid, userJSON.getString("name"));
-                myUser.altitude = userJSON.getDouble("altitude");
-                myUser.latitude = userJSON.getDouble("latitude");
-                myUser.longitude = userJSON.getDouble("longitude");
-                myUser.usingSchedule = userJSON.getBoolean("usingSchedule");
+                myUser.setAltitude(userJSON.getDouble("altitude"));
+                myUser.setLatitude(userJSON.getDouble("latitude"));
+                myUser.setLongitude(userJSON.getDouble("longitude"));
+                myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
 
                 //Wenn Nutzer einen Studiengang hat, dann setze ihn
                 if (userJSON.has("course")){
@@ -412,7 +413,7 @@ public class Firebase {
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(dateFormat.parse("" + userJSON.getLong("expirationDate")));
-                myUser.expirationDate = cal;
+                myUser.setExpirationDate(cal);
 
                 userList.add(myUser);
             }
@@ -448,10 +449,10 @@ public class Firebase {
                 JSONObject userJSON = reader.getJSONObject(userUid);
 
                 User myUser = new User(userUid, userJSON.getString("name"));
-                myUser.altitude = userJSON.getDouble("altitude");
-                myUser.latitude = userJSON.getDouble("latitude");
-                myUser.longitude = userJSON.getDouble("longitude");
-                myUser.usingSchedule = userJSON.getBoolean("usingSchedule");
+                myUser.setAltitude(userJSON.getDouble("altitude"));
+                myUser.setLatitude(userJSON.getDouble("latitude"));
+                myUser.setLongitude(userJSON.getDouble("longitude"));
+                myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
 
                 if (userJSON.has("course")){
                     String courseString = userJSON.getString("course");
@@ -460,7 +461,7 @@ public class Firebase {
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(dateFormat.parse("" + userJSON.getLong("expirationDate")));
-                myUser.expirationDate = cal;
+                myUser.setExpirationDate(cal);
 
                 userList.add(myUser);
             }
@@ -510,17 +511,17 @@ public class Firebase {
 
                 //Add user with current Appointment to ArrayList
                 if (currentAppointment != null) {
-                    myUser.altitude = currentAppointment.getRoom().getAltitude();
-                    myUser.latitude = currentAppointment.getRoom().getLatitude();
-                    myUser.longitude = currentAppointment.getRoom().getLongitude();
-                    myUser.usingSchedule = true;
+                    myUser.setAltitude(currentAppointment.getRoom().getAltitude());
+                    myUser.setLatitude(currentAppointment.getRoom().getLatitude());
+                    myUser.setLongitude(currentAppointment.getRoom().getLongitude());
+                    myUser.setUsingSchedule(true);
 
                     if (userJSON.has("course")){
                         String courseString = userJSON.getString("course");
                         myUser.setCourse(Course.valueOf(courseString));
                     }
 
-                    myUser.expirationDate = currentAppointment.getEndDate();
+                    myUser.setExpirationDate(currentAppointment.getEndDate());
 
                     userList.add(myUser);
                 } else {
