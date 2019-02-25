@@ -12,10 +12,10 @@ import de.psst.gumtreiber.data.Vector2;
 
 public class MapControl {
     // constants for gps calculation
-    final static double MAX_LAT = 51.027653;
-    final static double MIN_LAT = 51.020989;
-    final static double MAX_LONG = 7.566508;
-    final static double MIN_LONG = 7.560669;
+    final static double MAX_LAT = 51.029673; //51.027653;
+    final static double MIN_LAT = 51.019053; //51.020989;
+    final static double MAX_LONG = 7.567960; //7.566508;
+    final static double MIN_LONG = 7.559551; //7.560669;
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
 

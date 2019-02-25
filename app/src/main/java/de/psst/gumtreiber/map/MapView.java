@@ -21,22 +21,33 @@ public class MapView extends AppCompatImageView {
     // the transformation matrix is not initialized with the unit matrix
     // to correct this, the error is calculated and considered in future calculation
     private static float defaultMatrixError = 1.5827f;
+
     // Users that are drawn on the map
     private ArrayList<User> markers;
+
     // PhotoViewAttacher which holds this ImageView and enables zoom
     private PhotoViewAttacher zoomControl;
+
     // MapControl which coordinates the Lists and gps calculation
     private MapControl mapControl;
+
     // Needed to update the location of the prison on translation
     private PrisonControl prisonControl;
+
     // save of the old transformation matrix, used to check if the transformation has changed
     private Matrix oldTransformation = new Matrix();
+    private Matrix inverse = new Matrix();
+
     private double scale = 1.0;
     private boolean firstDraw = true; // TODO maybe move to init function
+
     // painter used to draw the map TODO could be deleted, if all problems with MovableMarkers are fixed
     private Paint paint = new Paint();
+
+
     // Declare some variables for the onDraw, so we
     // don't have to keep allocating them on the heap
+    private MovableMarker marker;
     private Vector2 defaultSize = new Vector2();
     private Coordinate pos = new Coordinate();
     private float[] defaultMatrix = new float[9];
@@ -156,6 +167,8 @@ public class MapView extends AppCompatImageView {
             defaultSize.x = getWidth();
             defaultSize.y = getHeight();
 
+            Log.d("pschm - MapView", "W:" + defaultSize.x + " H:" + defaultSize.y);
+
             // init transformation matrix error
             zoomControl.getDrawMatrix().getValues(defaultMatrix);
             defaultMatrixError = 1f / defaultMatrix[0];
@@ -167,30 +180,38 @@ public class MapView extends AppCompatImageView {
 
         // draw all users on the map
         for (User u : markers) {
+            marker = u.getMarker();
+
             // save user position
             pos.setLocation(u.latitude, u.longitude);
 
             // map the coordinate according to the Gumtreiber area
             mapPos = mapControl.gpsToMap(pos);
 
+//            if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", u.name + " MapCoords - " + mapPos);
+
             // consider possible zoom
             adjustPosToZoom(mapPos);
 
-            if (u.getMarker() == null) {
+//            if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", u.name + " ZoomedCoords - " + mapPos);
+
+            if (marker == null) {
                 Log.w("MapView", "WARNING: User without markers detected! (" + u.name + ")");
                 return;
             }
 
             // make sure the marker is visible TODO maybe move this in MapControl
-            u.getMarker().setVisibility(true);
+            marker.setVisibility(true);
 
             // set the markers directly to the new position if the zoom changed
             // or let the markers move to the new position
-            if (firstDraw || !u.getMarker().isAlreadyDrawn()) {
-                u.getMarker().setPosition(mapPos.x, mapPos.y);
-                u.getMarker().setAlreadyDrawn(true);
+            if (firstDraw || !marker.isAlreadyDrawn()) {
+                marker.setPosition(mapPos.x, mapPos.y);
+                marker.setAlreadyDrawn(true);
+//                if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "FIRST");
             } else if (!zoomControl.getDrawMatrix().equals(oldTransformation)) {
-                // TODO smooth moveable markers while zooming
+                // TODO smooth movable markers while zoomin
+
 //                markerPos = u.getMarker().getPosition();
 //                markerPoint.x = markerPos.x;
 //                markerPoint.y = markerPos.y;
@@ -208,16 +229,40 @@ public class MapView extends AppCompatImageView {
 ////                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150);
 
 //                u.getMarker().setPosition(mapPos.x - 17,mapPos.y - 150 + getActionbarHeight());
-                u.getMarker().setPosition(mapPos.x, mapPos.y);
+
+//                if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "NEW MAT");
+                if (marker.isMoving()) {
+//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "IS MOVING");
+//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " OldPos - " +marker.getPosition());
+//
+//                    oldTransformation.invert(inverse);
+//                    adjustPosToZoom(marker.getPosition(), inverse);
+//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " invers - " +marker.getPosition());
+//
+//                    adjustPosToZoom(marker.getPosition());
+//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " zoomed - " +marker.getPosition());
+//
+//                    marker.setPosition(marker.getPosition());
+//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " curPos - " + marker.getPosition());
+
+                    marker.moveTo(mapPos.x, mapPos.y);
+//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " moveTo - " + marker.getPosition());
+                }
+                else {
+//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "NOT MOVING");
+                    marker.setPosition(mapPos.x, mapPos.y);
+//                    if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView",u.name + " setPos - " + marker.getPosition());
+                }
             }
             else {
+//                if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", "OLD MAT");
                 // smoothly move the markers to the new position
-                u.getMarker().moveTo(mapPos.x, mapPos.y);
+                marker.moveTo(mapPos.x, mapPos.y);
             }
 
             // scale the markers according to the zoom
             calcScaling();
-            u.getMarker().setScale((float) scale);
+            marker.setScale((float) scale);
 
             // draw user on the map
             canvas.drawCircle(mapPos.x, mapPos.y, 17.5f, paint);
@@ -233,7 +278,7 @@ public class MapView extends AppCompatImageView {
     }
 
 
-    // some Matrix Utility Stuff
+    // some Matrix Utility
     private void copyMatix(Matrix dest, Matrix src) {
         src.getValues(matrixValues);
         dest.setValues(matrixValues);
