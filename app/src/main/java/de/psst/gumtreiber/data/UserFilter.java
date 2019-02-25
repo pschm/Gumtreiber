@@ -11,19 +11,19 @@ import java.util.ArrayList;
  */
 public class UserFilter {
     // Filter flags
-    public final boolean FIRENDS = true;
+    public static final boolean FIRENDS = true;
     // IT
-    public final boolean INF = true;
-    public final boolean AI = true;
-    public final boolean MI = true;
-    public final boolean WI = true;
-    public final boolean ITM = true;
-    public final boolean TI = true;
+    public static final boolean INF = true;
+    public static final boolean AI = true;
+    public static final boolean MI = true;
+    public static final boolean WI = true;
+    public static final boolean ITM = true;
+    public static final boolean TI = true;
     // Engineer
-    public final boolean ING = true;
-    public final boolean MA = true;
+    public static final boolean ING = true;
+    public static final boolean MA = true;
 
-    public ArrayList<User> filterUsers(ArrayList<User> users) {
+    public static ArrayList<User> filterUsers(ArrayList<User> users) {
         ArrayList<User> filtered = new ArrayList<>();
 
         for (User u : users) {
@@ -38,7 +38,7 @@ public class UserFilter {
      * @param course course to check if it should be shown
      * @return true, if the course flag is set
      */
-    private boolean isFiltered(Course course) {
+    private static boolean isFiltered(Course course) {
         if (course == null) return true; // TODO delete later
         switch (course) {
             case AI: if (AI) return true;
