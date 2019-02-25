@@ -24,6 +24,7 @@ public class MapControl {
     private final static int BOX_SIZE = 200;
 
     private MapView map;
+    private ArrayList<String> friends = new ArrayList<>();
     private Activity activity;
     private PrisonControl prisonControl;
     private ArrayList<AbstractUser> users = new ArrayList<>();
@@ -102,6 +103,11 @@ public class MapControl {
                 // u is the first user in this sector
                 if (u.getMarker() == null) u.setMarker(new MovableMarker(activity, u.getName()));
                 u.getMarker().changeLabel(u.getName()); // needed if a user moves out of a group
+                // change the look of the marker, if the user is a friend or bot
+                if (u instanceof Bot) u.getMarker().changeLook(MovableMarker.Look.BOT);
+                if (friends.contains(u.getUid()))
+                    u.getMarker().changeLook(MovableMarker.Look.FRIEND);
+
                 map[(int) x][(int) y] = u;
             } else if (sector.getUid() != null) {
                 // u is the second user in this sector
@@ -119,6 +125,7 @@ public class MapControl {
                 User mergedUsers = new User(null, "2");
                 mergedUsers.setMarker(sector.getMarker());
                 mergedUsers.getMarker().changeLabel("2");
+                mergedUsers.getMarker().changeLook(MovableMarker.Look.DEFAULT);
                 mergedUsers.setLatitude(u.getLatitude());
                 mergedUsers.setLongitude(u.getLongitude());
 
@@ -168,5 +175,9 @@ public class MapControl {
         mapPos.y = (float) (pos.getLatitude() * (map.getHeight() / DELTA_LAT));
 
         return mapPos;
+    }
+
+    public void updateFriends(ArrayList<String> friendlist) {
+        friends = friendlist;
     }
 }
