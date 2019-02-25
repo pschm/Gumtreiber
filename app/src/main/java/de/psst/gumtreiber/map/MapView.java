@@ -11,8 +11,8 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import androidx.appcompat.widget.AppCompatImageView;
+import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.Coordinate;
-import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.Vector2;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -23,7 +23,7 @@ public class MapView extends AppCompatImageView {
     private static float defaultMatrixError = 1.5827f;
 
     // Users that are drawn on the map
-    private ArrayList<User> markers;
+    private ArrayList<AbstractUser> markers;
 
     // PhotoViewAttacher which holds this ImageView and enables zoom
     private PhotoViewAttacher zoomControl;
@@ -80,7 +80,7 @@ public class MapView extends AppCompatImageView {
     /**
      * @param markers users to be drawn of the map
      */
-    public void setMarkers(ArrayList<User> markers) {
+    public void setMarkers(ArrayList<AbstractUser> markers) {
         this.markers = markers;
         invalidate(); // repaint the map
     }
@@ -180,7 +180,7 @@ public class MapView extends AppCompatImageView {
         paint.setTextSize(35);
 
         // draw all users on the map
-        for (User u : markers) {
+        for (AbstractUser u : markers) {
             marker = u.getMarker();
 
             // save user position
@@ -299,7 +299,7 @@ public class MapView extends AppCompatImageView {
      * @param msg to display in Log.d
      * @param u   currently calc user
      */
-    private void printDebug(User u, String msg) {
+    private void printDebug(AbstractUser u, String msg) {
 //        if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", msg);
     }
 }
