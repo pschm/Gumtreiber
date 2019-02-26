@@ -218,7 +218,6 @@ public class Firebase {
      */
     public static void activateSchedule(String uid) {
         database.child("users").child(uid).child("usingSchedule").setValue(true);
-        //database.child("users").child(uid).child("expirationDate").setValue(0);
     }
 
     /**

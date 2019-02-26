@@ -11,17 +11,12 @@ import java.util.ArrayList;
  */
 public class UserFilter {
     // Filter flags
-    public static final boolean FIRENDS = true;
-    // IT
-    public static final boolean INF = true;
-    public static final boolean AI = true;
-    public static final boolean MI = true;
-    public static final boolean WI = true;
-    public static final boolean ITM = true;
-    public static final boolean TI = true;
-    // Engineer
-    public static final boolean ING = true;
-    public static final boolean MA = true;
+    public static boolean FIRENDS = true;
+    //Course flags
+    public static boolean INF_FILTER= true;
+    public static boolean MB_FILTER = true;
+    public static boolean PROF_FILTER = true;
+
 
     public static ArrayList<User> filterUsers(ArrayList<User> users) {
         ArrayList<User> filtered = new ArrayList<>();
@@ -41,12 +36,10 @@ public class UserFilter {
     private static boolean isFiltered(Course course) {
         if (course == null) return true; // TODO delete later
         switch (course) {
-            case AI: if (AI) return true;
-            case MI: if (MI) return true;
-            case WI: if (WI) return true;
-            case ITM: if (ITM) return true;
-            case TI: if (TI) return true;
+            case INF: return INF_FILTER;
+            case MB: return MB_FILTER;
+            case PROF: return PROF_FILTER;
+            default: return false;
         }
-        return false;
     }
 }

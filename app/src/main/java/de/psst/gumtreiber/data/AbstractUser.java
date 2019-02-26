@@ -15,8 +15,6 @@ public abstract class AbstractUser {
     private double longitude;
     private double altitude;
 
-    private Course course;
-
     //After this date the location data becomes invalid
     private Calendar expirationDate;
 
@@ -86,13 +84,6 @@ public abstract class AbstractUser {
         this.altitude = altitude;
     }
 
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
 
     public Calendar getExpirationDate() {
         return expirationDate;

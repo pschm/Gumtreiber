@@ -1,9 +1,13 @@
 package de.psst.gumtreiber.data;
 
+import androidx.annotation.Nullable;
+
 public class User extends AbstractUser {
 
     private boolean usingSchedule;
 
+    @Nullable
+    private Course course;
 
     public User(String uid, String name) {
         super(uid, name);
@@ -15,6 +19,14 @@ public class User extends AbstractUser {
 
     public void setUsingSchedule(boolean usingSchedule) {
         this.usingSchedule = usingSchedule;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     /*

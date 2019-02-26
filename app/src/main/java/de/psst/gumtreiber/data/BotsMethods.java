@@ -42,7 +42,6 @@ public class BotsMethods {
 
     public static ArrayList<Bot> getActiveBots(String authToken) {
         String jsonString = Firebase.getJSON(firebaseURL + "/bots" + ".json"  + "?auth=" + authToken);
-        //Log.v("mimi", firebaseURL + "/bots" + ".json"  + "?auth=" + authToken);
 
         ArrayList<Bot> activeBots = new ArrayList<Bot>();
 
