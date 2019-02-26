@@ -1,7 +1,6 @@
 package de.psst.gumtreiber.map;
 
 import android.app.Activity;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -38,6 +37,8 @@ public class MapControl {
         map.setMapControl(this);
         map.setPrisonControl(prisonControl);
         prisonControl.setMapControl(this);
+
+        MovableMarker.setMapView(map);
     }
 
     /**
@@ -52,10 +53,8 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
-        // filter users according to the selected filters TODO Change back to normal assignment
-        //this.users = users;
-
-        this.users =UserFilter.filterUsers(users);
+        // filter users according to the selected filters
+        this.users = UserFilter.filterUsers(users);
 
         // filter users not on the map
         this.users = prisonControl.updateInmates(this.users);
@@ -157,8 +156,6 @@ public class MapControl {
         // add all mergedUsers to the list
         users.addAll(mergedUserList);
     }
-
-
 
     /**
      * Calculates the given coordinate from GPS Position to map coordinates

@@ -56,6 +56,8 @@ public class MovableMarker {
     private float scaleStepSpeedFactor = 1f;
 
     private boolean alreadyDrawn = false;
+    private boolean usingOwnPosition = false;
+    private static MapView view;
 
     /**
      * Creates a new movable marker.
@@ -254,20 +256,22 @@ public class MovableMarker {
      */
     public void setPosition(float x, float y) {
         allowMovingThread = false;
-        curPos = new Vector2(x, y);
+        if (!usingOwnPosition) curPos = new Vector2(x, y);
 
-        nameImg.setX(x + nameCntrOffset.x);
-        nameImg.setY(y + nameCntrOffset.y);
+        Vector2 zoomed = view.adjustToTransformation(curPos);
 
-        x += IMG_CNTR_OFFSET.x;
-        y += IMG_CNTR_OFFSET.y;
+        nameImg.setX(zoomed.x + nameCntrOffset.x);
+        nameImg.setY(zoomed.y + nameCntrOffset.y);
 
-        getLeftFixPrint().setX(x);
-        getLeftFixPrint().setY(y);
+        zoomed.x += IMG_CNTR_OFFSET.x;
+        zoomed.y += IMG_CNTR_OFFSET.y;
+
+        getLeftFixPrint().setX(zoomed.x);
+        getLeftFixPrint().setY(zoomed.y);
         getLeftFixPrint().makeVisible();
 
-        getRightFixPrint().setX(x);
-        getRightFixPrint().setY(y);
+        getRightFixPrint().setX(zoomed.x);
+        getRightFixPrint().setY(zoomed.y);
         getRightFixPrint().makeVisible();
     }
 
@@ -363,6 +367,11 @@ public class MovableMarker {
                 stepImgR.startFadeOut();
 
                 while(!curPos.equals(targetPos) && allowMovingThread) {
+                    if (usingOwnPosition) {
+                        setPosition(curPos);
+                        break;
+                    }
+
                     //Log.d("Loop1", "Counter: " + counter);
                     Vector2 direction = Vector2.sub(targetPos, curPos);
                     direction = direction.normalize();
@@ -375,8 +384,11 @@ public class MovableMarker {
                             rotation = direction.angle() + 90f;
 
                             stepImg = getNextPrint(isLeftStep);
-                            stepImg.setX(curPos.x + IMG_CNTR_OFFSET.x);
-                            stepImg.setY(curPos.y + IMG_CNTR_OFFSET.y);
+
+                            Vector2 zoomed = view.adjustToTransformation(curPos);
+
+                            stepImg.setX(zoomed.x + IMG_CNTR_OFFSET.x);
+                            stepImg.setY(zoomed.y + IMG_CNTR_OFFSET.y);
                             stepImg.setRotation(rotation);
                             stepImg.startFadeOut();
 
@@ -389,12 +401,13 @@ public class MovableMarker {
                         if(counter >= stepSpeed * scaleStepSpeedFactor && !isSecondTime) {
                             rotation = direction.angle() + 90f;
 
-                            stepImgL.setX(targetPos.x + IMG_CNTR_OFFSET.x);
-                            stepImgL.setY(targetPos.y + IMG_CNTR_OFFSET.y);
+                            Vector2 zoomed = view.adjustToTransformation(targetPos);
+                            stepImgL.setX(zoomed.x + IMG_CNTR_OFFSET.x);
+                            stepImgL.setY(zoomed.y + IMG_CNTR_OFFSET.y);
                             stepImgL.setRotation(rotation);
 
-                            stepImgR.setX(targetPos.x + IMG_CNTR_OFFSET.x);
-                            stepImgR.setY(targetPos.y + IMG_CNTR_OFFSET.y);
+                            stepImgR.setX(zoomed.x + IMG_CNTR_OFFSET.x);
+                            stepImgR.setY(zoomed.y + IMG_CNTR_OFFSET.y);
                             stepImgR.setRotation(rotation);
 
                             if (isLeftStep) stepImgL.makeVisible();
@@ -417,8 +430,9 @@ public class MovableMarker {
 
                     }
 
-                    nameImg.setX(curPos.x + nameCntrOffset.x);
-                    nameImg.setY(curPos.y + nameCntrOffset.y);
+                    Vector2 zoomed = view.adjustToTransformation(curPos);
+                    nameImg.setX(zoomed.x + nameCntrOffset.x);
+                    nameImg.setY(zoomed.y + nameCntrOffset.y);
                     nameImg.setRotation(rotOffset);
 
                     try {
@@ -486,6 +500,21 @@ public class MovableMarker {
         final float conversionScale = context.getResources().getDisplayMetrics().density;
 
         return (int) ((nDP * conversionScale) + 0.5f) ;
+    }
+
+    public static void setMapView(MapView mapView) {
+        view = mapView;
+    }
+
+    /**
+     * @param usingOwnPosition if true, the marker uses his last known position to draw (moveTo)
+     */
+    public void setUsingOwnPosition(boolean usingOwnPosition) {
+        this.usingOwnPosition = usingOwnPosition;
+    }
+
+    public boolean isUsingOwnPosition() {
+        return usingOwnPosition;
     }
 
     public boolean isAlreadyDrawn() {

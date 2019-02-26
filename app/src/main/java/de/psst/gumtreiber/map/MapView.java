@@ -57,6 +57,8 @@ public class MapView extends AppCompatImageView {
     private Vector2 markerPoint = new Vector2();
     private Vector2 oldPosition = new Vector2();
 
+    private Vector2 testVec = new Vector2(500, 500);
+
     // all constructors needed for Android to build the ImageView correctly
     public MapView(Context context) {
         super(context);
@@ -97,26 +99,22 @@ public class MapView extends AppCompatImageView {
         this.prisonControl = prisonControl;
     }
 
-    /**
-     * Adjust a given coordinate to the current zoom of the map
-     */
-    public void adjustPosToZoom(Vector2 mapPos) {
-        adjustPosToZoom(mapPos, zoomControl.getDrawMatrix());
+    public Vector2 adjustToTransformation(Vector2 v1) {
+        return adjustToTransformation(v1, zoomControl.getDrawMatrix());
     }
 
     /**
      * Adjust a given coordinate to the zoom of the given transformation matrix
      */
-    public void adjustPosToZoom(Vector2 mapPos, Matrix transformation) {
+    public Vector2 adjustToTransformation(Vector2 v1, Matrix transformation) {
         // save the coordinate as float array (needed for the matrix mul.)
-        float[] point = {mapPos.x*defaultMatrixError, mapPos.y*defaultMatrixError};
+        float[] point = {v1.x * defaultMatrixError, v1.y * defaultMatrixError};
 
-        // adjust coordinate to zoom by applying the matrix
+        // adjust coordinate to transformation by applying the matrix
         transformation.mapPoints(point);
 
-        // save the values
-        mapPos.x = point[0];
-        mapPos.y = point[1];
+        // return new pos
+        return new Vector2(point[0], point[1]);
     }
 
     /**
@@ -124,7 +122,7 @@ public class MapView extends AppCompatImageView {
      */
     private void calcScaling() {
         Vector2 scaledSize = new Vector2(defaultSize.x, defaultSize.y);
-        adjustPosToZoom(scaledSize);
+        scaledSize = adjustToTransformation(scaledSize);
 
         scale = (defaultSize.x + defaultSize.y) / (scaledSize.x + scaledSize.y);
 
@@ -185,19 +183,12 @@ public class MapView extends AppCompatImageView {
             // map the coordinate according to the Gumtreiber area
             mapPos = mapControl.gpsToMap(pos);
 
-//            if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", u.name + " MapCoords - " + mapPos);
-
-            // consider possible zoom
-            adjustPosToZoom(mapPos);
-
-//            if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", u.name + " ZoomedCoords - " + mapPos);
-
             if (marker == null) {
                 Log.w("MapView", "WARNING: User without markers detected! (" + u.getName() + ")");
                 return;
             }
 
-            // make sure the marker is visible TODO maybe move this in MapControl
+            // make sure the marker is visible
             marker.setVisibility(true);
 
             // set the markers directly to the new position if the zoom changed
@@ -205,50 +196,25 @@ public class MapView extends AppCompatImageView {
             if (firstDraw || !marker.isAlreadyDrawn()) {
                 marker.setPosition(mapPos.x, mapPos.y);
                 marker.setAlreadyDrawn(true);
-                printDebug(u, "First draw");
             } else if (!zoomControl.getDrawMatrix().equals(oldTransformation)) {
-                printDebug(u, "new trans. mat -> zoom detected");
-                // TODO smooth movable markers while zooming
+                // if the marker is currently moving
+                // tell the marker to save his position and use this till he is released
                 if (marker.isMoving()) {
-                    printDebug(u, "marker is moving");
-                    printDebug(u, "current user position: " + marker.getPosition());
-
-                    // invert old trans. matrix
-                    oldTransformation.invert(inverse);
-
-                    // copy current marker position
-                    copyVector(oldPosition, marker.getPosition());
-
-                    // calc old map position (excluding zoom)
-                    adjustPosToZoom(oldPosition, inverse);
-                    printDebug(u, "Old Position (without zoom): " + oldPosition);
-
-                    // calc old position with new zoom
-                    adjustPosToZoom(oldPosition);
-                    printDebug(u, "Old Position (with new zoom): " + oldPosition);
-
-                    // set the marker to the calc position
-                    marker.setPosition(50, 500); // should be oldPosition
-                    printDebug(u, "User now positioned at: " + marker.getPosition());
-
-                    // move the marker to the new target position
+                    marker.setUsingOwnPosition(true);
                     marker.moveTo(mapPos.x, mapPos.y);
-                    printDebug(u, "Target position (moveTo): " + mapPos);
                 }
                 else {
-                    // marker is not moving, just adjust to new zoom
+                    // marker is currently not moving, so adjust his position to the new zoom
                     marker.setPosition(mapPos.x, mapPos.y);
-                    printDebug(u, "marker is NOT moving");
-                    printDebug(u, "marker is set to new pos: " + marker.getPosition());
                 }
             }
             else {
+                // no zoom detected -> release marker to move again
+                marker.setUsingOwnPosition(false);
+
                 // smoothly move the markers to the new position
                 marker.moveTo(mapPos.x, mapPos.y);
-                printDebug(u, "marker moving to new position (no zoom detected)");
             }
-
-            printDebug(u, "----------------------------------------");
 
             // scale the markers according to the zoom
             calcScaling();
@@ -270,37 +236,9 @@ public class MapView extends AppCompatImageView {
         firstDraw = false;
     }
 
-
-    // some Matrix/Vector Utility
+    // some Matrix Utility
     private void copyMatix(Matrix dest, Matrix src) {
         src.getValues(matrixValues);
         dest.setValues(matrixValues);
-    }
-
-    private void copyVector(Vector2 dest, Vector2 src) {
-        dest.x = src.x;
-        dest.y = src.y;
-    }
-
-    private Matrix substracMatrix(Matrix a, Matrix b) {
-        float[] aA = new float[9];
-        float[] bA = new float[9];
-        a.getValues(aA);
-        b.getValues(bA);
-        for (int i = 0; i < 9; i++) {
-            aA[i] = aA[i] - bA[i];
-        }
-        a.setValues(aA);
-        return a;
-    }
-
-    /**
-     * Cleaner debuging of the jumping user on zoom bug
-     *
-     * @param msg to display in Log.d
-     * @param u   currently calc user
-     */
-    private void printDebug(AbstractUser u, String msg) {
-//        if (u.name.equals("Hegenkranz")) Log.d("pschm - MapView", msg);
     }
 }
