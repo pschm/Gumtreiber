@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import de.psst.gumtreiber.location.Room;
@@ -229,6 +230,7 @@ public class Firebase {
         database.child("users").child(uid).child("usingSchedule").setValue(false);
     }
 
+    /*
     public static void updateUserList(String authToken, HashMap<String, User> userList) {
         String jsonString = getJSON(firebaseURL+ "/users.json" + "?auth=" + authToken);
         try {
@@ -271,8 +273,78 @@ public class Firebase {
             e.printStackTrace();
         }
 
+    }*/
+
+    public static void UpdateUserList(String authToken, HashMap<String, AbstractUser> userList) {
+        ArrayList<User> allUser = getAllUsers(authToken);
+
+        for (User each : allUser) {
+
+            User userReference;
+            if (!userList.containsKey(each.getUid())) {
+                //Put user into the List, if it's not already inside
+                userList.put(each.getUid(), each);
+                userReference = each;
+            } else {
+                //Get Reference for user, if it's already inside
+                userReference = (User) userList.get(each.getUid());
+            }
+
+            //Update Userdata that may has changed
+            userReference.setName(each.getName());
+            userReference.setUsingSchedule(each.isUsingSchedule());
+            userReference.setCourse(each.getCourse());
+
+            //Update Location Data
+
+            if (userReference.isUsingSchedule()) {
+                //Build User with Current Appointment
+                Appointment currentAppointment = getCurrentAppointment(userReference.getUid(), authToken);
+                if (currentAppointment != null) {
+                    userReference.setAltitude(currentAppointment.getRoom().getAltitude());
+                    userReference.setLongitude(currentAppointment.getRoom().getLongitude());
+                    userReference.setLatitude(currentAppointment.getRoom().getLatitude());
+                    userReference.setExpirationDate(currentAppointment.getEndDate());
+                }
+            } else {
+                //Use location data from firebase
+                userReference.setAltitude(each.getAltitude());
+                userReference.setLatitude(each.getLatitude());
+                userReference.setLongitude(each.getLongitude());
+                userReference.setExpirationDate(each.getExpirationDate());
+            }
+        }
+
+        //Update bots
+        ArrayList<Bot> activeBots = BotsMethods.getActiveBots(authToken);
+        for (Bot each: activeBots){
+            Bot botReference;
+            if(!userList.containsKey(each.getUid())){
+                //Bot new Bot into userlist
+                userList.put(each.getUid(), each);
+                botReference = each;
+            } else {
+                //Update already existing bots
+                botReference = (Bot) userList.get(each.getUid());
+
+                botReference.setLongitude(each.getLongitude());
+                botReference.setLatitude(each.getLatitude());
+                botReference.setAltitude(each.getAltitude());
+                botReference.setExpirationDate(each.getExpirationDate());
+
+                botReference.setName(each.getName());
+            }
+        }
+
+        //Filter expired users
+        for(Map.Entry<String, AbstractUser> entry : userList.entrySet()) {
+            AbstractUser myUser = entry.getValue();
+            if(myUser.isExpired()) myUser.setVisible(false);
+        }
+
     }
 
+    /*
     public static void newUpdateUserList(String authToken, HashMap<String, User> userList) {
         ArrayList<User> allUser = getAllUsers(authToken);
 
@@ -357,7 +429,7 @@ public class Firebase {
             }
 
         }
-    }
+    }*/
 
     //TODO JavaDoc
     private static Appointment getCurrentAppointment(String uid, String authToken) {
@@ -425,7 +497,6 @@ public class Firebase {
         return userList;
     }
 
-    //TODO Nicht mehr gebraucht
 
     /**
      * Requests all useres from firebase with valid locations and returns them with their

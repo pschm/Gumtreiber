@@ -12,17 +12,19 @@ import java.util.ArrayList;
 public class UserFilter {
     // Filter flags
     public static boolean FIRENDS = true;
+    public static boolean BOT_FILTER = true;
     //Course flags
     public static boolean INF_FILTER= true;
     public static boolean MB_FILTER = true;
     public static boolean PROF_FILTER = true;
 
 
-    public static ArrayList<User> filterUsers(ArrayList<User> users) {
-        ArrayList<User> filtered = new ArrayList<>();
+    public static ArrayList<AbstractUser> filterUsers(ArrayList<AbstractUser> users) {
+        ArrayList<AbstractUser> filtered = new ArrayList<>();
 
-        for (User u : users) {
-            if (isFiltered(u.getCourse())) filtered.add(u);
+        for (AbstractUser u : users) {
+            if (u instanceof User && isFiltered(((User) u).getCourse())) filtered.add(u);
+            if (u instanceof Bot && BOT_FILTER) filtered.add(u);
         }
 
         return filtered;

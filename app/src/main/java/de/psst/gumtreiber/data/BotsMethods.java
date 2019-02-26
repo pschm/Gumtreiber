@@ -27,11 +27,11 @@ public class BotsMethods {
         database.child("bots").child(botID).child("name").setValue(name);
     }
 
-    public static void addRoutineToBot(String botID, long startTime, long endTime, Location location) {
+    public static void addRoutineToBot(String botID, int startTime, int endTime, Location location) {
         addRoutineToBot(botID,startTime,endTime,location.getLatitude(),location.getLongitude(), location.getAltitude());
     }
 
-    public static void addRoutineToBot(String botID, long startTime, long endTime, double latitude, double longitude, double altitude) {
+    public static void addRoutineToBot(String botID, int startTime, int endTime, double latitude, double longitude, double altitude) {
 
         database.child("bots").child(botID).child("routines").child(""+startTime).child("startTime").setValue(startTime);
         database.child("bots").child(botID).child("routines").child(""+startTime).child("endTime").setValue(endTime);

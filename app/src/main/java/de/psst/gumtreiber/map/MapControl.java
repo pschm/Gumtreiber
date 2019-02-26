@@ -1,6 +1,7 @@
 package de.psst.gumtreiber.map;
 
 import android.app.Activity;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -50,10 +51,11 @@ public class MapControl {
      * Update the user list and show the new filtered users on the map
      * @param users new user list
      */
-    public void updateUsers(ArrayList<User> users) {
+    public void updateUsers(ArrayList<AbstractUser> users) {
         // filter users according to the selected filters TODO Change back to normal assignment
-        this.users.clear();
-        this.users.addAll(UserFilter.filterUsers(users));
+        //this.users = users;
+
+        this.users =UserFilter.filterUsers(users);
 
         // filter users not on the map
         this.users = prisonControl.updateInmates(this.users);
@@ -79,7 +81,7 @@ public class MapControl {
         double x, y;
 
         // create a grid to detect close users
-        AbstractUser[][] map = new User[xSize / boxSize][ySize / boxSize];
+        AbstractUser[][] map = new AbstractUser[xSize / boxSize][ySize / boxSize];
 
         // list for all merged users
         ArrayList<User> mergedUserList = new ArrayList<>();

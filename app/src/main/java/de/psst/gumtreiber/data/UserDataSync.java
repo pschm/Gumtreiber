@@ -30,7 +30,7 @@ import de.psst.gumtreiber.map.MapControl;
  */
 public class UserDataSync implements Runnable, Application.ActivityLifecycleCallbacks {
 
-    private HashMap<String, User> userList = new HashMap<>();
+    private HashMap<String, AbstractUser> userList = new HashMap<>();
 
     private Activity activity;
     private LocationHandler locationHandler;
@@ -104,7 +104,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             }
 
             if(!TextUtils.isEmpty(userToken)) {
-                Firebase.updateUserList(userToken, userList);
+                Firebase.UpdateUserList(userToken, userList);
                 mapControl.updateFriends(Firebase.getFriendlist(FirebaseAuth.getInstance().getUid(), userToken));
                 mapControl.updateUsers(new ArrayList<>(userList.values()));
             } else {
