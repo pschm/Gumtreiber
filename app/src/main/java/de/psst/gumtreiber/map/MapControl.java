@@ -62,7 +62,8 @@ public class MapControl {
         buildUserGroups(BOX_SIZE);
 
         // show users on the map
-        map.setMarkers(this.users);
+        // new ArrayList is needed to avoid ConcurrentModificationExceptions
+        map.setMarkers(new ArrayList<>(this.users));
     }
 
     /**
