@@ -256,7 +256,7 @@ public class MovableMarker {
      */
     public void setPosition(float x, float y) {
         allowMovingThread = false;
-        if (!usingOwnPosition) curPos = new Vector2(x, y);
+        if (!isUsingOwnPosition()) curPos = new Vector2(x, y);
 
         Vector2 zoomed = view.adjustToTransformation(curPos);
 
@@ -367,17 +367,27 @@ public class MovableMarker {
                 stepImgR.startFadeOut();
 
                 while(!curPos.equals(targetPos) && allowMovingThread) {
-                    if (usingOwnPosition) {
+                    // hold the current position if the users zooms
+                    if (isUsingOwnPosition()) {
                         setPosition(curPos);
-                        break;
+                        return;
                     }
 
                     //Log.d("Loop1", "Counter: " + counter);
                     Vector2 direction = Vector2.sub(targetPos, curPos);
-                    direction = direction.normalize();
-                    curPos.x = curPos.x + direction.x * animationSpeed;
-                    curPos.y = curPos.y + direction.y * animationSpeed;
 
+                    // calc scaling of the map and adjust it for
+                    // clean marker movement on all zoom level
+                    float mapScaling = view.getZoomControl().getScale() * 2.5f;
+                    mapScaling = (float) Math.log((double)mapScaling);
+                    if (mapScaling < 0) mapScaling = 1;
+
+                    direction = direction.normalize().divide(mapScaling);
+                    float currentSpeed = animationSpeed / mapScaling;
+                    curPos.x = curPos.x + direction.x * currentSpeed;
+                    curPos.y = curPos.y + direction.y * currentSpeed;
+
+//                    if(targetPos.distance(curPos) > animationSpeed) {
                     if(targetPos.distance(curPos) > animationSpeed) {
                         if (counter >= stepSpeed * scaleStepSpeedFactor) {
                             //Log.d("curPos", curPos.toString());

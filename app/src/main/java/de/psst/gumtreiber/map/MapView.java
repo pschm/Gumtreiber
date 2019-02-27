@@ -202,6 +202,7 @@ public class MapView extends AppCompatImageView {
                 if (marker.isMoving()) {
                     marker.setUsingOwnPosition(true);
                     marker.moveTo(mapPos.x, mapPos.y);
+//                    if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: OWN position");
                 }
                 else {
                     // marker is currently not moving, so adjust his position to the new zoom
@@ -211,6 +212,7 @@ public class MapView extends AppCompatImageView {
             else {
                 // no zoom detected -> release marker to move again
                 marker.setUsingOwnPosition(false);
+//                if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: GIVEN position");
 
                 // smoothly move the markers to the new position
                 marker.moveTo(mapPos.x, mapPos.y);
@@ -234,6 +236,13 @@ public class MapView extends AppCompatImageView {
         // save the current transformation
         copyMatix(oldTransformation, zoomControl.getDrawMatrix());
         firstDraw = false;
+    }
+
+    /**
+     * @return the PhotoViewAttacher which holds this MapViews
+     */
+    public PhotoViewAttacher getZoomControl() {
+        return zoomControl;
     }
 
     // some Matrix Utility
