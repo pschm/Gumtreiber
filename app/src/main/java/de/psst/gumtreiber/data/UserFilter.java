@@ -7,22 +7,27 @@ import java.util.ArrayList;
  * it can also filter a user list according to the flags
  *
  * The UserFilter is used from the {@link de.psst.gumtreiber.map.MapControl}
- * TODO add/delete flags according to the UI-implementation
  */
 public class UserFilter {
     // Filter flags
-    public static boolean FIRENDS = true;
+    public static boolean FRIEND_FILTER = true;
     public static boolean BOT_FILTER = true;
-    //Course flags
-    public static boolean INF_FILTER= true;
-    public static boolean MB_FILTER = true;
+    // Course flags
+    public static boolean NONE_FILTER = true;
+    public static boolean INF_FILTER = true;
+    public static boolean ING_FILTER = true;
     public static boolean PROF_FILTER = true;
 
+    private static ArrayList<String> friendList = new ArrayList<>();
 
     public static ArrayList<AbstractUser> filterUsers(ArrayList<AbstractUser> users) {
         ArrayList<AbstractUser> filtered = new ArrayList<>();
 
         for (AbstractUser u : users) {
+            if (friendList.contains(u.getUid()) && FRIEND_FILTER) {
+                filtered.add(u);
+                continue;
+            }
             if (u instanceof User && isFiltered(((User) u).getCourse())) filtered.add(u);
             if (u instanceof Bot && BOT_FILTER) filtered.add(u);
         }
@@ -38,10 +43,15 @@ public class UserFilter {
     private static boolean isFiltered(Course course) {
         if (course == null) return true; // TODO delete later
         switch (course) {
+            case NONE: return NONE_FILTER;
             case INF: return INF_FILTER;
-            case MB: return MB_FILTER;
+            case ING: return ING_FILTER;
             case PROF: return PROF_FILTER;
             default: return false;
         }
+    }
+
+    public static void setFriendList(ArrayList<String> friendList) {
+        UserFilter.friendList = friendList;
     }
 }
