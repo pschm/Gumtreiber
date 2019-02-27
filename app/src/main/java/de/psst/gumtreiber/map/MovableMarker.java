@@ -57,7 +57,7 @@ public class MovableMarker {
 
     private boolean alreadyDrawn = false;
     private boolean usingOwnPosition = false;
-    private static MapView view;
+    private static MapView mapView;
 
     /**
      * Creates a new movable marker.
@@ -258,7 +258,7 @@ public class MovableMarker {
         allowMovingThread = false;
         if (!isUsingOwnPosition()) curPos = new Vector2(x, y);
 
-        Vector2 zoomed = view.adjustToTransformation(curPos);
+        Vector2 zoomed = mapView.adjustToTransformation(curPos);
 
         nameImg.setX(zoomed.x + nameCntrOffset.x);
         nameImg.setY(zoomed.y + nameCntrOffset.y);
@@ -369,6 +369,7 @@ public class MovableMarker {
                 while(!curPos.equals(targetPos) && allowMovingThread) {
                     // hold the current position if the users zooms
                     if (isUsingOwnPosition()) {
+                        stopFadeAnimation();
                         setPosition(curPos);
                         return;
                     }
@@ -378,7 +379,7 @@ public class MovableMarker {
 
                     // calc scaling of the map and adjust it for
                     // clean marker movement on all zoom level
-                    float mapScaling = view.getZoomControl().getScale() * 2.5f;
+                    float mapScaling = mapView.getZoomControl().getScale() * 2.5f;
                     mapScaling = (float) Math.log((double)mapScaling);
                     if (mapScaling < 0) mapScaling = 1;
 
@@ -387,7 +388,6 @@ public class MovableMarker {
                     curPos.x = curPos.x + direction.x * currentSpeed;
                     curPos.y = curPos.y + direction.y * currentSpeed;
 
-//                    if(targetPos.distance(curPos) > animationSpeed) {
                     if(targetPos.distance(curPos) > animationSpeed) {
                         if (counter >= stepSpeed * scaleStepSpeedFactor) {
                             //Log.d("curPos", curPos.toString());
@@ -395,7 +395,7 @@ public class MovableMarker {
 
                             stepImg = getNextPrint(isLeftStep);
 
-                            Vector2 zoomed = view.adjustToTransformation(curPos);
+                            Vector2 zoomed = mapView.adjustToTransformation(curPos);
 
                             stepImg.setX(zoomed.x + IMG_CNTR_OFFSET.x);
                             stepImg.setY(zoomed.y + IMG_CNTR_OFFSET.y);
@@ -411,7 +411,7 @@ public class MovableMarker {
                         if(counter >= stepSpeed * scaleStepSpeedFactor && !isSecondTime) {
                             rotation = direction.angle() + 90f;
 
-                            Vector2 zoomed = view.adjustToTransformation(targetPos);
+                            Vector2 zoomed = mapView.adjustToTransformation(targetPos);
                             stepImgL.setX(zoomed.x + IMG_CNTR_OFFSET.x);
                             stepImgL.setY(zoomed.y + IMG_CNTR_OFFSET.y);
                             stepImgL.setRotation(rotation);
@@ -440,7 +440,7 @@ public class MovableMarker {
 
                     }
 
-                    Vector2 zoomed = view.adjustToTransformation(curPos);
+                    Vector2 zoomed = mapView.adjustToTransformation(curPos);
                     nameImg.setX(zoomed.x + nameCntrOffset.x);
                     nameImg.setY(zoomed.y + nameCntrOffset.y);
                     nameImg.setRotation(rotOffset);
@@ -513,7 +513,7 @@ public class MovableMarker {
     }
 
     public static void setMapView(MapView mapView) {
-        view = mapView;
+        MovableMarker.mapView = mapView;
     }
 
     /**

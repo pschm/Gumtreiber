@@ -57,7 +57,6 @@ public class MapView extends AppCompatImageView {
     private Vector2 markerPoint = new Vector2();
     private Vector2 oldPosition = new Vector2();
 
-    private Vector2 testVec = new Vector2(500, 500);
 
     // all constructors needed for Android to build the ImageView correctly
     public MapView(Context context) {
@@ -99,12 +98,17 @@ public class MapView extends AppCompatImageView {
         this.prisonControl = prisonControl;
     }
 
+    /**
+     * Adjust a given vector to the current zoom of the map
+     * @param v1 vector used for the calculation
+     * @return new vector adjusted to the map transformation
+     */
     public Vector2 adjustToTransformation(Vector2 v1) {
         return adjustToTransformation(v1, zoomControl.getDrawMatrix());
     }
 
     /**
-     * Adjust a given coordinate to the zoom of the given transformation matrix
+     * Adjust a given vector to the zoom of the given transformation matrix
      */
     public Vector2 adjustToTransformation(Vector2 v1, Matrix transformation) {
         // save the coordinate as float array (needed for the matrix mul.)
@@ -202,7 +206,7 @@ public class MapView extends AppCompatImageView {
                 if (marker.isMoving()) {
                     marker.setUsingOwnPosition(true);
                     marker.moveTo(mapPos.x, mapPos.y);
-//                    if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: OWN position");
+                    if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: OWN position");
                 }
                 else {
                     // marker is currently not moving, so adjust his position to the new zoom
@@ -212,29 +216,18 @@ public class MapView extends AppCompatImageView {
             else {
                 // no zoom detected -> release marker to move again
                 marker.setUsingOwnPosition(false);
-//                if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: GIVEN position");
+                if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: GIVEN position");
 
                 // smoothly move the markers to the new position
                 marker.moveTo(mapPos.x, mapPos.y);
             }
-
-            // scale the markers according to the zoom
-            calcScaling();
-            marker.setScale((float) scale);
-
-            // TODO delete paint & circle as soon as markers work correctly
-            // the paint color and size
-            paint.setColor(Color.WHITE);
-
-            // draw user on the map
-            canvas.drawCircle(mapPos.x, mapPos.y, 15f, paint);
         }
 
         // translate prison
         prisonControl.updateLocation();
 
         // save the current transformation
-        copyMatix(oldTransformation, zoomControl.getDrawMatrix());
+        copyMatrix(oldTransformation, zoomControl.getDrawMatrix());
         firstDraw = false;
     }
 
@@ -246,7 +239,7 @@ public class MapView extends AppCompatImageView {
     }
 
     // some Matrix Utility
-    private void copyMatix(Matrix dest, Matrix src) {
+    private void copyMatrix(Matrix dest, Matrix src) {
         src.getValues(matrixValues);
         dest.setValues(matrixValues);
     }
