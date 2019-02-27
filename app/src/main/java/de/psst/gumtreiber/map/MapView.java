@@ -41,10 +41,6 @@ public class MapView extends AppCompatImageView {
     private double scale = 1.0;
     private boolean firstDraw = true;
 
-    // painter used to draw the map TODO could be deleted, if all problems with MovableMarkers are fixed
-    private Paint paint = new Paint();
-
-
     // Declare some variables for the onDraw, so we
     // don't have to keep allocating them on the heap
     private MovableMarker marker;
