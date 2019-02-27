@@ -691,6 +691,21 @@ public class Firebase {
 
     }
 
+    public static ArrayList<User> getAllFriends(String uid, String authToken){
+        ArrayList<String> friendList = getFriendlist(uid, authToken);
+        ArrayList<User> allUser = getAllUsers(authToken);
+
+        ArrayList<User> allFriends = new ArrayList<User>();
+
+        for(User each: allUser){
+            if (friendList.contains( each.getUid() ))
+                allFriends.add(each);
+        }
+
+        return allFriends;
+
+    }
+
 
     /**
      * Makes a GET request to Firebase and returns a JSON
