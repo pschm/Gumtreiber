@@ -2,7 +2,6 @@ package de.psst.gumtreiber.data;
 
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -317,9 +316,9 @@ public class Firebase {
 
         //Update bots
         ArrayList<Bot> activeBots = BotsMethods.getActiveBots(authToken);
-        for (Bot each: activeBots){
+        for (Bot each : activeBots) {
             Bot botReference;
-            if(!userList.containsKey(each.getUid())){
+            if (!userList.containsKey(each.getUid())) {
                 //Bot new Bot into userlist
                 userList.put(each.getUid(), each);
                 botReference = each;
@@ -337,9 +336,9 @@ public class Firebase {
         }
 
         //Filter expired users
-        for(Map.Entry<String, AbstractUser> entry : userList.entrySet()) {
+        for (Map.Entry<String, AbstractUser> entry : userList.entrySet()) {
             AbstractUser myUser = entry.getValue();
-            if(myUser.isExpired()) myUser.setVisible(false);
+            if (myUser.isExpired()) myUser.setVisible(false);
         }
 
     }
@@ -478,7 +477,7 @@ public class Firebase {
                 myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
 
                 //Wenn Nutzer einen Studiengang hat, dann setze ihn
-                if (userJSON.has("course")){
+                if (userJSON.has("course")) {
                     String courseString = userJSON.getString("course");
                     myUser.setCourse(Course.valueOf(courseString));
                 }
@@ -495,6 +494,39 @@ public class Firebase {
         }
 
         return userList;
+    }
+
+
+    public static User getUser(String uid, String authToken) {
+
+        String jsonString = getJSON(firebaseURL + "/users/" + uid + ".json" + "?auth=" + authToken);
+
+        User user = null;
+        try {
+            JSONObject reader = new JSONObject(jsonString);
+
+            user = new User(uid, reader.getString("name"));
+
+            user.setAltitude(reader.getDouble("altitude"));
+            user.setLatitude(reader.getDouble("latitude"));
+            user.setLongitude(reader.getDouble("longitude"));
+            user.setUsingSchedule(reader.getBoolean("usingSchedule"));
+
+            //Wenn Nutzer einen Studiengang hat, dann setze ihn
+            if (reader.has("course")) {
+                String courseString = reader.getString("course");
+                user.setCourse(Course.valueOf(courseString));
+            }
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dateFormat.parse("" + reader.getLong("expirationDate")));
+            user.setExpirationDate(cal);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return user;
     }
 
 
@@ -525,7 +557,7 @@ public class Firebase {
                 myUser.setLongitude(userJSON.getDouble("longitude"));
                 myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
 
-                if (userJSON.has("course")){
+                if (userJSON.has("course")) {
                     String courseString = userJSON.getString("course");
                     myUser.setCourse(Course.valueOf(courseString));
                 }
@@ -587,7 +619,7 @@ public class Firebase {
                     myUser.setLongitude(currentAppointment.getRoom().getLongitude());
                     myUser.setUsingSchedule(true);
 
-                    if (userJSON.has("course")){
+                    if (userJSON.has("course")) {
                         String courseString = userJSON.getString("course");
                         myUser.setCourse(Course.valueOf(courseString));
                     }
@@ -610,7 +642,8 @@ public class Firebase {
 
     /**
      * Adds the UID of your friend to your friendlist in firebase.
-     * @param myUID UID of the friendlist's owner
+     *
+     * @param myUID      UID of the friendlist's owner
      * @param friendsUID UID of the user to be added to the friendlist
      */
     public static void addUserToFriendlist(String myUID, String friendsUID) {
@@ -619,7 +652,8 @@ public class Firebase {
 
     /**
      * Deletes the UID of your friend from your friendlist in firebase.
-     * @param myUID UID of the friendlist's owner
+     *
+     * @param myUID      UID of the friendlist's owner
      * @param friendsUID UID of the user to be deleted from the friendlist
      */
     public static void deleteUserFromFriendlist(String myUID, String friendsUID) {
@@ -629,22 +663,23 @@ public class Firebase {
 
     /**
      * Returns a String Array with all UIDs of your friends.
-     * @param uid UID of the friendlist's owner
+     *
+     * @param uid       UID of the friendlist's owner
      * @param authToken token of the friendlist's owner
      * @return
      */
-    public static ArrayList<String> getFriendlist(String uid, String authToken){
+    public static ArrayList<String> getFriendlist(String uid, String authToken) {
 
         ArrayList<String> friendlist = new ArrayList<String>();
 
 
         try {
-            String jsonString = getJSON(firebaseURL + "/friendlists/" + uid + ".json"  + "?auth=" + authToken);
+            String jsonString = getJSON(firebaseURL + "/friendlists/" + uid + ".json" + "?auth=" + authToken);
             JSONObject reader = new JSONObject(jsonString);
             JSONArray allUIDs = reader.names();
 
-            for (int i = 0; i < allUIDs.length(); i++){
-                friendlist.add( allUIDs.getString(i));
+            for (int i = 0; i < allUIDs.length(); i++) {
+                friendlist.add(allUIDs.getString(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -655,7 +690,6 @@ public class Firebase {
         return friendlist;
 
     }
-
 
 
     /**
