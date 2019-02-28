@@ -1,65 +1,105 @@
 package de.psst.gumtreiber.viewmodels;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.data.User;
+import de.psst.gumtreiber.data.UserDataSync;
 
 public class FriendsViewModel extends AndroidViewModel {
 
-    //TODO Echte firebase Userliste Abrufen!
+    private String uid;
+    private String token;
 
-    private static final String PREFERENCES_KEY = "de.psst.gumtreiber";
-    private static final String FRIENDLIST_KEY = "friendList";
-
-    //TODO Später vielleicht erstezen -> Name Überdenken
-    private MutableLiveData<List<String>> friends = new MutableLiveData<>();
+    //private MutableLiveData<List<String>> friends = new MutableLiveData<>();
+    private List<User> friendList;
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
+        uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        token = UserDataSync.getUserToken();
         fetchFriends();
 
     }
 
-    public SharedPreferences getPreferences() {
-        return getApplication().getSharedPreferences(PREFERENCES_KEY, Context.MODE_PRIVATE);
-    }
-
-    public LiveData getFriends() {
-        return friends;
+    public ArrayList<User> getFriendList() {
+        return new ArrayList<>(friendList);
     }
 
     private void fetchFriends() {
-        friends.setValue(getOrCreateFriends());
+        friendList = getOrCreateFriends();
     }
 
-    private List<String> getOrCreateFriends() {
-        Set<String> dbFriends = getPreferences().getStringSet(FRIENDLIST_KEY, new HashSet<>());
-        return new ArrayList<>(Objects.requireNonNull(dbFriends));
+    private List<User> getOrCreateFriends() {
+        //Firebase friendList
+        return new ArrayList<>(Objects.requireNonNull(Firebase.getAllFriends(uid, token)));
     }
 
-    private List<String> saveFriends(List<String> friends) {
-        getPreferences().edit().putStringSet(FRIENDLIST_KEY, new HashSet<>(friends)).apply();
-        return friends;
-    }
 
-    //Momentan noch name
+    /**
+     * Delets a user from FriendList
+     *
+     * @param id of the user to be deleted
+     */
     public void deleteFriend(String id) {
-        //Aus der SharedPreference löschen
-        List<String> friendList = friends.getValue();
-        if (friendList != null)
-            friendList.remove(id);
-        friends.setValue(saveFriends(friendList));
-
+        //Delete from Firebase
+        Firebase.deleteUserFromFriendlist(uid, id);
+        //fetchFriends();
     }
+
+    /**
+     * Adds a new Friend to the FriendList
+     *
+     * @param id of the user to be added
+     */
+    public void addFriend(String id) {
+        //Add to Firebase
+        Firebase.addUserToFriendlist(uid, id);
+        //fetchFriends();
+    }
+
+    //Getting and Filtering UserList
+
+    /**
+     * Getting the Userlist from Firebase
+     *
+     * @return the list of useres
+     */
+    private List<User> getUserList() {
+        //Getting online UserList from Firebase
+        return Firebase.getAllUsers(UserDataSync.getUserToken());
+    }
+
+    /**
+     * Filters the Friends out of the userList
+     *
+     * @return userList without the users who are already in the FriendList
+     */
+    private List<User> filterUserList(List<User> userList) {
+        //filter the Friends out of it
+        for (int i = userList.size() - 1; i >= 0; i--) {
+            if (Objects.requireNonNull(friendList.contains(userList.get(i).getUid())) || userList.get(i).getUid().equals(uid)) {
+                userList.remove(i);
+            }
+        }
+        return userList;
+    }
+
+    /**
+     * Returns a the userList without the useres who are already in the friendList
+     *
+     * @return the filtered userList
+     */
+    public List<User> getFilterdUserList() {
+        return filterUserList(getUserList());
+    }
+
 }

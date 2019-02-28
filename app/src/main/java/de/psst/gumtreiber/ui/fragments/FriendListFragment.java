@@ -13,13 +13,12 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.psst.gumtreiber.R;
@@ -57,9 +56,10 @@ public class FriendListFragment extends Fragment {
         activity.setActionBarTitle(getString(R.string.title_my_friends));
 
         //Init ViewModel
-        model = new FriendsViewModel(getActivity().getApplication());
+        model = ViewModelProviders.of(activity).get(FriendsViewModel.class);
+        //ArrayList<String> Friends = new ArrayList<User>(model.getFriendList().getValue());
 
-        recyclerView = getActivity().findViewById(R.id.friends_recycler_view);
+        recyclerView = activity.findViewById(R.id.friends_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -73,16 +73,9 @@ public class FriendListFragment extends Fragment {
         ArrayList<User> test = new ArrayList<>(); //TODO init korrekt machen
         test.add(new User("ABC","Manni"));
         test.add(new User("DEF","Waißnich"));
-        adapter = new RecyclerAdapter(this, test);
+        adapter = new RecyclerAdapter(this, model.getFriendList());
         recyclerView.setAdapter(adapter);
 
-        //Observe friend list
-        model.getFriends().observe(activity, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> friends) {
-                adapter.refresh();
-            }
-        });
 
         //Button der uns zu der Auswahl möglich Freunde bringt
         FloatingActionButton btnAdd = activity.findViewById(R.id.fab_add_friend);
@@ -99,7 +92,6 @@ public class FriendListFragment extends Fragment {
     }
 
     private void removeFriend(final User user) {
-        //TODO Über die ID's Gehen!
 
         //AltertDialog für Abfrage ob wirklich gelösht werden soll
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
@@ -108,7 +100,7 @@ public class FriendListFragment extends Fragment {
         alertDialogBuilder.setPositiveButton(getString(R.string.popup_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                model.deleteFriend(user.getName());
+                model.deleteFriend(user.getUid());
             }
         });
 
@@ -154,6 +146,8 @@ public class FriendListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     fragment.removeFriend(user);
+                    model.deleteFriend(user.getUid());
+                    refresh();
                 }
             });
         }
@@ -250,7 +244,7 @@ public class FriendListFragment extends ListFragment {
         activity = getActivity();
 
         model = ViewModelProviders.of((FragmentActivity) activity).get(FriendsViewModel.class);
-        model.getFriends().observe((FragmentActivity) activity, new Observer<List<String>>() {
+        model.getFriendList().observe((FragmentActivity) activity, new Observer<List<String>>() {
 
             @Override
             public void onChanged(List<String> friends) {
