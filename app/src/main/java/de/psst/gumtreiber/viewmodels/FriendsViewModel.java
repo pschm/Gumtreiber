@@ -20,7 +20,7 @@ public class FriendsViewModel extends AndroidViewModel {
     private String token;
 
     //private MutableLiveData<List<String>> friends = new MutableLiveData<>();
-    private List<User> friendlist;
+    private List<User> friendList;
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
@@ -31,19 +31,16 @@ public class FriendsViewModel extends AndroidViewModel {
     }
 
     public ArrayList<User> getFriendList() {
-        return new ArrayList<>(friendlist);
+        return new ArrayList<>(friendList);
     }
 
     private void fetchFriends() {
-        friendlist = getOrCreateFriends();
+        friendList = getOrCreateFriends();
     }
 
     private List<User> getOrCreateFriends() {
-        //Firebase FriendList
-        ArrayList<String> friendIdList = new ArrayList<>(Firebase.getFriendlist(uid, token));
-        ArrayList<User> friendList = new ArrayList<>();
-        for (String id : friendIdList) friendIdList.add(Firebase.getUser(id));
-        return new ArrayList<>(Objects.requireNonNull(friendList));
+        //Firebase friendList
+        return new ArrayList<>(Objects.requireNonNull(Firebase.getAllFriends(uid, token)));
     }
 
 
@@ -89,7 +86,7 @@ public class FriendsViewModel extends AndroidViewModel {
     private List<User> filterUserList(List<User> userList) {
         //filter the Friends out of it
         for (int i = userList.size() - 1; i >= 0; i--) {
-            if (Objects.requireNonNull(friendlist.contains(userList.get(i).getUid()))) {
+            if (Objects.requireNonNull(friendList.contains(userList.get(i).getUid())) || userList.get(i).getUid().equals(uid)) {
                 userList.remove(i);
             }
         }

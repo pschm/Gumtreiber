@@ -76,14 +76,7 @@ public class FriendListFragment extends Fragment {
         adapter = new RecyclerAdapter(this, model.getFriendList());
         recyclerView.setAdapter(adapter);
 
-        //Observe friend list
-        /*model.getFriendList().observe(activity, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> friends) {
-                adapter.refresh();
-            }
-        });
-        */
+
         //Button der uns zu der Auswahl möglich Freunde bringt
         FloatingActionButton btnAdd = activity.findViewById(R.id.fab_add_friend);
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -153,6 +146,8 @@ public class FriendListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     fragment.removeFriend(user);
+                    model.deleteFriend(user.getUid());
+                    refresh();
                 }
             });
         }
