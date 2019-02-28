@@ -1,5 +1,7 @@
 package de.psst.gumtreiber.data;
 
+import android.annotation.SuppressLint;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -9,7 +11,9 @@ public class Bot extends AbstractUser {
         super(uid, name);
     }
 
+    @Override
     public String toString() {
+        @SuppressLint("SimpleDateFormat")
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String s = dateFormat.format(getExpirationDate().getTime());
 

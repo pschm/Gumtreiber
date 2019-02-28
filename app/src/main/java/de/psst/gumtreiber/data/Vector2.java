@@ -87,4 +87,22 @@ public class Vector2 {
         if (angle < 0) angle += 360;
         return angle;
     }
+
+    /**
+     * @return a new object with equal x, y values
+     */
+    public Vector2 copy() {
+        return new Vector2(x, y);
+    }
+
+    /**
+     * @param divider factor to divide the vector
+     * @return divided vector
+     */
+    public Vector2 divide(float divider) {
+        if  (divider == 0) return this;
+        x /= divider;
+        y /= divider;
+        return this;
+    }
 }

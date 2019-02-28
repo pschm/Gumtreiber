@@ -59,7 +59,7 @@ public class PrisonControl {
         Vector2 mapPos = mapControl.gpsToMap(new Coordinate(PRISON_LATITUDE, PRISON_LONGITUDE));
 
         // consider possible translation
-        mapControl.getMap().adjustPosToZoom(mapPos);
+        mapPos = mapControl.getMap().adjustToTransformation(mapPos);
 
         // set the new location
         view.setX(mapPos.x);

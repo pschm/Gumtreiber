@@ -4,20 +4,10 @@ public enum Course {
 
     //TODO Alle Studiegänge reintun, ich habe bisher nur die Bachelor Inf Studiengänge reingetan
 
+    NONE("Keiner"),
     INF("Informatik"),
-    MB("Maschienenbau"),
+    ING("Ingenieur"),
     PROF("Professor/Dozent");
-
-
-    /*
-    NONE("Keiner", "Keiner"),
-    AI("INF", "Allgemeie Informatik"),
-    MI("INF","Medieninformatik"),
-    TI("INF", "Technische Informatik"),
-    WI("INF", "Wirtschaftsinformatik"),
-    ITM("INF", "IT-Management");
-    */
-
 
     //Attribute
     private final String fullName;
@@ -33,6 +23,7 @@ public enum Course {
 
         String[] allCourses = new String[courses.length];
         for (int i = 0; i < allCourses.length; i++) {
+            if (courses[i].equals(PROF)) continue;
             allCourses[i] = courses[i].fullName;
         }
 
@@ -40,4 +31,4 @@ public enum Course {
     }
 
 
-    }
+}
