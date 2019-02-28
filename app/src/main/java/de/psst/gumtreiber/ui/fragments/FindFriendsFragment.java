@@ -8,15 +8,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.ui.MainActivity;
+import de.psst.gumtreiber.viewmodels.FriendsViewModel;
 
 public class FindFriendsFragment extends Fragment {
 
@@ -27,11 +30,16 @@ public class FindFriendsFragment extends Fragment {
     private FindFriendsFragment.RecyclerAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
+    //ViewModel
+    private FriendsViewModel model;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        activity = (MainActivity) getActivity();
+        activity = Objects.requireNonNull((MainActivity) getActivity());
+        model = ViewModelProviders.of(activity).get(FriendsViewModel.class);
         return inflater.inflate(R.layout.fragment_find_friends, container, false);
     }
 
@@ -46,7 +54,7 @@ public class FindFriendsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         activity.setActionBarTitle(getString(R.string.title_add_friends));
 
-        recyclerView = getActivity().findViewById(R.id.friends_recycler_view);
+        recyclerView = activity.findViewById(R.id.friends_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -57,13 +65,13 @@ public class FindFriendsFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        ArrayList<User> userList = new ArrayList<>();
+        /*ArrayList<User> userList = new ArrayList<>();
         userList.add(new User("ABC", "Der fast kopflose Kohls")); //TODO init korrekt machen
         userList.add(new User("ABC", "Yggi der Elf"));
         userList.add(new User("ABC", "Prof. Flitvikor"));
         userList.add(new User("ABC", "Die bittere Birgit"));
-
-        adapter = new RecyclerAdapter(this, userList);
+        */
+        adapter = new RecyclerAdapter(this, new ArrayList<>(model.getFilterdUserList()));
         recyclerView.setAdapter(adapter);
 
     }
@@ -99,7 +107,7 @@ public class FindFriendsFragment extends Fragment {
             holder.btnAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO Freund hinzufügen
+                    model.addFriend(user.getUid());
                 }
 
             });
