@@ -20,22 +20,18 @@ public class FriendsViewModel extends AndroidViewModel {
     private String token;
 
     //private MutableLiveData<List<String>> friends = new MutableLiveData<>();
-    private List<User> friendList;
+    private List<User> friendList; //Local copy of firendlist; No need to fetch the whole list on add or deletion
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
         uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         token = UserDataSync.getUserToken();
-        fetchFriends();
 
-    }
-
-    public ArrayList<User> getFriendList() {
-        return new ArrayList<>(friendList);
-    }
-
-    private void fetchFriends() {
         friendList = getOrCreateFriends();
+    }
+
+    public List<User> getFriendListRef() {
+        return friendList;
     }
 
     private List<User> getOrCreateFriends() {
@@ -43,27 +39,26 @@ public class FriendsViewModel extends AndroidViewModel {
         return new ArrayList<>(Objects.requireNonNull(Firebase.getAllFriends(uid, token)));
     }
 
-
     /**
      * Delets a user from FriendList
      *
-     * @param id of the user to be deleted
+     * @param user user to be deleted
      */
-    public void deleteFriend(String id) {
+    public void deleteFriend(User user) {
         //Delete from Firebase
-        Firebase.deleteUserFromFriendlist(uid, id);
-        //fetchFriends();
+        Firebase.deleteUserFromFriendlist(uid, user.getUid());
+        friendList.remove(user);
     }
 
     /**
      * Adds a new Friend to the FriendList
      *
-     * @param id of the user to be added
+     * @param user user to be added
      */
-    public void addFriend(String id) {
+    public void addFriend(User user) {
         //Add to Firebase
-        Firebase.addUserToFriendlist(uid, id);
-        //fetchFriends();
+        Firebase.addUserToFriendlist(uid, user.getUid());
+        friendList.add(user);
     }
 
     //Getting and Filtering UserList

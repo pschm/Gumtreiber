@@ -107,9 +107,8 @@ public class FindFriendsFragment extends Fragment {
             holder.btnAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    model.addFriend(user.getUid());
-                    refresh();
-
+                    model.addFriend(user);
+                    activity.onBackPressed();
                 }
 
             });
@@ -118,10 +117,6 @@ public class FindFriendsFragment extends Fragment {
         @Override
         public int getItemCount() {
             return dataset.size();
-        }
-
-        public void refresh() {
-            notifyDataSetChanged();
         }
 
 

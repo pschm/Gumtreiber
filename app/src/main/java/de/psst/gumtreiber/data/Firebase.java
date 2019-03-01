@@ -2,6 +2,7 @@ package de.psst.gumtreiber.data;
 
 import android.location.Location;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -715,6 +716,7 @@ public class Firebase {
     public static String getJSON(final String urlGet) {
         final Semaphore sem = new Semaphore(0);
         final StringBuilder json = new StringBuilder();
+        json.append("");
 
 
         //Android needs a background thread in order to run network operations
@@ -729,7 +731,10 @@ public class Firebase {
                     conn.setRequestProperty("Accept", "application/json");
 
                     if (conn.getResponseCode() != 200) {
-                        throw new RuntimeException("Failed 'getJSON': HTTP error code: " + conn.getResponseCode());
+                        Log.v("Firebase", "Fehler beim Fetchen des JSONs.");
+                        sem.release();
+                        return;
+                        //throw new RuntimeException("Failed 'getJSON': HTTP error code: " + conn.getResponseCode());
                     }
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));

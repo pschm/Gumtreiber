@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,7 +57,7 @@ public class FriendListFragment extends Fragment {
 
         //Init ViewModel
         model = ViewModelProviders.of(activity).get(FriendsViewModel.class);
-        //ArrayList<String> Friends = new ArrayList<User>(model.getFriendList().getValue());
+        //ArrayList<String> Friends = new ArrayList<User>(model.getFriendListRef().getValue());
 
         recyclerView = activity.findViewById(R.id.friends_recycler_view);
 
@@ -70,10 +70,7 @@ public class FriendListFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        ArrayList<User> test = new ArrayList<>(); //TODO init korrekt machen
-        test.add(new User("ABC","Manni"));
-        test.add(new User("DEF","Waißnich"));
-        adapter = new RecyclerAdapter(this, model.getFriendList());
+        adapter = new RecyclerAdapter(this, model.getFriendListRef());
         recyclerView.setAdapter(adapter);
 
 
@@ -100,7 +97,8 @@ public class FriendListFragment extends Fragment {
         alertDialogBuilder.setPositiveButton(getString(R.string.popup_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                model.deleteFriend(user.getUid());
+                model.deleteFriend(user);
+                adapter.refresh();
             }
         });
 
@@ -121,9 +119,9 @@ public class FriendListFragment extends Fragment {
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
         private FriendListFragment fragment;
-        private ArrayList<User> dataset;
+        private List<User> dataset;
 
-        private RecyclerAdapter(FriendListFragment fragment, ArrayList<User> dataset) {
+        private RecyclerAdapter(FriendListFragment fragment, List<User> dataset) {
             this.fragment = fragment;
             this.dataset = dataset;
         }
@@ -146,8 +144,6 @@ public class FriendListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     fragment.removeFriend(user);
-                    model.deleteFriend(user.getUid());
-                    refresh();
                 }
             });
         }
@@ -244,7 +240,7 @@ public class FriendListFragment extends ListFragment {
         activity = getActivity();
 
         model = ViewModelProviders.of((FragmentActivity) activity).get(FriendsViewModel.class);
-        model.getFriendList().observe((FragmentActivity) activity, new Observer<List<String>>() {
+        model.getFriendListRef().observe((FragmentActivity) activity, new Observer<List<String>>() {
 
             @Override
             public void onChanged(List<String> friends) {
