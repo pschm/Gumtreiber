@@ -55,8 +55,6 @@ public enum Room {
         return allRooms;
     }
 
-
-
     /**
      * @return Number of this room without the leading R.
      */

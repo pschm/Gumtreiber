@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,7 +45,7 @@ public class AppointmentFragment extends Fragment {
     private Spinner spinner;
 
     @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("E, dd. MMM yyyy");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("E, dd.MM.yyyy");
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
 
@@ -54,7 +55,7 @@ public class AppointmentFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_appointment, container, false);
         activity = (MainActivity) getActivity();
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         model = ViewModelProviders.of((FragmentActivity) activity).get(CalendarViewModel.class);
         return fragmentView;
 
@@ -224,7 +225,7 @@ public class AppointmentFragment extends Fragment {
     private Appointment buildAppointment() {
 
         //Room
-        Room room = (Room) spinner.getSelectedItem();
+        Room room = Room.values()[spinner.getSelectedItemPosition()];
 
         //Start Date
         TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
@@ -263,9 +264,9 @@ public class AppointmentFragment extends Fragment {
      */
     private long formatDate(String date, String time) {
 
-        String day = date.substring(0, 2);
-        String month = date.substring(3, 5);
-        String year = date.substring(6, 10);
+        String day = date.substring(5, 7);
+        String month = date.substring(8, 10);
+        String year = date.substring(11, 13);
 
         String hours = time.substring(0, 2);
         String minutes = time.substring(3, 5);
