@@ -253,6 +253,7 @@ public class MovableMarker {
      * This will cancel a running transition from a {@link #moveTo} call.
      * @param x The visual x position of this marker, in pixels.
      * @param y The visual y position of this marker, in pixels.
+     * TODO keep current rotation
      */
     public void setPosition(float x, float y) {
         allowMovingThread = false;

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,17 +39,44 @@ public class MapFragment extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
 
+        // enable zoom effect
+        PhotoViewAttacher viewAttacher = new PhotoViewAttacher(mapView, true);
+        mapView.setZoomControl(viewAttacher);
+
         MapControl mapControl = new MapControl(mapView, activity, new PrisonControl(prisonView));
+
+        mapView.setImageResource(R.mipmap.map);
 
         //TODO updatesEnabled aus config laden
         UserDataSync uds = new UserDataSync(activity, activity.getLocationHandler(), mapControl);
         uds.startUpdating();
 
-        // enable zoom effect
-        PhotoViewAttacher viewAttacher = new PhotoViewAttacher(mapView, true);
-        mapView.setZoomControl(viewAttacher);
         viewAttacher.setMaximumScale(9f);
-        viewAttacher.update();
+        viewAttacher.setMediumScale(3f);
+        viewAttacher.setMinimumScale(2f);
+
+        ViewTreeObserver vto = mapView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                // TODO adjust x, y values to the current user pos
+                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, 500, 500, false);
+            }
+        });
+
+
+//        mapView.setScale(3f, 500f, 500f, true);
+//        mapView.setScale(4f);
+
+//        mapView.setScale(5f, 500, 1000, true);
+//        mapView.getZoomControl().update();
+//        viewAttacher.setZoomable(false); TODO disable zoom before markers are drawn
+//        viewAttacher.setScale(3f);
+
+
+//        viewAttacher.update();
+//        mapView.invalidate();
     }
 
 }
