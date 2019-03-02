@@ -23,8 +23,7 @@ public class MapControl {
     private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022029, 7.561740);
     public final static Vector2 MAIN_BUILDING_MAP = new Vector2(320.97003f, 1762.0068f);
 
-    // TODO ggf. vom aktuellen zoomfaktor abhängig machen --> könnte performanceprobleme verursachen
-    private final static int BOX_SIZE = 200;
+    public final static int BOX_SIZE = 200;
 
     private MapView map;
     private ArrayList<String> friends = new ArrayList<>();
@@ -90,7 +89,7 @@ public class MapControl {
         this.users = prisonControl.updateInmates(this.users);
 
         // merge close users in Groups
-        buildUserGroups(BOX_SIZE);
+        this.users = buildUserGroups(this.users, BOX_SIZE); // comment if you want to use dynamicGroups
 
         // show users on the map
         // new ArrayList is needed to avoid ConcurrentModificationExceptions
@@ -103,11 +102,11 @@ public class MapControl {
      *
      * @param boxSize distance before users are merged
      */
-    public void buildUserGroups(int boxSize) {
+    public ArrayList<AbstractUser> buildUserGroups(ArrayList<AbstractUser> users, int boxSize) {
         // reduce gps coordinates to the area (GM)
         int xSize = (int) DELTA_LONG;
         int ySize = (int) DELTA_LAT;
-        double x, y;
+        Vector2 pos;
 
         // create a grid to detect close users
         AbstractUser[][] map = new AbstractUser[xSize / boxSize][ySize / boxSize];
@@ -120,27 +119,27 @@ public class MapControl {
             AbstractUser u = users.get(i);
 
             // transform user coordinates to the area
-            x = (u.getLongitude() - MIN_LONG) * 1000000;
-            y = (u.getLatitude() - MIN_LAT) * 1000000;
-            y = DELTA_LAT - y; // invert y-Axis
+            pos = gpsToMap(new Coordinate(u.getLatitude(), u.getLongitude()));
 
             // calc grid position
-            x /= boxSize;
-            y /= boxSize;
+            pos.x /= boxSize;
+            pos.y /= boxSize;
 
             // load possible users already in this grid sector
-            AbstractUser sector = map[(int) x][(int) y];
+            AbstractUser sector = map[(int) pos.x][(int) pos.y];
 
             if (sector == null) {
+
                 // u is the first user in this sector
                 if (u.getMarker() == null) u.setMarker(new MovableMarker(activity, u.getName()));
                 u.getMarker().changeLabel(u.getName()); // needed if a user moves out of a group
                 // change the look of the marker, if the user is a friend or bot
                 if (u instanceof Bot) u.getMarker().changeLook(MovableMarker.Look.BOT);
-                if (friends.contains(u.getUid()))
+                if (friends.contains(u.getUid())) {
                     u.getMarker().changeLook(MovableMarker.Look.FRIEND);
+                }
 
-                map[(int) x][(int) y] = u;
+                map[(int) pos.x][(int) pos.y] = u;
             } else if (sector.getUid() != null) {
                 // u is the second user in this sector
                 // delete both users from list and build a group
@@ -158,11 +157,11 @@ public class MapControl {
                 mergedUsers.setMarker(sector.getMarker());
                 mergedUsers.getMarker().changeLabel("2");
                 mergedUsers.getMarker().changeLook(MovableMarker.Look.DEFAULT);
-                mergedUsers.setLatitude(u.getLatitude());
-                mergedUsers.setLongitude(u.getLongitude());
+                mergedUsers.setLatitude(sector.getLatitude());
+                mergedUsers.setLongitude(sector.getLongitude());
 
                 // save merge user to the grid
-                map[(int) x][(int) y] = mergedUsers;
+                map[(int) pos.x][(int) pos.y] = mergedUsers;
                 mergedUserList.add(mergedUsers);
 
             } else {
@@ -185,6 +184,7 @@ public class MapControl {
 
         // add all mergedUsers to the list
         users.addAll(mergedUserList);
+        return users;
     }
 
     /**
