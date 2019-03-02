@@ -5,12 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import de.psst.gumtreiber.R;
@@ -19,10 +19,13 @@ import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorCourse;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorEmail;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorNickname;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorPwd;
+import de.psst.gumtreiber.viewmodels.SettingsViewModel;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private MainActivity activity;
+    private static final String FRAGMENT_FLAG = "SETTINGS";
+    private SettingsViewModel model;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -32,7 +35,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        activity = (MainActivity) getActivity();
+        activity = Objects.requireNonNull((MainActivity) getActivity());
+        model = ViewModelProviders.of(activity).get(SettingsViewModel.class);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -46,21 +50,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         activity.setActionBarTitle(getString(R.string.title_settings));
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        initSummaries(user);
+        initSummaries();
     }
 
-    private void initSummaries(FirebaseUser user) {
+    private void initSummaries() {
 
-        if(user == null) findPreference("email").setSummary(R.string.invalid);
-        else findPreference("email").setSummary(user.getEmail());
+        if (model.getEmail() == null) findPreference("email").setSummary(R.string.invalid);
+        else findPreference("email").setSummary(model.getEmail());
 
-        if(user == null) findPreference("nickname").setSummary(R.string.invalid);
-        else findPreference("nickname").setSummary(user.getDisplayName());
+        if (model.getNickname() == null) findPreference("nickname").setSummary(R.string.invalid);
+        else findPreference("nickname").setSummary(model.getNickname());
 
-        if(user == null) findPreference("course").setSummary(R.string.invalid);
-        else findPreference("course").setSummary("TODO"); //TODO
+        if (model.getCourse() == null) findPreference("course").setSummary(R.string.invalid);
+        else findPreference("course").setSummary(model.getCourse().toString());
 
 
         findPreference("version").setSummary(getString(R.string.app_version));
@@ -74,20 +76,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         switch(pref.getKey()) {
             //Account
             case "email":
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorEmail()).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorEmail()).addToBackStack(FRAGMENT_FLAG).commit();
                 break;
             case "password":
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorPwd()).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorPwd()).addToBackStack(FRAGMENT_FLAG).commit();
                 break;
             case "nickname":
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorNickname()).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorNickname()).addToBackStack(FRAGMENT_FLAG).commit();
                 break;
             case "course":
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorCourse()).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsManipulatorCourse()).addToBackStack(FRAGMENT_FLAG).commit();
                 break;
 
             //Filter
-            //...
+
 
             //Info
             case "version":

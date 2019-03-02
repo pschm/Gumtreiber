@@ -9,30 +9,40 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.MainActivity;
+import de.psst.gumtreiber.viewmodels.SettingsViewModel;
 
 public abstract class SettingsManipulatorFragment extends Fragment {
 
     MainActivity activity;
+    SettingsViewModel model;
 
     TextView txtTitle;
     EditText txtUserInput1, txtUserInput2;
+    Spinner spinner;
+
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        activity = (MainActivity) getActivity();
+        activity = Objects.requireNonNull((MainActivity) getActivity());
+        model = ViewModelProviders.of(activity).get(SettingsViewModel.class);
         return inflater.inflate(R.layout.fragment_settings_manipulator, container, false);
     }
 
@@ -52,7 +62,9 @@ public abstract class SettingsManipulatorFragment extends Fragment {
         txtTitle = activity.findViewById(R.id.txtSettingsTitle);
         txtUserInput1 = activity.findViewById(R.id.txtUserInput1);
         txtUserInput2 = activity.findViewById(R.id.txtUserInput2);
+        spinner = activity.findViewById(R.id.spinner_course);
 
+        spinner.setVisibility(Spinner.INVISIBLE);
         txtUserInput2.setVisibility(View.GONE);
 
     }

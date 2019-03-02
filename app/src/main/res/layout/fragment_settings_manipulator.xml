@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/constraint_layout_settings_manipulator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -25,35 +26,46 @@
         android:textSize="24sp"
         android:textStyle="bold"
 
+        app:layout_constraintBottom_toBottomOf="@id/imgHeadBackground"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/imgHeadBackground" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/txtUserInput1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/password"
+        android:layout_marginStart="20dp"
 
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:hint="@string/password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSettingsTitle"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/txtSettingsTitle" />
 
     <EditText
         android:id="@+id/txtUserInput2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/password"
+        android:layout_marginStart="20dp"
 
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:hint="@string/password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtUserInput1"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/txtUserInput1" />
+
+    <Spinner
+        android:id="@+id/spinner_course"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSettingsTitle" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

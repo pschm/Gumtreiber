@@ -239,8 +239,6 @@ public class AppointmentFragment extends Fragment {
         TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
 
         long endDate = formatDate(tvEndDate.getText().toString(), tvEndTime.getText().toString());
-
-
         return new Appointment(startDate, endDate, room);
     }
 
@@ -266,7 +264,7 @@ public class AppointmentFragment extends Fragment {
 
         String day = date.substring(5, 7);
         String month = date.substring(8, 10);
-        String year = date.substring(11, 13);
+        String year = date.substring(11, 15);
 
         String hours = time.substring(0, 2);
         String minutes = time.substring(3, 5);
