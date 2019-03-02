@@ -24,6 +24,7 @@ public class MapView extends AppCompatImageView { // PhotoView
 
     // Users that are drawn on the map
     private ArrayList<AbstractUser> markers;
+//    private ArrayList<AbstractUser> markers2; // needed for dynamicGroups
 
     // PhotoViewAttacher which holds this ImageView and enables zoom
     private PhotoViewAttacher zoomControl;
@@ -144,27 +145,20 @@ public class MapView extends AppCompatImageView { // PhotoView
             return;
         }
 
+        // group users
+//        int boxSize = (int) (MapControl.BOX_SIZE / zoomControl.getScale());
+//        markers2 = mapControl.buildUserGroups(new ArrayList<>(markers), boxSize);
+//        Log.d("pschm", "onDraw() -------------------------------------");
+
         if (firstDraw) {
             // init transformation matrix error
             zoomControl.getDrawMatrix().getValues(defaultMatrix);
             defaultMatrixError = 1f / defaultMatrix[0];
-            defaultMatrixError *= INITIAL_ZOOM;
-
-
-//            float[] values = new float[9];
-//            Matrix m = new Matrix();
-//            copyMatrix(m, zoomControl.getDrawMatrix());
-//            m.getValues(values);
-//            values[0] *= 2;
-//            values[4] *= 2;
-//            values[8] *= 2;
-//            m.setValues(values);
-//            zoomControl.setDisplayMatrix(m);
-//            zoomControl.update();
+            defaultMatrixError *= INITIAL_ZOOM; // include if buildUserGroups is used in MapControl
         }
 
         // draw all users on the map
-        for (AbstractUser u : markers) {
+        for (AbstractUser u : markers) { // dynamicGroups change to markers2
             marker = u.getMarker();
 
             // save user position

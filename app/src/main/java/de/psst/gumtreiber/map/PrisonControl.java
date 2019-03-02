@@ -78,7 +78,7 @@ public class PrisonControl {
         for (int i = users.size() - 1; i >= 0; i--) {
             AbstractUser u = users.get(i);
 
-            if (userOnMap(u)) {
+            if (userNotOnMap(u)) {
                 inmates.add(u);
 
                 if (u.getMarker() != null) {
@@ -94,9 +94,9 @@ public class PrisonControl {
     }
 
     /**
-     * @return true, if the given user is in the area of the {@link MapView}
+     * @return true, if the given user is not in the area of the {@link MapView}
      */
-    public static boolean userOnMap(AbstractUser u) {
+    public static boolean userNotOnMap(AbstractUser u) {
         return u.getLatitude() > MAX_LAT || u.getLatitude() < MIN_LAT
                 || u.getLongitude() > MAX_LONG || u.getLongitude() < MIN_LONG;
     }
