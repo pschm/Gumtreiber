@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
@@ -37,7 +38,10 @@ import de.psst.gumtreiber.viewmodels.MainViewModel;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //Fragment Tags
-    String MAP_FRAGMENT_TAG = "MAP_FRAGMENT";
+    private static final String MAP_FRAGMENT_TAG = "MAP_FRAGMENT";
+    private static final String CAL_FRAGMENT_TAG = "CALENDAR_FRAGMENT";
+    private static final String FND_FRAGMENT_TAG = "FRIEND_LIST_FRAGMENT";
+    private static final String STG_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
 
     //LocationState stuff
     private MainViewModel model;
@@ -118,14 +122,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        MapFragment mapFragment = (MapFragment) fragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG);
+        Fragment mapFragment = fragmentManager.findFragmentByTag(MAP_FRAGMENT_TAG);
+
 
         //If the drawer is Open a click on the back button will close it
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if(drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
         //If the Map is Visible the next back button double tap will close the app
-        else if (mapFragment != null && mapFragment.isVisible()) {
+        else if(mapFragment != null && mapFragment.isVisible()) {
             if (backToast != null && backToast.getView().getWindowToken() != null) {
                 //Getting back to Homescreen Screen
                 Intent startMain = new Intent(Intent.ACTION_MAIN);
@@ -137,8 +142,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 backToast.show();
             }
         }
+        //If one "main" fragment is open (the ones, which can be directly accessed by the nav drawer), go back top map
+        else if(isMainFragmentVisible()) {
+            fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
         //In any other case the last first fragment from the backStack will show
         else fragmentManager.popBackStackImmediate();
+    }
+
+    private boolean isMainFragmentVisible() {
+        Fragment calendarFgmt = fragmentManager.findFragmentByTag(CAL_FRAGMENT_TAG);
+        Fragment friendListFgmt = fragmentManager.findFragmentByTag(FND_FRAGMENT_TAG);
+        Fragment settingsFgmt = fragmentManager.findFragmentByTag(STG_FRAGMENT_TAG);
+
+        return (calendarFgmt != null && calendarFgmt.isVisible()) ||
+                (friendListFgmt != null && friendListFgmt.isVisible()) ||
+                (settingsFgmt != null && settingsFgmt.isVisible());
     }
 
     @Override
@@ -175,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_calendar:
 
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new CalendarFragment()).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new CalendarFragment(), CAL_FRAGMENT_TAG).addToBackStack(null).commit();
 
                 drawer.closeDrawer(GravityCompat.START);
                 break;
@@ -183,14 +202,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case (R.id.nav_friendList):
 
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new FriendListFragment()).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FriendListFragment(), FND_FRAGMENT_TAG).addToBackStack(null).commit();
 
                 drawer.closeDrawer(GravityCompat.START);
                 break;
 
             case (R.id.nav_settings):
 
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsFragment()).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new SettingsFragment(), STG_FRAGMENT_TAG).addToBackStack(null).commit();
 
                 drawer.closeDrawer(GravityCompat.START);
                 break;
