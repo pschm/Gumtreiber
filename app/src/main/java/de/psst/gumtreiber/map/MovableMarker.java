@@ -226,7 +226,7 @@ public class MovableMarker {
             for(FadingImage img : leftPrints) {
                 img.makeInvisible();
             }
-            for(FadingImage img : leftPrints) {
+            for (FadingImage img : rightPrints) {
                 img.makeInvisible();
             }
             nameImg.makeInvisible();
