@@ -28,6 +28,7 @@ public class MapControl {
     private Activity activity;
     private PrisonControl prisonControl;
     private ArrayList<AbstractUser> users = new ArrayList<>();
+    private AbstractUser currentUser;
 
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.map = map;
@@ -39,6 +40,7 @@ public class MapControl {
         prisonControl.setMapControl(this);
 
         MovableMarker.setMapView(map);
+        //setUpInitialZoomOnUser();
     }
 
     /**
@@ -46,6 +48,11 @@ public class MapControl {
      */
     public MapView getMap() {
         return map;
+    }
+
+
+    public void setUpInitialZoomOnUser(User u) {
+//        this.currentUser = userList.get(u)
     }
 
     /**
@@ -179,5 +186,9 @@ public class MapControl {
 
     public void updateFriends(ArrayList<String> friendlist) {
         friends = friendlist;
+    }
+
+    public void setCurrentUser(String currentUserID) {
+
     }
 }
