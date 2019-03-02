@@ -7,6 +7,7 @@
     <color name="colorAuthFont">#4D3D2F</color>
     <color name="colorLightBrown">#D2C8A3</color>
 
+    <!-- Appointment Color-->
     <color name="colorBuildingNbr1">#806820</color>
     <color name="colorBuildingNbr2">#1A6126</color>
     <color name="colorBuildingNbr3">#1C555E</color>
@@ -22,4 +23,9 @@
 
     <color name="colorStepsBot">#4872BA</color>
     <color name="colorLabelBot">#035FFF</color>
+
+    <!-- Friend color-->
+    <color name="friendOnline">#3B9425</color>
+    <color name="friendOffline">#777777</color>
+
 </resources>

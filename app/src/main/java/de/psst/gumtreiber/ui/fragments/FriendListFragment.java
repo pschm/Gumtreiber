@@ -16,6 +16,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
@@ -149,24 +150,13 @@ public class FriendListFragment extends Fragment {
         }
 
         private void tintStatusCircle(ImageView imageView, User user) {
-            int colorResId;
-            /*
-            switch (user.expirationDate) { //TODO Kreis enfärben wenn Freund online/offline ist
-                case "1":
-                    colorResId = R.color.colorBuildingNbr1;
-                    break;
 
-                case "2":
-                    colorResId = R.color.colorBuildingNbr2;
-                    break;
-
-                default:
-                    colorResId = R.color.colorPrimary;
-                    break;
+            if(user.isExpired()) {
+                imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), R.color.friendOffline));
+            } else {
+                imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), R.color.friendOnline));
             }
 
-            imageView.setColorFilter(ContextCompat.getColor(imageView.getContext(), colorResId));
-            */
         }
 
         @Override
