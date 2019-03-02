@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -55,15 +54,14 @@ public class MapFragment extends Fragment {
         viewAttacher.setMediumScale(3f);
         viewAttacher.setMinimumScale(2f);
 
-        ViewTreeObserver vto = mapView.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                // TODO adjust x, y values to the current user pos
-                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, 500, 500, false);
-            }
-        });
+//        ViewTreeObserver vto = mapView.getViewTreeObserver();
+//        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapControl.MAIN_BUILDING_MAP.x, MapControl.MAIN_BUILDING_MAP.y, false);
+//            }
+//        });
 
 
 //        mapView.setScale(3f, 500f, 500f, true);

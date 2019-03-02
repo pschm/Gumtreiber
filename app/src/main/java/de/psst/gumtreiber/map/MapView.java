@@ -149,18 +149,6 @@ public class MapView extends AppCompatImageView { // PhotoView
             zoomControl.getDrawMatrix().getValues(defaultMatrix);
             defaultMatrixError = 1f / defaultMatrix[0];
             defaultMatrixError *= INITIAL_ZOOM;
-
-
-//            float[] values = new float[9];
-//            Matrix m = new Matrix();
-//            copyMatrix(m, zoomControl.getDrawMatrix());
-//            m.getValues(values);
-//            values[0] *= 2;
-//            values[4] *= 2;
-//            values[8] *= 2;
-//            m.setValues(values);
-//            zoomControl.setDisplayMatrix(m);
-//            zoomControl.update();
         }
 
         // draw all users on the map

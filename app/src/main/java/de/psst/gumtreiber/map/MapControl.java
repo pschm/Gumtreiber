@@ -1,6 +1,7 @@
 package de.psst.gumtreiber.map;
 
 import android.app.Activity;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -19,6 +20,8 @@ public class MapControl {
     final static double MIN_LONG = 7.559551; //7.560669;
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
+    private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022029, 7.561740);
+    public final static Vector2 MAIN_BUILDING_MAP = new Vector2(320.97003f, 1762.0068f);
 
     // TODO ggf. vom aktuellen zoomfaktor abhängig machen --> könnte performanceprobleme verursachen
     private final static int BOX_SIZE = 200;
@@ -29,6 +32,7 @@ public class MapControl {
     private PrisonControl prisonControl;
     private ArrayList<AbstractUser> users = new ArrayList<>();
     private AbstractUser currentUser;
+    private String currentUserID;
 
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.map = map;
@@ -40,7 +44,6 @@ public class MapControl {
         prisonControl.setMapControl(this);
 
         MovableMarker.setMapView(map);
-        //setUpInitialZoomOnUser();
     }
 
     /**
@@ -51,8 +54,18 @@ public class MapControl {
     }
 
 
-    public void setUpInitialZoomOnUser(User u) {
-//        this.currentUser = userList.get(u)
+    public void setUpInitialZoomOnUser(AbstractUser u) {
+        Vector2 pos;
+
+        if (PrisonControl.userNotOnMap(u)) {
+            pos = gpsToMap(MAIN_BUILDING_GPS);
+            Log.d("MapControl - pschm", "user not on the map!" + pos);
+        } else {
+            pos = gpsToMap(new Coordinate(u.getLatitude(), u.getLongitude()));
+            Log.d("MapControl - pschm", "user on the map!" + pos);
+        }
+
+        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
     }
 
     /**
@@ -60,6 +73,16 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
+        if (currentUser == null) {
+            for (AbstractUser u : users) {
+                if (u.getUid().equals(currentUserID)) {
+                    currentUser = u;
+                    break;
+                }
+            }
+            setUpInitialZoomOnUser(currentUser);
+        }
+
         // filter users according to the selected filters
         this.users = UserFilter.filterUsers(users);
 
@@ -189,6 +212,6 @@ public class MapControl {
     }
 
     public void setCurrentUser(String currentUserID) {
-
+        this.currentUserID = currentUserID;
     }
 }
