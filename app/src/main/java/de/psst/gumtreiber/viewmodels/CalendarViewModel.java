@@ -37,7 +37,7 @@ public class CalendarViewModel extends AndroidViewModel {
      */
     public void saveAppointment(Appointment appointment) {
         Firebase.addAppointmentToSchedule(uid, appointment);
-        fetchAppointments();
+        appointments.add(appointment);
     }
 
     /**
@@ -47,7 +47,7 @@ public class CalendarViewModel extends AndroidViewModel {
      */
     public void removeAppointment(Appointment appointment) {
         Firebase.deleteAppointment(uid, appointment);
-        fetchAppointments();
+        appointments.remove(appointment);
     }
 
 
