@@ -2,9 +2,7 @@ package de.psst.gumtreiber.map;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -16,11 +14,13 @@ import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.Vector2;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class MapView extends AppCompatImageView {
+public class MapView extends AppCompatImageView { // PhotoView
 
     // the transformation matrix is not initialized with the unit matrix
     // to correct this, the error is calculated and considered in future calculation
     private static float defaultMatrixError = 1.5827f;
+
+    public static final float INITIAL_ZOOM = 2.5f;
 
     // Users that are drawn on the map
     private ArrayList<AbstractUser> markers;
@@ -36,22 +36,16 @@ public class MapView extends AppCompatImageView {
 
     // save of the old transformation matrix, used to check if the transformation has changed
     private Matrix oldTransformation = new Matrix();
-    private Matrix inverse = new Matrix();
 
-    private double scale = 1.0;
     private boolean firstDraw = true;
 
     // Declare some variables for the onDraw, so we
     // don't have to keep allocating them on the heap
     private MovableMarker marker;
-    private Vector2 defaultSize = new Vector2();
     private Coordinate pos = new Coordinate();
     private float[] defaultMatrix = new float[9];
     private float[] matrixValues = new float[9];
-    private Vector2 markerPos = new Vector2();
     private Vector2 mapPos = new Vector2(-50f, -50f);
-    private Vector2 markerPoint = new Vector2();
-    private Vector2 oldPosition = new Vector2();
 
 
     // all constructors needed for Android to build the ImageView correctly
@@ -84,6 +78,7 @@ public class MapView extends AppCompatImageView {
 
     /**
      * Set the MapControl which calculates the gps/map coordinates and manages the user lists
+     *
      * @param mapControl MapControl which manages this MapView
      */
     public void setMapControl(MapControl mapControl) {
@@ -96,6 +91,7 @@ public class MapView extends AppCompatImageView {
 
     /**
      * Adjust a given vector to the current zoom of the map
+     *
      * @param v1 vector used for the calculation
      * @return new vector adjusted to the map transformation
      */
@@ -115,19 +111,6 @@ public class MapView extends AppCompatImageView {
 
         // return new pos
         return new Vector2(point[0], point[1]);
-    }
-
-    /**
-     * Calculates a pseudo scaling of the image to scale the markers
-     */
-    private void calcScaling() {
-        Vector2 scaledSize = new Vector2(defaultSize.x, defaultSize.y);
-        scaledSize = adjustToTransformation(scaledSize);
-
-        scale = (defaultSize.x + defaultSize.y) / (scaledSize.x + scaledSize.y);
-
-        if (scale < 0.9) scale = 0.9;
-        else if (scale > 1.25) scale = 1.25;
     }
 
     /**
@@ -162,15 +145,22 @@ public class MapView extends AppCompatImageView {
         }
 
         if (firstDraw) {
-            // init scaling (device dependent)
-            defaultSize.x = getWidth();
-            defaultSize.y = getHeight();
-
-            Log.d("pschm - MapView", "W:" + defaultSize.x + " H:" + defaultSize.y);
-
             // init transformation matrix error
             zoomControl.getDrawMatrix().getValues(defaultMatrix);
             defaultMatrixError = 1f / defaultMatrix[0];
+            defaultMatrixError *= INITIAL_ZOOM;
+
+
+//            float[] values = new float[9];
+//            Matrix m = new Matrix();
+//            copyMatrix(m, zoomControl.getDrawMatrix());
+//            m.getValues(values);
+//            values[0] *= 2;
+//            values[4] *= 2;
+//            values[8] *= 2;
+//            m.setValues(values);
+//            zoomControl.setDisplayMatrix(m);
+//            zoomControl.update();
         }
 
         // draw all users on the map
@@ -202,17 +192,15 @@ public class MapView extends AppCompatImageView {
                 if (marker.isMoving()) {
                     marker.setUsingOwnPosition(true);
                     marker.moveTo(mapPos.x, mapPos.y);
-                    if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: OWN position");
-                }
-                else {
+//                    if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: OWN position");
+                } else {
                     // marker is currently not moving, so adjust his position to the new zoom
                     marker.setPosition(mapPos.x, mapPos.y);
                 }
-            }
-            else {
+            } else {
                 // no zoom detected -> release marker to move again
                 marker.setUsingOwnPosition(false);
-                if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: GIVEN position");
+//                if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: GIVEN position");
 
                 // smoothly move the markers to the new position
                 marker.moveTo(mapPos.x, mapPos.y);
