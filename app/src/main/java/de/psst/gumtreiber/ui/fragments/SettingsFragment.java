@@ -103,7 +103,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 UserFilter.ING_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_4", true);
                 break;
             case "check_box_preference_5":
-                UserFilter.NONE_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_5", true);
+                UserFilter.PROF_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_5", true);
+                break;
+            case "check_box_preference_6":
+                UserFilter.NONE_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_6", true);
                 break;
 
             //Info

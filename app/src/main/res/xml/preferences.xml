@@ -41,6 +41,10 @@
         <CheckBoxPreference
             android:key="check_box_preference_5"
             android:defaultValue="true"
+            android:title="Professor/innen" />
+        <CheckBoxPreference
+            android:key="check_box_preference_6"
+            android:defaultValue="true"
             android:title="Andere" />
 
     </PreferenceCategory>

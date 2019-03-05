@@ -107,7 +107,8 @@ public class LoginActivity extends AppCompatActivity {
         UserFilter.BOT_FILTER = prefs.getBoolean("check_box_preference_2", true);
         UserFilter.INF_FILTER = prefs.getBoolean("check_box_preference_3", true);
         UserFilter.ING_FILTER = prefs.getBoolean("check_box_preference_4", true);
-        UserFilter.NONE_FILTER = prefs.getBoolean("check_box_preference_5", true);
+        UserFilter.PROF_FILTER = prefs.getBoolean("check_box_preference_5", true);
+        UserFilter.NONE_FILTER = prefs.getBoolean("check_box_preference_6", true);
     }
 
     @Override
