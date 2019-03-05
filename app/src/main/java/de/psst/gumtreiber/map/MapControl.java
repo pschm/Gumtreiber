@@ -53,14 +53,14 @@ public class MapControl {
     }
 
 
-    public void setUpInitialZoomOnUser(AbstractUser u) {
+    public void setUpInitialZoomOnUser() {
         Vector2 pos;
 
-        if (PrisonControl.userNotOnMap(u)) {
-            pos = gpsToMap(MAIN_BUILDING_GPS);
+        if (PrisonControl.userNotOnMap(currentUser)) {
+            pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
             Log.d("MapControl - pschm", "user not on the map!" + pos);
         } else {
-            pos = gpsToMap(new Coordinate(u.getLatitude(), u.getLongitude()));
+            pos = gpsToMap(new Coordinate(currentUser.getLatitude(), currentUser.getLongitude()));
             Log.d("MapControl - pschm", "user on the map!" + pos);
         }
 
@@ -79,7 +79,7 @@ public class MapControl {
                     break;
                 }
             }
-            setUpInitialZoomOnUser(currentUser);
+            setUpInitialZoomOnUser();
         }
 
         // filter users according to the selected filters
