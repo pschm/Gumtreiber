@@ -2,6 +2,7 @@ package de.psst.gumtreiber.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,7 +24,9 @@ import com.google.firebase.auth.FirebaseUser;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.viewmodels.LoginViewModel;
 
 public class LoginActivity extends AppCompatActivity {
@@ -40,6 +43,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth_login);
+
+        // load user filter option from shared preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        initUserFilter(prefs);
 
         model = ViewModelProviders.of(this).get(LoginViewModel.class);
 
@@ -93,6 +100,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         signOut();
+    }
+
+    private void initUserFilter(SharedPreferences prefs) {
+        UserFilter.FRIEND_FILTER = prefs.getBoolean("check_box_preference_1", true);
+        UserFilter.BOT_FILTER = prefs.getBoolean("check_box_preference_2", true);
+        UserFilter.INF_FILTER = prefs.getBoolean("check_box_preference_3", true);
+        UserFilter.ING_FILTER = prefs.getBoolean("check_box_preference_4", true);
+        UserFilter.NONE_FILTER = prefs.getBoolean("check_box_preference_5", true);
     }
 
     @Override

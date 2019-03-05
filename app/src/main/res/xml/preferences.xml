@@ -21,18 +21,26 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Kartenfilter - TODO (ggf. auch anders als so)">
+    <PreferenceCategory android:title="Kartenfilter">
         <CheckBoxPreference
             android:key="check_box_preference_1"
             android:defaultValue="true"
-            android:title="Informatiker/innen" />
+            android:title="Freunde" />
         <CheckBoxPreference
             android:key="check_box_preference_2"
-            android:defaultValue="false"
-            android:title="Maschienenbauer/innen" />
+            android:defaultValue="true"
+            android:title="Bots" />
         <CheckBoxPreference
             android:key="check_box_preference_3"
-            android:defaultValue="false"
+            android:defaultValue="true"
+            android:title="Informatiker/innen" />
+        <CheckBoxPreference
+            android:key="check_box_preference_4"
+            android:defaultValue="true"
+            android:title="Ingenieur/innen" />
+        <CheckBoxPreference
+            android:key="check_box_preference_5"
+            android:defaultValue="true"
             android:title="Andere" />
 
     </PreferenceCategory>

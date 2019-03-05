@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.ui.MainActivity;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorCourse;
 import de.psst.gumtreiber.ui.fragments.settings.SettingsManipulatorEmail;
@@ -89,7 +90,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 break;
 
             //Filter
-
+            case "check_box_preference_1":
+                UserFilter.FRIEND_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_1", true);
+                break;
+            case "check_box_preference_2":
+                UserFilter.BOT_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_2", true);
+                break;
+            case "check_box_preference_3":
+                UserFilter.INF_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_3", true);
+                break;
+            case "check_box_preference_4":
+                UserFilter.ING_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_4", true);
+                break;
+            case "check_box_preference_5":
+                UserFilter.NONE_FILTER = pref.getSharedPreferences().getBoolean("check_box_preference_5", true);
+                break;
 
             //Info
             case "version":

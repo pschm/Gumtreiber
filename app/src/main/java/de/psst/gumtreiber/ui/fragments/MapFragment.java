@@ -31,7 +31,7 @@ public class MapFragment extends Fragment {
     }
 
     /**
-     * Initialisert die Map
+     * Initialize the Map and UserDataSync
      */
     private void initMap() {
         MapView mapView = fragmentView.findViewById(R.id.map);
