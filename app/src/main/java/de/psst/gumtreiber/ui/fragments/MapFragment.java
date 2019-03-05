@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,31 +51,22 @@ public class MapFragment extends Fragment {
         UserDataSync uds = new UserDataSync(activity, activity.getLocationHandler(), mapControl);
         uds.startUpdating();
 
+        // disable zoom till fully loaded
+        viewAttacher.setZoomable(false);
+
         viewAttacher.setMaximumScale(9f);
         viewAttacher.setMediumScale(3f);
         viewAttacher.setMinimumScale(2f);
 
-//        ViewTreeObserver vto = mapView.getViewTreeObserver();
-//        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        ViewTreeObserver vto = mapView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                viewAttacher.setZoomable(true);
 //                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapControl.MAIN_BUILDING_MAP.x, MapControl.MAIN_BUILDING_MAP.y, false);
-//            }
-//        });
-
-
-//        mapView.setScale(3f, 500f, 500f, true);
-//        mapView.setScale(4f);
-
-//        mapView.setScale(5f, 500, 1000, true);
-//        mapView.getZoomControl().update();
-//        viewAttacher.setZoomable(false); TODO disable zoom before markers are drawn
-//        viewAttacher.setScale(3f);
-
-
-//        viewAttacher.update();
-//        mapView.invalidate();
+            }
+        });
     }
 
 }
