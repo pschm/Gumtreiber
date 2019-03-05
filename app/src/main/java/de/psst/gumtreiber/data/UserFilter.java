@@ -24,8 +24,8 @@ public class UserFilter {
         ArrayList<AbstractUser> filtered = new ArrayList<>();
 
         for (AbstractUser u : users) {
-            if (friendList.contains(u.getUid()) && FRIEND_FILTER) {
-                filtered.add(u);
+            if (friendList.contains(u.getUid())) {
+                if (FRIEND_FILTER) filtered.add(u);
                 continue;
             }
             if (u instanceof User && isFiltered(((User) u).getCourse())) filtered.add(u);
