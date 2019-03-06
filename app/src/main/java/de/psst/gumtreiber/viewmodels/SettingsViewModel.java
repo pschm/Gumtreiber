@@ -1,7 +1,8 @@
 package de.psst.gumtreiber.viewmodels;
 
 import android.app.Application;
-import android.content.res.Resources;
+import android.content.Context;
+import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -13,11 +14,13 @@ import androidx.lifecycle.AndroidViewModel;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Course;
 import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserDataSync;
 
 public class SettingsViewModel extends AndroidViewModel {
     private static final int MAX_USERNAME_LENGTH = 12;
     private static final int MIN_USERNAME_LENGTH = 3;
+    public static final String USERNAME_VALID_CODE = "OK";
 
     private String uid;
     private String token;
@@ -32,7 +35,9 @@ public class SettingsViewModel extends AndroidViewModel {
 
     //Getter
     public Course getCourse() {
-        return Firebase.getUser(uid, token).getCourse();
+        User user = Firebase.getUser(uid, token);
+        if(user != null) return user.getCourse();
+        else return null;
     }
 
     //Setter
@@ -49,7 +54,7 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     public String getNickname() {
-        return Firebase.getUser(uid, token).getName();
+        return currentUser.getDisplayName();
     }
 
     /**
@@ -58,19 +63,20 @@ public class SettingsViewModel extends AndroidViewModel {
      * @param name which will be reviewed
      * @return "OK" if the username is valid or a corresponding error msg
      */
-    public String validateUserName(@NonNull String name) {
-        Resources res = getApplication().getResources();
+    public static String validateUserName(@NonNull Context context, String name) {
 
+        if (TextUtils.isEmpty(name))
+            return context.getString(R.string.username_error_length_min);
         if (name.length() > MAX_USERNAME_LENGTH)
-            return res.getString(R.string.username_error_length_max);
+            return context.getString(R.string.username_error_length_max);
         if (name.length() < MIN_USERNAME_LENGTH)
-            return res.getString(R.string.username_error_length_min);
+            return context.getString(R.string.username_error_length_min);
         if (!name.matches("^[a-züäößA-ZÜÄÖ].*"))
-            return res.getString(R.string.username_error_starts_with);
+            return context.getString(R.string.username_error_starts_with);
         if (!name.matches("[a-züäößA-ZÜÄÖ_-]*"))
-            return res.getString(R.string.username_error_allowed_characters);
+            return context.getString(R.string.username_error_allowed_characters);
 
-        return "OK";
+        return USERNAME_VALID_CODE;
     }
 
 }
