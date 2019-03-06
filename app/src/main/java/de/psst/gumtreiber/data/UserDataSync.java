@@ -38,7 +38,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
     private Activity activity;
     private LocationHandler locationHandler;
 
-    private static String userToken;
+    private static String userToken = "";
 
     private Thread updateThread;
     private boolean allowRunning = true;
@@ -198,7 +198,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
      */
     public void stopUpdating() {
         allowRunning = false;
-        userToken = null;
+        userToken = "";
     }
 
 
