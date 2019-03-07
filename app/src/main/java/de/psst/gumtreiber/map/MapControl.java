@@ -2,7 +2,6 @@ package de.psst.gumtreiber.map;
 
 import android.app.Activity;
 import android.location.Location;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -24,6 +23,8 @@ public class MapControl {
     // TODO Maybe Use Location instead of Coordinate
     private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022029, 7.561740);
     public final static Vector2 MAIN_BUILDING_MAP = new Vector2(320.97003f, 1762.0068f);
+    private final static float INITIAL_ZOOM_X_OFFSET = -75;
+    private final static float INITIAL_ZOOM_Y_OFFSET = 160;
 
     public final static int BOX_SIZE = 100;
 
@@ -33,6 +34,7 @@ public class MapControl {
     private PrisonControl prisonControl;
     private ArrayList<AbstractUser> users = new ArrayList<>();
     private Coordinate currentUserLocation = new Coordinate(0, 0);
+    private boolean initialized = false;
 
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.map = map;
@@ -58,11 +60,15 @@ public class MapControl {
         Vector2 pos;
 
         if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
+//            Log.d("MapControl - pschm", "user NOT on the map!" + currentUserLocation.getLatitude() + "/" + currentUserLocation.getLongitude());
+            pos = gpsToMap(currentUserLocation);
+//            Log.d("MapControl - pschm", "user NOT on the map!" + pos);
             pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
-            Log.d("MapControl - pschm", "user not on the map!" + pos);
         } else {
             pos = gpsToMap(currentUserLocation);
-            Log.d("MapControl - pschm", "user on the map!" + pos);
+            pos.x += INITIAL_ZOOM_X_OFFSET;
+            pos.y += INITIAL_ZOOM_Y_OFFSET;
+//            Log.d("MapControl - pschm", "user on the map!" + pos);
         }
 
         map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
@@ -73,8 +79,10 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
-        // TODO use gps from location handle
-        setUpInitialZoomOnUser();
+        if (!initialized) {
+            setUpInitialZoomOnUser();
+            initialized = true;
+        }
 
         // filter users according to the selected filters
         this.users = UserFilter.filterUsers(users);
@@ -214,9 +222,7 @@ public class MapControl {
     }
 
     public void updateCurrentUserLocation(Location location) {
-        if (location == null)
-            currentUserLocation.setLocation(0, 0);
-        else
+        if (location != null)
             currentUserLocation.setLocation(location.getLatitude(), location.getLongitude());
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -69,21 +70,21 @@ public class MapFragment extends Fragment {
         });
 
         // disable zoom till fully loaded
-//        viewAttacher.setZoomable(false);
+        viewAttacher.setZoomable(false);
 
         viewAttacher.setMaximumScale(9f);
         viewAttacher.setMediumScale(3f);
         viewAttacher.setMinimumScale(2f);
 
-//        ViewTreeObserver vto = mapView.getViewTreeObserver();
-//        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//                viewAttacher.setZoomable(true);
-////                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapControl.MAIN_BUILDING_MAP.x, MapControl.MAIN_BUILDING_MAP.y, false);
-//            }
-//        });
+        ViewTreeObserver vto = mapView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                viewAttacher.setZoomable(true);
+//                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapControl.MAIN_BUILDING_MAP.x, MapControl.MAIN_BUILDING_MAP.y, false);
+            }
+        });
     }
 
 }
