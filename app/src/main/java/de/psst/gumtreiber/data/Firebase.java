@@ -151,7 +151,8 @@ public class Firebase {
     public static ArrayList<Appointment> getAppointments(String uid, String authToken) {
         ArrayList<Appointment> appointmentList = new ArrayList<>();
 
-        String jsonString = getJSON(firebaseURL + "/schedules/" + uid + ".json" + "?auth=" + authToken);
+        long currentDate = generateCurrentDate();
+        String jsonString = getJSON(firebaseURL + "/schedules/" + uid + ".json" + "?orderBy=\"endDate\"&startAt=" + currentDate + "&auth=" + authToken);
 
         try {
             JSONObject reader = new JSONObject(jsonString);
