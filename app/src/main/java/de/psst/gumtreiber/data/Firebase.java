@@ -184,6 +184,9 @@ public class Firebase {
         long currentDate = generateCurrentDate();
         String jsonString = getJSON(firebaseURL + "/schedules/" + uid + ".json" + "?orderBy=\"endDate\"&startAt=" + currentDate + "&auth=" + authToken);
 
+        //return empty ArrayList, if JSON is empty
+        if (jsonString.equals("")) return appointmentList;
+
         try {
             JSONObject reader = new JSONObject(jsonString);
             JSONArray allAppointments = reader.names();
@@ -506,6 +509,8 @@ public class Firebase {
         if(!isNetworkAvailable()) return userList;
 
         String jsonString = getJSON(firebaseURL + "/users.json" + "?auth=" + authToken);
+        //return empty ArrayList, if JSON is empty
+        if (jsonString.equals("")) return userList;
 
         try {
             JSONObject reader = new JSONObject(jsonString);
@@ -547,6 +552,8 @@ public class Firebase {
         if(!isNetworkAvailable()) return null;
 
         String jsonString = getJSON(firebaseURL + "/users/" + uid + ".json" + "?auth=" + authToken);
+        //return empty null, if JSON is empty
+        if (jsonString.equals("")) return null;
 
         User user = null;
         try {
@@ -592,6 +599,9 @@ public class Firebase {
 
         final long date = generateCurrentDate();
         String jsonString = getJSON(firebaseURL + "/users.json" + "?orderBy=\"expirationDate\"&startAt=" + date + "&auth=" + authToken);
+
+        //return empty ArrayList, if JSON is empty
+        if (jsonString.equals("")) return userList;
 
         try {
             JSONObject reader = new JSONObject(jsonString);
@@ -642,6 +652,8 @@ public class Firebase {
         if(!isNetworkAvailable()) return userList;
 
         String jsonString = getJSON(firebaseURL + "/users.json" + "?orderBy=\"usingSchedule\"&startAt=" + true + "&auth=" + authToken);
+        //return empty ArrayList, if JSON is empty
+        if (jsonString.equals("")) return userList;
 
         try {
             JSONObject reader = new JSONObject(jsonString);
