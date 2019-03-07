@@ -128,7 +128,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             }
 
             if(!TextUtils.isEmpty(userToken) && user != null) {
-                Firebase.UpdateUserList(userToken, userList); //Updating the User-Hash-Map
+                Firebase.updateUserList(userToken, userList); //Updating the User-Hash-Map
 
                 ArrayList<String> friends = Firebase.getFriendlist(user.getUid(), userToken);
                 UserFilter.setFriendList(friends);
