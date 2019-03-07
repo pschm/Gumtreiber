@@ -2,6 +2,7 @@ package de.psst.gumtreiber.map;
 
 import android.app.Activity;
 import android.location.Location;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -31,8 +32,7 @@ public class MapControl {
     private Activity activity;
     private PrisonControl prisonControl;
     private ArrayList<AbstractUser> users = new ArrayList<>();
-    private AbstractUser currentUser;
-    private String currentUserID;
+    private Coordinate currentUserLocation = new Coordinate(0, 0);
 
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.map = map;
@@ -57,15 +57,14 @@ public class MapControl {
     public void setUpInitialZoomOnUser() {
         Vector2 pos;
 
-//        if (PrisonControl.userNotOnMap(currentUser)) {
-//            pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
-//            Log.d("MapControl - pschm", "user not on the map!" + pos);
-//        } else {
-//            pos = gpsToMap(new Coordinate(currentUser.getLatitude(), currentUser.getLongitude()));
-//            Log.d("MapControl - pschm", "user on the map!" + pos);
-//        }
+        if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
+            pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
+            Log.d("MapControl - pschm", "user not on the map!" + pos);
+        } else {
+            pos = gpsToMap(currentUserLocation);
+            Log.d("MapControl - pschm", "user on the map!" + pos);
+        }
 
-        pos = MAIN_BUILDING_MAP;
         map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
     }
 
@@ -214,11 +213,10 @@ public class MapControl {
         friends = friendlist;
     }
 
-    public void setCurrentUser(String currentUserID) {
-        this.currentUserID = currentUserID;
-    }
-
     public void updateCurrentUserLocation(Location location) {
-
+        if (location == null)
+            currentUserLocation.setLocation(0, 0);
+        else
+            currentUserLocation.setLocation(location.getLatitude(), location.getLongitude());
     }
 }
