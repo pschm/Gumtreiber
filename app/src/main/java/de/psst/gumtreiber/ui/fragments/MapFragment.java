@@ -4,13 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.data.AbstractUser;
+import de.psst.gumtreiber.data.UserDataSync;
 import de.psst.gumtreiber.map.MapControl;
 import de.psst.gumtreiber.map.MapView;
 import de.psst.gumtreiber.map.PrisonControl;
@@ -48,25 +51,30 @@ public class MapFragment extends Fragment {
 
         //TODO updatesEnabled aus config laden
         //TODO Neues UDS-Konzept umsetzen
-        //UserDataSync uds = new UserDataSync(activity, activity.getLocationHandler(), mapControl);
-        //uds.startUpdating();
+        UserDataSync uds = new UserDataSync(activity, activity.getLocationHandler(), true);
+
+        uds.addOnUpdateReceivedListener((userList, friendList) -> {
+            mapControl.updateFriends(friendList);
+            ArrayList<AbstractUser> arrayList = new ArrayList<>(userList);
+            mapControl.updateUsers(arrayList);
+        });
 
         // disable zoom till fully loaded
-        viewAttacher.setZoomable(false);
+//        viewAttacher.setZoomable(false);
 
         viewAttacher.setMaximumScale(9f);
         viewAttacher.setMediumScale(3f);
         viewAttacher.setMinimumScale(2f);
 
-        ViewTreeObserver vto = mapView.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                viewAttacher.setZoomable(true);
-//                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapControl.MAIN_BUILDING_MAP.x, MapControl.MAIN_BUILDING_MAP.y, false);
-            }
-        });
+//        ViewTreeObserver vto = mapView.getViewTreeObserver();
+//        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                viewAttacher.setZoomable(true);
+////                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapControl.MAIN_BUILDING_MAP.x, MapControl.MAIN_BUILDING_MAP.y, false);
+//            }
+//        });
     }
 
 }
