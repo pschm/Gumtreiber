@@ -54,7 +54,7 @@ public class Firebase {
      * @param name name of the user
      */
     public static void createUser(String uid, String name) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
 
         database.child("users").child(uid).child("name").setValue(name);
@@ -65,7 +65,7 @@ public class Firebase {
     }
 
     public static void createUser(String uid, String name, Course course) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
 
         createUser(uid, name);
@@ -80,7 +80,7 @@ public class Firebase {
      * @param name name of the user
      */
     public static void changeName(String uid, String name) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
 
         database.child("users").child(uid).child("name").setValue(name);
@@ -88,7 +88,7 @@ public class Firebase {
 
 
     public static void setCourse(String uid, Course course) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
 
         database.child("users").child(uid).child("course").setValue(course.name());
@@ -102,7 +102,7 @@ public class Firebase {
      * @param location
      */
     public static void setCurrentLocation(FirebaseUser user, Location location) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
 
         if (user == null || location == null) return;
@@ -118,7 +118,7 @@ public class Firebase {
      * @param altitude
      */
     public static void setCurrentLocation(String uid, double latitude, double longitude, double altitude) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
 
         long expirationDate = generateExpirationDate();
@@ -140,7 +140,7 @@ public class Firebase {
      */
     public static void addAppointmentToSchedule(String uid, Appointment appointment) {
 
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
 
         //int start = appointment.getFormatedStartTime();
@@ -161,7 +161,7 @@ public class Firebase {
      * @param appointment
      */
     public static void deleteAppointment(String uid, Appointment appointment) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
         long start = appointment.getFormatedStartDate();
 
@@ -178,7 +178,7 @@ public class Firebase {
     public static ArrayList<Appointment> getAppointments(String uid, String authToken) {
         ArrayList<Appointment> appointmentList = new ArrayList<>();
 
-        //return empty ArrayList, if there is now internet connection
+        //return empty ArrayList, if there is no internet connection
         if(!isNetworkAvailable()) return appointmentList;
 
         long currentDate = generateCurrentDate();
@@ -249,7 +249,7 @@ public class Firebase {
      * @param uid
      */
     public static void activateSchedule(String uid) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
         database.child("users").child(uid).child("usingSchedule").setValue(true);
     }
@@ -260,7 +260,7 @@ public class Firebase {
      * @param uid
      */
     public static void deactivateSchedule(String uid) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
         database.child("users").child(uid).child("usingSchedule").setValue(false);
     }
@@ -311,7 +311,7 @@ public class Firebase {
     }*/
 
     public static void updateUserList(String authToken, HashMap<String, AbstractUser> userList) {
-        //return, if there is now internet connection
+        //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
 
         ArrayList<User> allUser = getAllUsers(authToken);
@@ -472,7 +472,7 @@ public class Firebase {
     //TODO JavaDoc
     private static Appointment getCurrentAppointment(String uid, String authToken) {
 
-        //return null, if there is now internet connection
+        //return null, if there is no internet connection
         if(!isNetworkAvailable()) return null;
 
         ArrayList<Appointment> appointments = getAppointments(uid, authToken);
@@ -502,7 +502,7 @@ public class Firebase {
     public static ArrayList<User> getAllUsers(String authToken) {
         ArrayList<User> userList = new ArrayList<>();
 
-        //return empty ArrayList, if there is now internet connection
+        //return empty ArrayList, if there is no internet connection
         if(!isNetworkAvailable()) return userList;
 
         String jsonString = getJSON(firebaseURL + "/users.json" + "?auth=" + authToken);
