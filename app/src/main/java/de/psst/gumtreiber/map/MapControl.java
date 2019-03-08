@@ -28,7 +28,7 @@ public class MapControl {
 
     public final static int BOX_SIZE = 100;
 
-    private MapView map;
+    private MapView mapView;
     private ArrayList<String> friends = new ArrayList<>();
     private Activity activity;
     private PrisonControl prisonControl;
@@ -37,7 +37,7 @@ public class MapControl {
     private boolean initialized = false;
 
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
-        this.map = map;
+        this.mapView = map;
         this.activity = activity;
         this.prisonControl = prisonControl;
 
@@ -51,8 +51,8 @@ public class MapControl {
     /**
      * @return the MapView which is managed by this MapControl
      */
-    public MapView getMap() {
-        return map;
+    public MapView getMapView() {
+        return mapView;
     }
 
 
@@ -60,22 +60,18 @@ public class MapControl {
         Vector2 pos;
 
         if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
-//            Log.d("MapControl - pschm", "user NOT on the map!" + currentUserLocation.getLatitude() + "/" + currentUserLocation.getLongitude());
-            pos = gpsToMap(currentUserLocation);
-//            Log.d("MapControl - pschm", "user NOT on the map!" + pos);
             pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
         } else {
             pos = gpsToMap(currentUserLocation);
             pos.x += INITIAL_ZOOM_X_OFFSET;
             pos.y += INITIAL_ZOOM_Y_OFFSET;
-//            Log.d("MapControl - pschm", "user on the map!" + pos);
         }
 
-        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
+        mapView.setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
     }
 
     /**
-     * Update the user list and show the new filtered users on the map
+     * Update the user list and show the new filtered users on the mapView
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
@@ -87,15 +83,15 @@ public class MapControl {
         // filter users according to the selected filters
         this.users = UserFilter.filterUsers(users);
 
-        // filter users not on the map
+        // filter users not on the mapView
         this.users = prisonControl.updateInmates(this.users);
 
         // merge close users in Groups
         this.users = buildUserGroups(this.users, BOX_SIZE); // comment if you want to use dynamicGroups
 
-        // show users on the map
+        // show users on the mapView
         // new ArrayList is needed to avoid ConcurrentModificationExceptions
-        map.setMarkers(new ArrayList<>(this.users));
+        mapView.setMarkers(new ArrayList<>(this.users));
     }
 
     /**
@@ -198,7 +194,7 @@ public class MapControl {
     }
 
     /**
-     * Calculates the given coordinate from GPS Position to map coordinates
+     * Calculates the given coordinate from GPS Position to mapView coordinates
      * and returns it
      */
     public Vector2 gpsToMap(Coordinate pos) {
@@ -211,8 +207,8 @@ public class MapControl {
 
         // calc x,y values according to screen size
         Vector2 mapPos = new Vector2();
-        mapPos.x = (float) (pos.getLongitude() * (map.getWidth() / DELTA_LONG));
-        mapPos.y = (float) (pos.getLatitude() * (map.getHeight() / DELTA_LAT));
+        mapPos.x = (float) (pos.getLongitude() * (mapView.getWidth() / DELTA_LONG));
+        mapPos.y = (float) (pos.getLatitude() * (mapView.getHeight() / DELTA_LAT));
 
         return mapPos;
     }

@@ -8,13 +8,12 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import androidx.appcompat.widget.AppCompatImageView;
 import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.Vector2;
-import uk.co.senab.photoview.PhotoViewAttacher;
+import uk.co.senab.photoview.PhotoView;
 
-public class MapView extends AppCompatImageView { // PhotoView
+public class MapView extends PhotoView {
 
     // the transformation matrix is not initialized with the unit matrix
     // to correct this, the error is calculated and considered in future calculation
@@ -25,9 +24,6 @@ public class MapView extends AppCompatImageView { // PhotoView
     // Users that are drawn on the map
     private ArrayList<AbstractUser> markers;
 //    private ArrayList<AbstractUser> markers2; // needed for dynamicGroups
-
-    // PhotoViewAttacher which holds this ImageView and enables zoom
-    private PhotoViewAttacher zoomControl;
 
     // MapControl which coordinates the Lists and gps calculation
     private MapControl mapControl;
@@ -63,13 +59,6 @@ public class MapView extends AppCompatImageView { // PhotoView
     }
 
     /**
-     * @param zoomControl zoomControl which holds this MapView
-     */
-    public void setZoomControl(PhotoViewAttacher zoomControl) {
-        this.zoomControl = zoomControl;
-    }
-
-    /**
      * @param markers users to be drawn of the map
      */
     public void setMarkers(ArrayList<AbstractUser> markers) {
@@ -97,7 +86,7 @@ public class MapView extends AppCompatImageView { // PhotoView
      * @return new vector adjusted to the map transformation
      */
     public Vector2 adjustToTransformation(Vector2 v1) {
-        return adjustToTransformation(v1, zoomControl.getDrawMatrix());
+        return adjustToTransformation(v1, getDisplayMatrix());
     }
 
     /**
@@ -123,14 +112,8 @@ public class MapView extends AppCompatImageView { // PhotoView
         // draw the map
         super.onDraw(canvas);
 
-        // some safety checks
-        if (zoomControl == null) {
-            Log.d("MapView", "zoomControl missing");
-            return;
-        }
-
-        if (zoomControl.getDrawMatrix() == null) {
-            Log.d("MapView", "There is no draw Matrix");
+        if (getDisplayMatrix() == null) {
+            Log.d("MapView", "There is no display Matrix");
             return;
         }
 
@@ -152,7 +135,7 @@ public class MapView extends AppCompatImageView { // PhotoView
 
         if (firstDraw) {
             // init transformation matrix error
-            zoomControl.getDrawMatrix().getValues(defaultMatrix);
+            getDisplayMatrix().getValues(defaultMatrix);
             defaultMatrixError = 1f / defaultMatrix[0];
             defaultMatrixError *= INITIAL_ZOOM; // include if buildUserGroups is used in MapControl
         }
@@ -180,7 +163,7 @@ public class MapView extends AppCompatImageView { // PhotoView
             if (firstDraw || !marker.isAlreadyDrawn()) {
                 marker.setPosition(mapPos.x, mapPos.y);
                 marker.setAlreadyDrawn(true);
-            } else if (!zoomControl.getDrawMatrix().equals(oldTransformation)) {
+            } else if (!getDisplayMatrix().equals(oldTransformation)) {
                 // if the marker is currently moving
                 // tell the marker to save his position and use this till he is released
                 if (marker.isMoving()) {
@@ -205,15 +188,8 @@ public class MapView extends AppCompatImageView { // PhotoView
         prisonControl.updateLocation();
 
         // save the current transformation
-        copyMatrix(oldTransformation, zoomControl.getDrawMatrix());
+        copyMatrix(oldTransformation, getDisplayMatrix());
         firstDraw = false;
-    }
-
-    /**
-     * @return the PhotoViewAttacher which holds this MapViews
-     */
-    public PhotoViewAttacher getZoomControl() {
-        return zoomControl;
     }
 
     // some Matrix Utility
