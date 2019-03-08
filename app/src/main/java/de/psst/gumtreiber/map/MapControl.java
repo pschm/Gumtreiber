@@ -46,6 +46,11 @@ public class MapControl {
         prisonControl.setMapControl(this);
 
         MovableMarker.setMapView(map);
+        initViews();
+    }
+
+    private void initViews() {
+        mapView.adjustMarker();
     }
 
     /**

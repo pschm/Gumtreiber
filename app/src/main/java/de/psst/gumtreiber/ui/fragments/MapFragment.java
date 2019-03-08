@@ -86,7 +86,6 @@ public class MapFragment extends Fragment {
             public void onGlobalLayout() {
                 mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mapView.setZoomable(true);
-//                mapView.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapControl.MAIN_BUILDING_MAP.x, MapControl.MAIN_BUILDING_MAP.y, false);
             }
         });
     }

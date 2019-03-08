@@ -48,90 +48,31 @@ public class MapView extends PhotoView {
     // all constructors needed for Android to build the ImageView correctly
     public MapView(Context context) {
         super(context);
+        initMatrixListener();
     }
 
     public MapView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initMatrixListener();
     }
 
     public MapView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initMatrixListener();
+    }
+
+    private void initMatrixListener() {
+        setOnMatrixChangeListener(rect -> adjustMarker());
     }
 
     /**
-     * @param markers users to be drawn of the map
+     * Update the position of every user based on {@link #markers}
      */
-    public void setMarkers(ArrayList<AbstractUser> markers) {
-        this.markers = markers;
-        invalidate(); // repaint the map
-    }
-
-    /**
-     * Set the MapControl which calculates the gps/map coordinates and manages the user lists
-     *
-     * @param mapControl MapControl which manages this MapView
-     */
-    public void setMapControl(MapControl mapControl) {
-        this.mapControl = mapControl;
-    }
-
-    public void setPrisonControl(PrisonControl prisonControl) {
-        this.prisonControl = prisonControl;
-    }
-
-    /**
-     * Adjust a given vector to the current zoom of the map
-     *
-     * @param v1 vector used for the calculation
-     * @return new vector adjusted to the map transformation
-     */
-    public Vector2 adjustToTransformation(Vector2 v1) {
-        return adjustToTransformation(v1, getDisplayMatrix());
-    }
-
-    /**
-     * Adjust a given vector to the zoom of the given transformation matrix
-     */
-    public Vector2 adjustToTransformation(Vector2 v1, Matrix transformation) {
-        // save the coordinate as float array (needed for the matrix mul.)
-        float[] point = {v1.x * defaultMatrixError, v1.y * defaultMatrixError};
-
-        // adjust coordinate to transformation by applying the matrix
-        transformation.mapPoints(point);
-
-        // return new pos
-        return new Vector2(point[0], point[1]);
-    }
-
-    /**
-     * Draw the map itself as well as the position of every user
-     * on the map based on {@link #markers}
-     */
-    @Override
-    public void onDraw(Canvas canvas) {
-        // draw the map
-        super.onDraw(canvas);
-
-        if (getDisplayMatrix() == null) {
-            Log.d("MapView", "There is no display Matrix");
+    public void adjustMarker() {
+        if (markers == null || markers.isEmpty()) {
+            Log.w("MapView", "There are no Users to display.");
             return;
         }
-
-        // skip drawing - there are no users to draw
-        if (markers == null) {
-            Log.d("MapView", "markers is NUll!");
-            return;
-        }
-
-        if (markers.isEmpty()) {
-            Log.w("MapView", "Nothing to draw - the user list ist empty");
-            return;
-        }
-
-        // group users
-//        int boxSize = (int) (MapControl.BOX_SIZE / zoomControl.getScale());
-//        markers2 = mapControl.buildUserGroups(new ArrayList<>(markers), boxSize);
-//        Log.d("pschm", "onDraw() -------------------------------------");
 
         if (firstDraw) {
             // init transformation matrix error
@@ -185,11 +126,64 @@ public class MapView extends PhotoView {
         }
 
         // translate prison
-        prisonControl.updateLocation();
+        prisonControl.updateLocation(); // TODO add own listener in prisonControl
 
         // save the current transformation
         copyMatrix(oldTransformation, getDisplayMatrix());
         firstDraw = false;
+    }
+
+    /**
+     * Adjust a given vector to the current zoom of the map
+     *
+     * @param v1 vector used for the calculation
+     * @return new vector adjusted to the map transformation
+     */
+    public Vector2 adjustToTransformation(Vector2 v1) {
+        return adjustToTransformation(v1, getDisplayMatrix());
+    }
+
+    /**
+     * Adjust a given vector to the zoom of the given transformation matrix
+     */
+    public Vector2 adjustToTransformation(Vector2 v1, Matrix transformation) {
+        // save the coordinate as float array (needed for the matrix mul.)
+        float[] point = {v1.x * defaultMatrixError, v1.y * defaultMatrixError};
+
+        // adjust coordinate to transformation by applying the matrix
+        transformation.mapPoints(point);
+
+        // return new pos
+        return new Vector2(point[0], point[1]);
+    }
+
+    /**
+     * @param markers users to be drawn of the map
+     */
+    public void setMarkers(ArrayList<AbstractUser> markers) {
+        this.markers = markers;
+        invalidate(); // repaint the map
+    }
+
+    /**
+     * Set the MapControl which calculates the gps/map coordinates and manages the user lists
+     *
+     * @param mapControl MapControl which manages this MapView
+     */
+    public void setMapControl(MapControl mapControl) {
+        this.mapControl = mapControl;
+    }
+
+    public void setPrisonControl(PrisonControl prisonControl) {
+        this.prisonControl = prisonControl;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+//        if (firstDraw) {
+//            adjustMarker();
+//        }
     }
 
     // some Matrix Utility
