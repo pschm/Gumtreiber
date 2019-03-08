@@ -175,6 +175,8 @@ public class MapView extends AppCompatImageView { // PhotoView
             // make sure the marker is visible
             marker.setVisibility(true);
 
+            Log.d("Map", "User:" + u.getName());
+
             // set the markers directly to the new position if the zoom changed
             // or let the markers move to the new position
             if (firstDraw || !marker.isAlreadyDrawn()) {

@@ -2,6 +2,7 @@ package de.psst.gumtreiber.map;
 
 import android.app.Activity;
 import android.location.Location;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,8 @@ public class MapControl {
     private Coordinate currentUserLocation = new Coordinate(0, 0);
     private boolean initialized = false;
 
+    private ArrayList<OnMapInitialized> listeners = new ArrayList<>();
+
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.map = map;
         this.activity = activity;
@@ -61,7 +64,7 @@ public class MapControl {
 
         if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
 //            Log.d("MapControl - pschm", "user NOT on the map!" + currentUserLocation.getLatitude() + "/" + currentUserLocation.getLongitude());
-            pos = gpsToMap(currentUserLocation);
+//            pos = gpsToMap(currentUserLocation);
 //            Log.d("MapControl - pschm", "user NOT on the map!" + pos);
             pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
         } else {
@@ -70,8 +73,9 @@ public class MapControl {
             pos.y += INITIAL_ZOOM_Y_OFFSET;
 //            Log.d("MapControl - pschm", "user on the map!" + pos);
         }
-
+        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
         map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
+        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
     }
 
     /**
@@ -79,9 +83,11 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
+        Log.d("timing", "MapControl - updateUsers");
         if (!initialized) {
             setUpInitialZoomOnUser();
-            initialized = true;
+            Log.d("MapControl", "init zoom");
+//            initialized = true;
         }
 
         // filter users according to the selected filters
@@ -93,9 +99,27 @@ public class MapControl {
         // merge close users in Groups
         this.users = buildUserGroups(this.users, BOX_SIZE); // comment if you want to use dynamicGroups
 
+
+//        MovableMarker marker = new MovableMarker(activity, "Hier bin ich!");
+//        marker.setVisibility(true);
+//        marker.setPosition(250, 250);
+
+
+        for (AbstractUser u : this.users) {
+            Log.d("MapControl", u.getName() + ": " + u.getLatitude() + "/" + u.getLongitude());
+        }
+
         // show users on the map
         // new ArrayList is needed to avoid ConcurrentModificationExceptions
         map.setMarkers(new ArrayList<>(this.users));
+
+        if (!initialized) {
+            // inform listener that the map is initialized
+            initialized = true;
+            for (OnMapInitialized l : listeners)
+                l.onMapInitialized();
+        }
+        Log.d("timing", "MapControl - finished");
     }
 
     /**
@@ -217,12 +241,39 @@ public class MapControl {
         return mapPos;
     }
 
-    public void updateFriends(ArrayList<String> friendlist) {
-        friends = friendlist;
+    public void updateFriends(ArrayList<String> friendList) {
+        friends = friendList;
     }
 
     public void updateCurrentUserLocation(Location location) {
         if (location != null)
             currentUserLocation.setLocation(location.getLatitude(), location.getLongitude());
+    }
+
+    /**
+     * Listen on this interface to receive an update if the map is initialized
+     */
+    public interface OnMapInitialized {
+        void onMapInitialized();
+    }
+
+    /**
+     * Add a listener who will listen on map init
+     *
+     * @param listener The listener to be added
+     */
+    public void addOnMapInitializedListener(OnMapInitialized listener) {
+        if (listeners == null) listeners = new ArrayList<>();
+        listeners.add(listener);
+    }
+
+    /**
+     * Remove a listener who is listen on map init
+     *
+     * @param listener The listener to be removed
+     */
+    public void removeOnMapInitializedListener(OnMapInitialized listener) {
+        if (listener == null) return;
+        listeners.remove(listener);
     }
 }

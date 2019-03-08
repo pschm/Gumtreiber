@@ -256,11 +256,13 @@ public class MovableMarker {
      * TODO keep current rotation
      */
     public void setPosition(float x, float y) {
+        setVisibility(true);
         allowMovingThread = false;
         if (!isUsingOwnPosition()) curPos = new Vector2(x, y);
 
         Vector2 zoomed = mapView.adjustToTransformation(curPos);
 
+        Log.d("MapCon", "pos: " + zoomed);
         nameImg.setX(zoomed.x + nameCntrOffset.x);
         nameImg.setY(zoomed.y + nameCntrOffset.y);
 
