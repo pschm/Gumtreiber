@@ -165,7 +165,8 @@ public class MapControl {
             if (sector == null) {
 
                 // u is the first user in this sector
-                if (u.getMarker() == null) u.setMarker(new MovableMarker(activity, u.getName()));
+                if (u.getMarker() == null || !initialized)
+                    u.setMarker(new MovableMarker(activity, u.getName()));
                 u.getMarker().changeLabel(u.getName()); // needed if a user moves out of a group
                 // change the look of the marker, if the user is a friend or bot
                 if (u instanceof Bot) u.getMarker().changeLook(MovableMarker.Look.BOT);

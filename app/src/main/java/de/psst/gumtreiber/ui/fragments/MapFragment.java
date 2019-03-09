@@ -131,6 +131,8 @@ public class MapFragment extends Fragment {
         // TODO lh.getCurrentLocation();
         lh.addOnLocationChangedListener(mapControl::updateCurrentUserLocation);
 
+        // TODO call updateFriends / updateUsers if uds has data (getter needed)
+
         // Firebase updates
         onUpdateReceivedListener = (userList, friendList) -> {
             ArrayList<AbstractUser> arrayList;
@@ -138,12 +140,12 @@ public class MapFragment extends Fragment {
             if (userList == null || userList.isEmpty()) arrayList = new ArrayList<>();
             else arrayList = new ArrayList<>(userList);
 
-            User u;
-            u = new User("123452336", "Hans-Peter");
-            u.setLatitude(51.028);
-            u.setLongitude(7.56174);
-            u.setCourse(Course.INF);
-            arrayList.add(u);
+//            User u;
+//            u = new User("123452336", "Hans-Peter");
+//            u.setLatitude(51.028);
+//            u.setLongitude(7.56174);
+//            u.setCourse(Course.INF);
+//            arrayList.add(u);
 
             mapControl.updateFriends(friendList);
             mapControl.updateUsers(arrayList);
