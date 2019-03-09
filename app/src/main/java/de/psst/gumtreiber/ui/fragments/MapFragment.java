@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.AbstractUser;
+import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserDataSync;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapControl;
@@ -90,4 +91,21 @@ public class MapFragment extends Fragment {
         });
     }
 
+
+    private void test() {
+        ArrayList<AbstractUser> users = new ArrayList<>();
+        User u;
+
+        u = new User("12345667790", "Hans-Peter");
+        u.setLatitude(51.023);
+        u.setLongitude(7.56174);
+        users.add(u);
+
+        u = new User("12345667790", "Hans-Peter");
+        u.setLatitude(51.0237231);
+        u.setLongitude(7.5621626);
+        users.add(u);
+
+        mapControl.updateUsers(users);
+    }
 }

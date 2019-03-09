@@ -2,6 +2,7 @@ package de.psst.gumtreiber.map;
 
 import android.app.Activity;
 import android.location.Location;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -110,6 +111,11 @@ public class MapControl {
         int xSize = (int) DELTA_LONG;
         int ySize = (int) DELTA_LAT;
         Vector2 pos;
+
+        if (activity == null) {
+            Log.w("MapControl", "Activity is NULL!!");
+            return new ArrayList<>();
+        }
 
         // create a grid to detect close users
         AbstractUser[][] map = new AbstractUser[xSize / boxSize][ySize / boxSize];
