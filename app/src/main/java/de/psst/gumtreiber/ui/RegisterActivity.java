@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Course;
 import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.viewmodels.SettingsViewModel;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -57,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
         spnCourseList.add(getString(R.string.course));
         spnCourseList.add("");
         spnCourseList.addAll( Arrays.asList(Course.getAllCourses()) );
-        spnCourse.setAdapter(new ArrayAdapter<>(this, R.layout.auth_spinner_item, spnCourseList )); //TODO ggf an neuer Enum anpassen
+        spnCourse.setAdapter(new ArrayAdapter<>(this, R.layout.auth_spinner_item, spnCourseList ));
 
         btnCompleteRegister = findViewById(R.id.btnCompleteRegister);
         btnCompleteRegister.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +117,15 @@ public class RegisterActivity extends AppCompatActivity {
             txtName.setError(getString(R.string.required_field));
             valid = false;
         } else {
-            txtName.setError(null);
+
+            String validationCode = SettingsViewModel.validateUserName(this, nickname);
+            if(!validationCode.equals(SettingsViewModel.USERNAME_VALID_CODE)) {
+                txtName.setError(validationCode);
+                valid = false;
+            } else {
+                txtName.setError(null);
+            }
+
         }
 
 

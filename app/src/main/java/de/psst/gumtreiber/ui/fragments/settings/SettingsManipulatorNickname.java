@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.LoginActivity;
 import de.psst.gumtreiber.ui.RegisterActivity;
+import de.psst.gumtreiber.viewmodels.SettingsViewModel;
 
 public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
 
@@ -40,12 +41,20 @@ public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 String newName = txtUserInput1.getText().toString();
-                //Wenn inputfeld leer, abbruch
-                if(TextUtils.isEmpty(newName)) { //TODO Nickname restriktionen anwenden!
+                if (TextUtils.isEmpty(newName)) {
                     txtUserInput1.setError(getString(R.string.required_field));
                     return false;
-                }
+                } else {
 
+                    String validationCode = SettingsViewModel.validateUserName(activity, newName);
+                    if(!validationCode.equals(SettingsViewModel.USERNAME_VALID_CODE)) {
+                        txtUserInput1.setError(validationCode);
+                        return false;
+                    } else {
+                        txtUserInput1.setError(null);
+                    }
+
+                }
 
                 RegisterActivity.updateDisplayName(FirebaseAuth.getInstance().getCurrentUser(), newName).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

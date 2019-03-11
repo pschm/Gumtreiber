@@ -13,30 +13,32 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import de.psst.gumtreiber.location.LocationHandler;
-import de.psst.gumtreiber.map.MapControl;
 
 /**
  * Sends repeatedly the current users location to the server and
- * fetches available userdata from the server to the client for displaying it on the map.<br>
+ * fetches available userdata from the server to the client.<br>
  * <br>
  * Take in mind that the users location is only send to the server
  * if given {@link LocationHandler#updatesEnabled} returns {@code true}.<br>
  * <br>
  * It will automatically start and stop syncing data when the activity gets stopped or started.
+ * <br>
+ * To receive updated data, register an {@link OnUpdateReceivedListener} listener.
  */
 public class UserDataSync implements Runnable, Application.ActivityLifecycleCallbacks {
 
     private HashMap<String, AbstractUser> userList = new HashMap<>();
+    private ArrayList<OnUpdateReceivedListener> listeners = new ArrayList<>();
 
     private Activity activity;
     private LocationHandler locationHandler;
-    private MapControl mapControl;
 
-    private static String userToken;
+    private static String userToken = "";
 
     private Thread updateThread;
     private boolean allowRunning = true;
@@ -46,15 +48,37 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
      * Creates a new instance of UserDataSync.
      * @param activity Activity on which the ActivityLifecycleCallbacks are registered.
      * @param locationHandler LocationHandler from which this sync will receive the location data.
-     * @param mapControl MapView on which the server data will transferred to.
+     * @param enableUpdating Set to {@code true} to immediately start sending and receiving data.
      */
-    public UserDataSync(Activity activity, LocationHandler locationHandler, MapControl mapControl) {
+    public UserDataSync(Activity activity, LocationHandler locationHandler, boolean enableUpdating) {
         this.activity = activity;
         this.locationHandler = locationHandler;
-        this.mapControl = mapControl;
 
         activity.getApplication().registerActivityLifecycleCallbacks(this);
+
+        if(enableUpdating) startUpdating();
+        else stopUpdating();
     }
+
+
+    /**
+     * Add a listener who will listen on receiving data updates
+     * @param listener The listener to be added
+     */
+    public void addOnUpdateReceivedListener(OnUpdateReceivedListener listener) {
+        if(listeners == null) listeners = new ArrayList<>();
+        listeners.add(listener);
+    }
+
+    /**
+     * Remove a listener who is listen to  data updates
+     * @param listener The listener to be removed
+     */
+    public void removeOnUpdateReceivedListener(OnUpdateReceivedListener listener) {
+        if(listener == null) return;
+        listeners.remove(listener);
+    }
+
 
     /**
      * Starts synchronizing the data to the server and vice versa.
@@ -103,18 +127,22 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
                 Firebase.setCurrentLocation(user, locationHandler.getCurrentLocation());
             }
 
-            if(!TextUtils.isEmpty(userToken)) {
-                Firebase.UpdateUserList(userToken, userList);
-                String currentUserID = FirebaseAuth.getInstance().getUid();
-                ArrayList<String> friends = Firebase.getFriendlist(currentUserID, userToken);
+            if(!TextUtils.isEmpty(userToken) && user != null) {
+                Firebase.updateUserList(userToken, userList); //Updating the User-Hash-Map
+
+                ArrayList<String> friends = Firebase.getFriendlist(user.getUid(), userToken);
                 UserFilter.setFriendList(friends);
-                mapControl.setCurrentUser(currentUserID);
-                mapControl.updateFriends(friends);
-                mapControl.updateUsers(new ArrayList<>(userList.values()));
+
+
+                if(listeners != null) {
+                    for(OnUpdateReceivedListener l: listeners) {
+                        l.onUpdateReceived(userList.values(), friends);
+                    }
+                }
+
             } else {
                 Log.w("UserDataSync","Cannot get all users, Auth-Token is not available yet!");
             }
-
 
             try {
                 Thread.sleep(LocationHandler.FASTEST_INTERVAL); //Sync as fast as the location updates can be occur
@@ -170,6 +198,14 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
      */
     public void stopUpdating() {
         allowRunning = false;
-        userToken = null;
+        userToken = "";
+    }
+
+
+    /**
+     * Listen on this interface to receive the updated location data when location updates are enabled
+     */
+    public interface OnUpdateReceivedListener {
+        void onUpdateReceived(Collection<AbstractUser> userList, ArrayList<String> friendList);
     }
 }

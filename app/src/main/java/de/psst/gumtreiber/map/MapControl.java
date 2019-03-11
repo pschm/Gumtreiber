@@ -1,7 +1,7 @@
 package de.psst.gumtreiber.map;
 
 import android.app.Activity;
-import android.util.Log;
+import android.location.Location;
 
 import java.util.ArrayList;
 
@@ -20,18 +20,21 @@ public class MapControl {
     final static double MIN_LONG = 7.559551; //7.560669;
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
+    // TODO Maybe Use Location instead of Coordinate
     private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022029, 7.561740);
     public final static Vector2 MAIN_BUILDING_MAP = new Vector2(320.97003f, 1762.0068f);
+    private final static float INITIAL_ZOOM_X_OFFSET = -75;
+    private final static float INITIAL_ZOOM_Y_OFFSET = 160;
 
-    public final static int BOX_SIZE = 200;
+    public final static int BOX_SIZE = 100;
 
     private MapView map;
     private ArrayList<String> friends = new ArrayList<>();
     private Activity activity;
     private PrisonControl prisonControl;
     private ArrayList<AbstractUser> users = new ArrayList<>();
-    private AbstractUser currentUser;
-    private String currentUserID;
+    private Coordinate currentUserLocation = new Coordinate(0, 0);
+    private boolean initialized = false;
 
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.map = map;
@@ -56,12 +59,16 @@ public class MapControl {
     public void setUpInitialZoomOnUser() {
         Vector2 pos;
 
-        if (PrisonControl.userNotOnMap(currentUser)) {
+        if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
+//            Log.d("MapControl - pschm", "user NOT on the map!" + currentUserLocation.getLatitude() + "/" + currentUserLocation.getLongitude());
+            pos = gpsToMap(currentUserLocation);
+//            Log.d("MapControl - pschm", "user NOT on the map!" + pos);
             pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
-            Log.d("MapControl - pschm", "user not on the map!" + pos);
         } else {
-            pos = gpsToMap(new Coordinate(currentUser.getLatitude(), currentUser.getLongitude()));
-            Log.d("MapControl - pschm", "user on the map!" + pos);
+            pos = gpsToMap(currentUserLocation);
+            pos.x += INITIAL_ZOOM_X_OFFSET;
+            pos.y += INITIAL_ZOOM_Y_OFFSET;
+//            Log.d("MapControl - pschm", "user on the map!" + pos);
         }
 
         map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
@@ -72,14 +79,9 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
-        if (currentUser == null) {
-            for (AbstractUser u : users) {
-                if (u.getUid().equals(currentUserID)) {
-                    currentUser = u;
-                    break;
-                }
-            }
+        if (!initialized) {
             setUpInitialZoomOnUser();
+            initialized = true;
         }
 
         // filter users according to the selected filters
@@ -117,6 +119,14 @@ public class MapControl {
         // sort all users in the grid
         for (int i = 0; i < users.size(); i++) {
             AbstractUser u = users.get(i);
+
+//            // TODO implement to hide expired users
+//            // TODO check remove functions --> loop backwards through the array?
+//            if (!u.isVisible()) {
+//                if (u.getMarker() != null) u.getMarker().setVisibility(false);
+//                users.remove(i);
+//                continue;
+//            }
 
             // transform user coordinates to the area
             pos = gpsToMap(new Coordinate(u.getLatitude(), u.getLongitude()));
@@ -211,7 +221,8 @@ public class MapControl {
         friends = friendlist;
     }
 
-    public void setCurrentUser(String currentUserID) {
-        this.currentUserID = currentUserID;
+    public void updateCurrentUserLocation(Location location) {
+        if (location != null)
+            currentUserLocation.setLocation(location.getLatitude(), location.getLongitude());
     }
 }

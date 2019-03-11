@@ -11,7 +11,8 @@ public enum Course {
 
     //Attribute
     private final String fullName;
-    private final int position;
+    private final int position; //TODO Das ist ja völlig doof so, eine enum ist ja genau DAS
+
     //Konstruktor
     Course(String fullName, int position) {
         this.fullName = fullName;
@@ -22,8 +23,8 @@ public enum Course {
     public static String[] getAllCourses() {
         Course[] courses = Course.values();
 
-        String[] allCourses = new String[courses.length];
-        for (int i = 0; i < allCourses.length - 1; i++) {
+        String[] allCourses = new String[courses.length-1];
+        for (int i = 0; i < courses.length; i++) {
             if (courses[i].equals(PROF)) continue;
             allCourses[i] = courses[i].fullName;
         }

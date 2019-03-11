@@ -1,6 +1,9 @@
 package de.psst.gumtreiber.data;
 
+import android.content.Context;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -27,6 +30,7 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import de.psst.gumtreiber.location.Room;
+import de.psst.gumtreiber.ui.MainActivity;
 
 //REST
 
@@ -50,6 +54,9 @@ public class Firebase {
      * @param name name of the user
      */
     public static void createUser(String uid, String name) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         database.child("users").child(uid).child("name").setValue(name);
 
         //Initialize properties of user
@@ -58,6 +65,9 @@ public class Firebase {
     }
 
     public static void createUser(String uid, String name, Course course) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         createUser(uid, name);
         if (course != null) setCourse(uid, course);
     }
@@ -70,11 +80,17 @@ public class Firebase {
      * @param name name of the user
      */
     public static void changeName(String uid, String name) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         database.child("users").child(uid).child("name").setValue(name);
     }
 
 
     public static void setCourse(String uid, Course course) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         database.child("users").child(uid).child("course").setValue(course.name());
     }
 
@@ -86,6 +102,9 @@ public class Firebase {
      * @param location
      */
     public static void setCurrentLocation(FirebaseUser user, Location location) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         if (user == null || location == null) return;
         setCurrentLocation(user.getUid(), location.getLatitude(), location.getLongitude(), location.getAltitude());
     }
@@ -99,6 +118,9 @@ public class Firebase {
      * @param altitude
      */
     public static void setCurrentLocation(String uid, double latitude, double longitude, double altitude) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         long expirationDate = generateExpirationDate();
         database.child("users").child(uid).child("latitude").setValue(latitude);
         database.child("users").child(uid).child("longitude").setValue(longitude);
@@ -118,6 +140,9 @@ public class Firebase {
      */
     public static void addAppointmentToSchedule(String uid, Appointment appointment) {
 
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         //int start = appointment.getFormatedStartTime();
         //int end = appointment.getFormatedEndTime();
 
@@ -136,6 +161,8 @@ public class Firebase {
      * @param appointment
      */
     public static void deleteAppointment(String uid, Appointment appointment) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
         long start = appointment.getFormatedStartDate();
 
         database.child("schedules").child(uid).child("" + start).removeValue();
@@ -151,7 +178,14 @@ public class Firebase {
     public static ArrayList<Appointment> getAppointments(String uid, String authToken) {
         ArrayList<Appointment> appointmentList = new ArrayList<>();
 
-        String jsonString = getJSON(firebaseURL + "/schedules/" + uid + ".json" + "?auth=" + authToken);
+        //return empty ArrayList, if there is no internet connection
+        if(!isNetworkAvailable()) return appointmentList;
+
+        long currentDate = generateCurrentDate();
+        String jsonString = getJSON(firebaseURL + "/schedules/" + uid + ".json" + "?orderBy=\"endDate\"&startAt=" + currentDate + "&auth=" + authToken);
+
+        //return empty ArrayList, if JSON is empty
+        if (jsonString.equals("")) return appointmentList;
 
         try {
             JSONObject reader = new JSONObject(jsonString);
@@ -218,6 +252,8 @@ public class Firebase {
      * @param uid
      */
     public static void activateSchedule(String uid) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
         database.child("users").child(uid).child("usingSchedule").setValue(true);
     }
 
@@ -227,6 +263,8 @@ public class Firebase {
      * @param uid
      */
     public static void deactivateSchedule(String uid) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
         database.child("users").child(uid).child("usingSchedule").setValue(false);
     }
 
@@ -275,7 +313,10 @@ public class Firebase {
 
     }*/
 
-    public static void UpdateUserList(String authToken, HashMap<String, AbstractUser> userList) {
+    public static void updateUserList(String authToken, HashMap<String, AbstractUser> userList) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         ArrayList<User> allUser = getAllUsers(authToken);
 
         for (User each : allUser) {
@@ -434,6 +475,9 @@ public class Firebase {
     //TODO JavaDoc
     private static Appointment getCurrentAppointment(String uid, String authToken) {
 
+        //return null, if there is no internet connection
+        if(!isNetworkAvailable()) return null;
+
         ArrayList<Appointment> appointments = getAppointments(uid, authToken);
         Appointment currentAppointment = null;
         long currentDate = generateCurrentDate();
@@ -461,7 +505,12 @@ public class Firebase {
     public static ArrayList<User> getAllUsers(String authToken) {
         ArrayList<User> userList = new ArrayList<>();
 
+        //return empty ArrayList, if there is no internet connection
+        if(!isNetworkAvailable()) return userList;
+
         String jsonString = getJSON(firebaseURL + "/users.json" + "?auth=" + authToken);
+        //return empty ArrayList, if JSON is empty
+        if (jsonString.equals("")) return userList;
 
         try {
             JSONObject reader = new JSONObject(jsonString);
@@ -499,8 +548,12 @@ public class Firebase {
 
 
     public static User getUser(String uid, String authToken) {
+        //return null, if there is no internet connection
+        if(!isNetworkAvailable()) return null;
 
         String jsonString = getJSON(firebaseURL + "/users/" + uid + ".json" + "?auth=" + authToken);
+        //return empty null, if JSON is empty
+        if (jsonString.equals("")) return null;
 
         User user = null;
         try {
@@ -541,8 +594,14 @@ public class Firebase {
     public static ArrayList<User> getAllActiveUsers(String authToken) {
         ArrayList<User> userList = new ArrayList<>();
 
+        //return empty ArrayList, if there is no internet connection
+        if(!isNetworkAvailable()) return userList;
+
         final long date = generateCurrentDate();
         String jsonString = getJSON(firebaseURL + "/users.json" + "?orderBy=\"expirationDate\"&startAt=" + date + "&auth=" + authToken);
+
+        //return empty ArrayList, if JSON is empty
+        if (jsonString.equals("")) return userList;
 
         try {
             JSONObject reader = new JSONObject(jsonString);
@@ -589,7 +648,12 @@ public class Firebase {
     public static ArrayList<User> getAllScheduledUsers(String authToken) {
         ArrayList<User> userList = new ArrayList<>();
 
+        //return empty ArrayList, if there is no internet connection
+        if(!isNetworkAvailable()) return userList;
+
         String jsonString = getJSON(firebaseURL + "/users.json" + "?orderBy=\"usingSchedule\"&startAt=" + true + "&auth=" + authToken);
+        //return empty ArrayList, if JSON is empty
+        if (jsonString.equals("")) return userList;
 
         try {
             JSONObject reader = new JSONObject(jsonString);
@@ -648,6 +712,8 @@ public class Firebase {
      * @param friendsUID UID of the user to be added to the friendlist
      */
     public static void addUserToFriendlist(String myUID, String friendsUID) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
         database.child("friendlists").child(myUID).child(friendsUID).setValue(true);
     }
 
@@ -658,6 +724,9 @@ public class Firebase {
      * @param friendsUID UID of the user to be deleted from the friendlist
      */
     public static void deleteUserFromFriendlist(String myUID, String friendsUID) {
+        //return, if there is no internet connection
+        if(!isNetworkAvailable()) return;
+
         database.child("friendlists").child(myUID).child(friendsUID).removeValue();
 
     }
@@ -673,9 +742,16 @@ public class Firebase {
 
         ArrayList<String> friendlist = new ArrayList<String>();
 
+        //return empty ArrayList, if there is no internet connection
+        if(!isNetworkAvailable()) return friendlist;
+
 
         try {
             String jsonString = getJSON(firebaseURL + "/friendlists/" + uid + ".json" + "?auth=" + authToken);
+
+            //return empty ArrayList, if JSON is empty
+            if (jsonString.equals("")) return friendlist;
+
             JSONObject reader = new JSONObject(jsonString);
             JSONArray allUIDs = reader.names();
 
@@ -693,10 +769,15 @@ public class Firebase {
     }
 
     public static ArrayList<User> getAllFriends(String uid, String authToken){
+        ArrayList<User> allFriends = new ArrayList<User>();
+
+        //return empty ArrayList, if there is no internet connection
+        if(!isNetworkAvailable()) return allFriends;
+
         ArrayList<String> friendList = getFriendlist(uid, authToken);
         ArrayList<User> allUser = getAllUsers(authToken);
 
-        ArrayList<User> allFriends = new ArrayList<User>();
+
 
         for(User each: allUser){
             if (friendList.contains( each.getUid() ))
@@ -714,6 +795,9 @@ public class Firebase {
      * @return JSON-String
      */
     public static String getJSON(final String urlGet) {
+        //return empty String, if there is no internet connection
+        if(!isNetworkAvailable()) return "";
+
         final Semaphore sem = new Semaphore(0);
         final StringBuilder json = new StringBuilder();
         json.append("");
@@ -732,6 +816,7 @@ public class Firebase {
 
                     if (conn.getResponseCode() != 200) {
                         Log.v("Firebase", "Fehler beim Fetchen des JSONs.");
+                        conn.disconnect();
                         sem.release();
                         return;
                         //throw new RuntimeException("Failed 'getJSON': HTTP error code: " + conn.getResponseCode());
@@ -769,5 +854,14 @@ public class Firebase {
         return json.toString();
     }
 
+    private static boolean  isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) MainActivity.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        boolean hasInternet = activeNetworkInfo != null;
+        Log.v("internet", "active network: " + hasInternet);
+        return activeNetworkInfo != null;
+    }
 
 }

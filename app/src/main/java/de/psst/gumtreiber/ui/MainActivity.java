@@ -1,6 +1,7 @@
 package de.psst.gumtreiber.ui;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,9 +59,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Toast backToast;
 
+    private static Context instance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.instance = this;
 
         //Getting the locationState from the ViewModel
         model = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -263,5 +267,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+    }
+
+    public static Context getInstance() {
+        return instance;
     }
 }

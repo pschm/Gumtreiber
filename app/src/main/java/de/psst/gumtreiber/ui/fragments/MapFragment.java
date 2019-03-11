@@ -7,11 +7,15 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.UserDataSync;
+import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapControl;
 import de.psst.gumtreiber.map.MapView;
 import de.psst.gumtreiber.map.PrisonControl;
@@ -48,8 +52,22 @@ public class MapFragment extends Fragment {
         mapView.setImageResource(R.mipmap.map);
 
         //TODO updatesEnabled aus config laden
-        UserDataSync uds = new UserDataSync(activity, activity.getLocationHandler(), mapControl);
-        uds.startUpdating();
+        //TODO Neues UDS-Konzept umsetzen
+        UserDataSync uds = new UserDataSync(activity, activity.getLocationHandler(), true);
+
+        LocationHandler lh = activity.getLocationHandler();
+        mapControl.updateCurrentUserLocation(lh.getCurrentLocation());
+        lh.addOnLocationChangedListener(mapControl::updateCurrentUserLocation);
+
+        uds.addOnUpdateReceivedListener((userList, friendList) -> {
+            ArrayList<AbstractUser> arrayList;
+
+            if (userList == null || userList.isEmpty()) arrayList = new ArrayList<>();
+            else arrayList = new ArrayList<>(userList);
+
+            mapControl.updateFriends(friendList);
+            mapControl.updateUsers(arrayList);
+        });
 
         // disable zoom till fully loaded
         viewAttacher.setZoomable(false);
