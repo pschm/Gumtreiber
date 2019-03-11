@@ -12,9 +12,6 @@ import androidx.annotation.Nullable;
 public enum Room {
 
     //Hauptgebäude Ost-Trakt x.1xx
-    //TODO Schaun, ob wir das so machen wollen, dann Fleißarbeit.
-
-    //Hauptgebäude West-Trakt x.2xx
     R3100(51.023025, 7.562189, 3,"Seminar 6"),
     R3101(51.023000, 7.562344, 3, "Seminarsaal IV"),
     R3102(51.023117, 7.562346, 3, "euro engineering  Saal"),
@@ -33,9 +30,32 @@ public enum Room {
     R3115(51.023335, 7.562190, 3, "Beh-WC"),
     R3116(51.023330, 7.562137, 3, "EDV-Raum"),
     R3117(51.023319, 7.562193, 3, "D-WC"),
-    //R3118(,, 3,""), Existiert nicht
+    //R3118(,, 3,""),
     R3119(51.023281, 7.562166, 3,"H-WC"),
+
+    R2100(51.023015, 7.562175, 2, "Seminar 7"),
+    R2101(51.022975, 7.562340, 2, "Übungsraum"),
+    R2102(51.023020, 7.562354, 2, "Übungsraum"),
+    R2103(51.023039, 7.562359, 2, "Übungsraum"),
+    R2104(51.023099, 7.562312, 2, "Übungsraum"),
+    R2105(51.023165, 7.562347, 2, "SLZ"),
+    R2106(51.023261, 7.562320, 2, "WI-PC-Pool I"),
+    R2107(51.023444, 7.562314, 2, "WI-PC-Pool II"),
+    R2108(51.023587, 7.562308, 2, "Medienraum"),
+    R2109(51.023714, 7.562263, 2, "ADV-Terminalraum II"),
+    R2110(51.023636, 7.562121, 2, "ADV-Terminalraum I"),
+    R2111(51.023580, 7.562103, 2, "Supervisor"),
+    R2112(51.023517, 7.562129, 2, "PC-Pool Mathe Ing."),
+    R2113(51.023456, 7.562151, 2, "Seminarraum"),
+    R2114(51.023372, 7.562142, 2, "Seminarraum"),
+    R2115(51.023326, 7.562188, 2, "UV/AV"),
+    R2116(51.023318, 7.562193, 2, "D-WC"),
+    //R2117(, 2, ""),
+    R2118(51.023288, 7.562157, 2, "H-WC"),
     //TODO restliche Etagen
+
+    //Hauptgebäude West-Trakt x.2xx
+    //TODO Schaun, ob wir das so machen wollen, dann Fleißarbeit.
 
     //Block Mensa x.3xx + x.4xx
     R0300(51.0220919, 7.562135, 0, "Mensa"),
