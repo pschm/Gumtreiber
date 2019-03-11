@@ -15,7 +15,27 @@ public enum Room {
     //TODO Schaun, ob wir das so machen wollen, dann Fleißarbeit.
 
     //Hauptgebäude West-Trakt x.2xx
-    //TODO Schaun, ob wir das so machen wollen, dann Fleißarbeit.
+    R3100(51.023025, 7.562189, 3,"Seminar 6"),
+    R3101(51.023000, 7.562344, 3, "Seminarsaal IV"),
+    R3102(51.023117, 7.562346, 3, "euro engineering  Saal"),
+    R3103(51.023227, 7.562328, 3, "Seminar 5"),
+    R3104(51.023293, 7.562339, 3, "Seminar 4"),
+    R3105(51.023323, 7.562305, 3, "UV/AV"),
+    R3106(51.023423, 7.562317, 3, "FISIA BABCOCK Saal"),
+    R3107(51.023520, 7.562307, 3, "Unitechnik Saal"),
+    R3108(51.023597, 7.562282, 3, "Seminar 1"),
+    R3109(51.023694, 7.562278, 3, "Seminarraum"),
+    R3110(51.023639, 7.562138, 3, "Seminarraum"),
+    R3111(51.023579, 7.562137, 3, "Seminarraum"),
+    R3112(51.023483, 7.562122, 3, "Seminarraum"),
+    R3113(51.023391, 7.562150, 3, "Mathe-PC-Pool"),
+    R3114(51.023360, 7.562156, 3, "Mathe-Mitarb."),
+    R3115(51.023335, 7.562190, 3, "Beh-WC"),
+    R3116(51.023330, 7.562137, 3, "EDV-Raum"),
+    R3117(51.023319, 7.562193, 3, "D-WC"),
+    //R3118(,, 3,""), Existiert nicht
+    R3119(51.023281, 7.562166, 3,"H-WC"),
+    //TODO restliche Etagen
 
     //Block Mensa x.3xx + x.4xx
     R0300(51.0220919, 7.562135, 0, "Mensa"),
