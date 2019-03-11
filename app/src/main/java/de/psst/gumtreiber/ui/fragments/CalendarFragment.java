@@ -2,7 +2,6 @@ package de.psst.gumtreiber.ui.fragments;
 
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,11 +34,7 @@ public class CalendarFragment extends Fragment {
 
     private MainActivity activity;
     private CalendarViewModel model;
-
-    //RecyclerView
-    private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
 
     @Nullable
     @Override
@@ -64,14 +59,15 @@ public class CalendarFragment extends Fragment {
         model = new CalendarViewModel(activity.getApplication());
 
 
-        recyclerView = activity.findViewById(R.id.calendar_recycler_view);
+        //RecyclerView
+        RecyclerView recyclerView = activity.findViewById(R.id.calendar_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        layoutManager = new LinearLayoutManager(activity);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(activity);
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
@@ -80,13 +76,8 @@ public class CalendarFragment extends Fragment {
 
 
         //Init Floating Action Button
-        FloatingActionButton btnAdd = getActivity().findViewById(R.id.fab_add_appointment);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startAppointmentFragment();
-            }
-        });
+        FloatingActionButton btnAdd = activity.findViewById(R.id.fab_add_appointment);
+        btnAdd.setOnClickListener(view1 -> startAppointmentFragment());
     }
 
 
@@ -100,25 +91,15 @@ public class CalendarFragment extends Fragment {
 
 
     private void deleteAppointmentConfirmation(final Appointment appointment) {
-        //TODO Über die ID's Gehen!
-        //AltertDialog für Abfrage ob wirklich gelösht werden soll
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle(getString(R.string.popup_rem_appo_title));
 
-        alertDialogBuilder.setPositiveButton(getString(R.string.popup_yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                model.removeAppointment(appointment);
-                adapter.refresh();
-            }
+        alertDialogBuilder.setPositiveButton(getString(R.string.popup_yes), (dialogInterface, i) -> {
+            model.removeAppointment(appointment);
+            adapter.refresh();
         });
 
-        alertDialogBuilder.setNegativeButton(getString(R.string.popup_no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+        alertDialogBuilder.setNegativeButton(getString(R.string.popup_no), (dialogInterface, i) -> dialogInterface.cancel());
         alertDialogBuilder.show();
     }
 
@@ -131,7 +112,7 @@ public class CalendarFragment extends Fragment {
         private CalendarFragment fragment;
         private ArrayList<Appointment> dataset;
 
-        public RecyclerAdapter(CalendarFragment fragment, ArrayList<Appointment> dataset) {
+        RecyclerAdapter(CalendarFragment fragment, ArrayList<Appointment> dataset) {
             this.fragment = fragment; //used for popup on deletion
             this.dataset = dataset;
         }
@@ -139,7 +120,7 @@ public class CalendarFragment extends Fragment {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem_appointment, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem_appointment2, parent, false);
             return new ViewHolder(view);
         }
 
@@ -158,13 +139,9 @@ public class CalendarFragment extends Fragment {
             holder.txtEndTime.setText(getString(R.string.appo_to_datetime, ap.getReadableEndDate(), ap.getReadableEndTime()) );
 
 
-            holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("RecyclerAdapter", "Delete appointment in room '" + dataset.get(position).getRoom().name() + "'.");
-                    fragment.deleteAppointmentConfirmation(ap);
-                    //TODO delete Appointment stuff
-                }
+            holder.btnDelete.setOnClickListener(v -> {
+                Log.d("RecyclerAdapter", "Delete appointment in room '" + dataset.get(position).getRoom().name() + "'.");
+                fragment.deleteAppointmentConfirmation(ap);
             });
         }
 
@@ -204,18 +181,18 @@ public class CalendarFragment extends Fragment {
             return dataset.size();
         }
 
-        public void refresh() {
+        void refresh() {
             notifyDataSetChanged();
         }
 
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder {
 
             private TextView txtRoomNbr, txtRoomName, txtStartDay, txtStartTime, txtEndDay, txtEndTime;
             private Button btnDelete;
             private ImageView imgRoomCircle;
 
-            public ViewHolder(@NonNull View itemView) {
+            ViewHolder(@NonNull View itemView) {
                 super(itemView);
 
                 txtRoomNbr = itemView.findViewById(R.id.txtRoomNbr);
@@ -230,210 +207,5 @@ public class CalendarFragment extends Fragment {
                 txtEndTime = itemView.findViewById(R.id.txtEndTime);
             }
         }
-
     }
-
 }
-
-
-
-
-
-
-
-
-/*
-
-//TODO old code; to be deleted. -> check old xml filed too!
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.ListFragment;
-import androidx.lifecycle.ViewModelProviders;
-import de.psst.gumtreiber.R;
-import de.psst.gumtreiber.data.Appointment;
-import de.psst.gumtreiber.viewmodels.CalendarViewModel;
-
-//import androidx.recyclerview.widget.LinearLayoutManager;
-//import androidx.recyclerview.widget.RecyclerView;
-//import de.psst.gumtreiber.ui.CalendarAdapter;
-
-public class CalendarFragment extends ListFragment {
-
-    private Activity activity;
-    private CalendarViewModel model;
-    private CalendarListAdapter adapter;
-
-    //RecyclerView
-    //private RecyclerView recyclerView;
-    //private RecyclerView.Adapter adapter;
-    //private RecyclerView.LayoutManager manager;
-
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-
-        activity = getActivity();
-
-        //Init ViewModel
-        model = ViewModelProviders.of((FragmentActivity) activity).get(CalendarViewModel.class);
-
-        return inflater.inflate(R.layout.fragment_calendar, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
-        //ListView
-        adapter = new CalendarListAdapter(activity, R.layout.recycler_view_calendar_row_layout, model.getAppointments());
-        setListAdapter(adapter);
-
-
-
-        /*
-        //Wenn Recycler View wieder genutzt werden soll -> Layout.xml + vererbung anpassen !!!
-        //Init RecyclerView
-        recyclerView = activity.findViewById(R.id.rv_calendar);
-
-        //use a LinearLayout manager
-        manager = new LinearLayoutManager(activity);
-        recyclerView.setLayoutManager(manager);
-
-        //specify an adapter
-        if (getContext() != null) {
-            adapter = new CalendarAdapter(model, getContext());
-            recyclerView.setAdapter(adapter);
-        }
-        */
-
-/*
-
-        //Init Floating Action Button
-        FloatingActionButton btnAdd = activity.findViewById(R.id.fab_add_appointment);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startAppointmentFragment();
-            }
-        });
-    }
-
-    @Override
-    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
-        Appointment clickedAppointment = model.getAppointments().get(position);
-
-
-        //AlertDialog asking if the user really want to remove the Appointment
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
-        alertDialogBuilder.setTitle("Termin entfernen ?");
-
-        alertDialogBuilder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                model.removeAppointment(clickedAppointment);
-                adapter.refreshEvents(model.getAppointments());
-            }
-        });
-
-        alertDialogBuilder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        alertDialogBuilder.show();
-    }
-
-
-    private void startAppointmentFragment() {
-        FragmentManager fragmentManager = getFragmentManager();
-
-        if (fragmentManager != null) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new AppointmentFragment()).addToBackStack(null).commit();
-        }
-    }
-
-
-
-}
-
-class CalendarListAdapter extends ArrayAdapter<Appointment> {
-
-    private int resourceLayout;
-    private Context mContext;
-    private List<Appointment> appointments;
-
-    public CalendarListAdapter(Context context, int resource, List<Appointment> items) {
-        super(context, resource, items);
-        this.resourceLayout = resource;
-        this.mContext = context;
-        this.appointments = items;
-    }
-
-    public void refreshEvents(List<Appointment> appointments) {
-        this.appointments.clear();
-        this.appointments.addAll(appointments);
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        View v = convertView;
-
-        if (v == null) {
-            LayoutInflater vi;
-            vi = LayoutInflater.from(mContext);
-            v = vi.inflate(resourceLayout, null);
-        }
-
-        Appointment p = getItem(position);
-
-        if (p != null) {
-            TextView room = v.findViewById(R.id.rv_tv_room);
-            TextView startDate = v.findViewById(R.id.rv_tv_start_date);
-            TextView endDate = v.findViewById(R.id.rv_tv_end_date);
-
-            if (room != null) {
-                room.setText(p.getRoom().toString());
-            }
-
-            if (startDate != null) {
-                startDate.setText(p.getReadableStartDate());
-            }
-
-            if (endDate != null) {
-                endDate.setText(p.getReadableEndDate());
-            }
-        }
-
-        return v;
-    }
-
-}
-
-*/
