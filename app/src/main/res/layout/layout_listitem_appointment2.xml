@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="0dp"
+    android:theme="@style/AppTheme">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/circle_image2"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:tint="#868686"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/circle" />
+
+        <ImageView
+            android:id="@+id/circle_image"
+            android:layout_width="74dp"
+            android:layout_height="74dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:tint="@color/colorBuildingNbr3"
+            app:layout_constraintStart_toStartOf="@+id/circle_image2"
+            app:layout_constraintTop_toTopOf="@+id/circle_image2"
+            app:srcCompat="@drawable/circle" />
+
+        <TextView
+            android:id="@+id/txtR"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="R"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/circle_image"
+            app:layout_constraintStart_toStartOf="@+id/circle_image"
+            app:layout_constraintTop_toTopOf="@+id/circle_image" />
+
+        <TextView
+            android:id="@+id/txtRoomNbr"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="3.100"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/txtR"
+            app:layout_constraintTop_toBottomOf="@+id/txtR" />
+
+        <TextView
+            android:id="@+id/txtEndTime"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:text="16.02.2019
+13:13 Uhr"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/txtEndName"
+            app:layout_constraintStart_toStartOf="@+id/txtEndName"
+            app:layout_constraintTop_toBottomOf="@+id/txtEndName" />
+
+        <TextView
+            android:id="@+id/txtRoomName"
+            android:layout_width="255dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Mensa Essensausgabe"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="italic|bold"
+            app:layout_constraintEnd_toStartOf="@+id/btnDeleteAppointment"
+            app:layout_constraintStart_toEndOf="@+id/txtR"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtStartName"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="VON Donnerstag"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/circle_image"
+            app:layout_constraintTop_toBottomOf="@+id/txtRoomName" />
+
+        <TextView
+            android:id="@+id/txtEndName"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="BIS Donnerstag"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/txtStartName"
+            app:layout_constraintTop_toBottomOf="@+id/txtRoomName" />
+
+        <Button
+            android:id="@+id/btnDeleteAppointment"
+            android:layout_width="28dp"
+            android:layout_height="27dp"
+
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="#7A3131"
+            android:text="X"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtStartTime"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+
+            android:text="15.02.2019
+16:45 Uhr"
+            android:textAlignment="center"
+            android:textColor="@color/colorGrayFont"
+            android:textSize="15sp"
+            tools:layout_editor_absoluteX="101dp"
+            tools:layout_editor_absoluteY="57dp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:background="#868686"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtEndTime" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

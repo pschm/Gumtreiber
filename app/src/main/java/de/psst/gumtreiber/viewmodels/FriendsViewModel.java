@@ -52,7 +52,6 @@ public class FriendsViewModel extends AndroidViewModel {
 
     /**
      * Adds a new Friend to the FriendList
-     *
      * @param user user to be added
      */
     public void addFriend(User user) {
@@ -65,7 +64,6 @@ public class FriendsViewModel extends AndroidViewModel {
 
     /**
      * Getting the Userlist from Firebase
-     *
      * @return the list of useres
      */
     private List<User> getUserList() {
@@ -75,7 +73,6 @@ public class FriendsViewModel extends AndroidViewModel {
 
     /**
      * Filters the Friends out of the userList
-     *
      * @return userList without the users who are already in the FriendList
      */
     private List<User> filterUserList(List<User> userList) {
@@ -90,7 +87,6 @@ public class FriendsViewModel extends AndroidViewModel {
 
     /**
      * Returns a the userList without the useres who are already in the friendList
-     *
      * @return the filtered userList
      */
     public List<User> getFilterdUserList() {
