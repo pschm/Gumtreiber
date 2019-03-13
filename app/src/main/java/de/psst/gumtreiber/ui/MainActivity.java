@@ -29,6 +29,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Firebase;
+import de.psst.gumtreiber.data.UserDataSync;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.ui.fragments.CalendarFragment;
 import de.psst.gumtreiber.ui.fragments.FriendListFragment;
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Firebase UserID
     private String uid;
 
+    // UserDataSync
+    private UserDataSync uds;
+
     //Fragment Manager
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -64,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.instance = this;
+        MainActivity.instance = this;
 
         //Getting the locationState from the ViewModel
         model = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -104,6 +108,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerNavSwitch = navigationView.getMenu().findItem(R.id.nav_location);
         initDrawerSwitch();
 
+        //TODO updatesEnabled aus config laden
+        uds = new UserDataSync(this, getLocationHandler(), false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        uds.startUpdating();
     }
 
     public void setActionBarTitle(String s) {
@@ -271,5 +283,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static Context getInstance() {
         return instance;
+    }
+
+    public UserDataSync getUds() {
+        return uds;
     }
 }
