@@ -32,7 +32,7 @@ public class MapFragment extends Fragment {
     private TextView prisonView;
     private MapControl mapControl;
     private MainActivity activity;
-    private UserDataSync userDataSync;
+
     private MapControl.OnMapInitialized onMapInitializedListener;
     private UserDataSync.OnUpdateReceivedListener onUpdateReceivedListener;
 
@@ -42,11 +42,9 @@ public class MapFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         fragmentView = inflater.inflate(R.layout.fragment_map, container, false);
 
+        // load activity
         activity = (MainActivity) Objects.requireNonNull(getActivity());
         activity.getUds().startUpdating();
-
-        initMap();
-        initListeners();
 
         return fragmentView;
     }
@@ -56,6 +54,7 @@ public class MapFragment extends Fragment {
         super.onStart();
         initLoadingScreen();
         initMap();
+        initListeners();
     }
 
     @Override
@@ -69,27 +68,17 @@ public class MapFragment extends Fragment {
      * Initialize the Map and UserDataSync
      */
     private void initMap() {
-        // load views & activity
+        // load views
         mapView = fragmentView.findViewById(R.id.map);
         prisonView = fragmentView.findViewById(R.id.prison);
-        activity = (MainActivity) getActivity();
 
         mapControl = new MapControl(mapView, activity, new PrisonControl(prisonView));
-
-        MapView mapView = fragmentView.findViewById(R.id.map);
-        mapView.setImageResource(R.mipmap.map);
 
         // configure mapView
         mapView.setImageResource(R.mipmap.map);
         mapView.setMaximumScale(9f);
         mapView.setMediumScale(3f);
         mapView.setMinimumScale(2f);
-
-        initListeners();
-
-        //TODO updatesEnabled aus config laden
-        //TODO Neues UDS-Konzept umsetzen
-        userDataSync = new UserDataSync(activity, activity.getLocationHandler(), true);
     }
 
     /**
@@ -101,8 +90,8 @@ public class MapFragment extends Fragment {
         onMapInitializedListener = () -> {
             if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
             else Log.d("MapFrag.", "other Thread.");
-            hideViews();
-        }; //this::hideViews;
+            hideLoadingScreen();
+        }; //this::hideLoadingScreen;
         mapControl.addOnMapInitializedListener(onMapInitializedListener);
 
         // current user location
@@ -125,6 +114,9 @@ public class MapFragment extends Fragment {
         activity.getUds().addOnUpdateReceivedListener(onUpdateReceivedListener);
     }
 
+    /**
+     * Initialize the color of the ProgressBar
+     */
     private void initLoadingScreen() {
         ProgressBar loadingCircle = fragmentView.findViewById(R.id.loadingCircle);
 
@@ -132,7 +124,10 @@ public class MapFragment extends Fragment {
         loadingCircle.getIndeterminateDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
-    private void hideViews() {
+    /**
+     * Hides both loading screen views (Background & ProgressBar)
+     */
+    private void hideLoadingScreen() {
         if (isUiThread()) {
             View loadingScreen = fragmentView.findViewById(R.id.loadingScreen);
             View loadingCircle = fragmentView.findViewById(R.id.loadingCircle);

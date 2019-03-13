@@ -101,8 +101,7 @@ public class MapView extends PhotoView {
             // make sure the marker is visible
             marker.setVisibility(true);
 
-            // set the markers directly to the new position if the zoom changed
-            // or let the markers move to the new position
+            // apply marker positioning
             if (firstDraw || !marker.isAlreadyDrawn()) {
                 marker.setPosition(mapPos.x, mapPos.y);
                 marker.setAlreadyDrawn(true);
@@ -112,7 +111,6 @@ public class MapView extends PhotoView {
                 if (marker.isMoving()) {
                     marker.setUsingOwnPosition(true);
                     marker.moveTo(mapPos.x, mapPos.y);
-//                    if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: OWN position");
                 } else {
                     // marker is currently not moving, so adjust his position to the new zoom
                     marker.setPosition(mapPos.x, mapPos.y);
@@ -120,7 +118,6 @@ public class MapView extends PhotoView {
             } else {
                 // no zoom detected -> release marker to move again
                 marker.setUsingOwnPosition(false);
-//                if (u.getName().equals("Manni")) Log.d("Manni", "Manni uses now: GIVEN position");
 
                 // smoothly move the markers to the new position
                 marker.moveTo(mapPos.x, mapPos.y);
@@ -128,7 +125,7 @@ public class MapView extends PhotoView {
         }
 
         // translate prison
-        prisonControl.updateLocation(); // TODO add own listener in prisonControl
+        prisonControl.updateLocation();
 
         // some debugging
 //        Vector2 p = adjustToTransformation(new Vector2(DEBUG_X, DEBUG_Y));

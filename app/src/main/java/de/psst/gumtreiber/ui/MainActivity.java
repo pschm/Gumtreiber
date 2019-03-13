@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.instance = this;
+        MainActivity.instance = this;
 
         //Getting the locationState from the ViewModel
         model = ViewModelProviders.of(this).get(MainViewModel.class);

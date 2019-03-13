@@ -13,10 +13,8 @@ import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.data.Vector2;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static de.psst.gumtreiber.map.MapView.INITIAL_ZOOM;
-import static de.psst.gumtreiber.map.MapView.MapView.INITIAL_ZOOM;
 
 public class MapControl {
     private static final String CLASS = "MapControl ";
@@ -56,11 +54,6 @@ public class MapControl {
         prisonControl.setMapControl(this);
 
         MovableMarker.setMapView(mapView);
-        initViews();
-    }
-
-    private void initViews() {
-        mapView.adjustMarker();
     }
 
     /**
@@ -71,20 +64,17 @@ public class MapControl {
     }
 
 
-    public void setUpInitialZoomOnUser() {
+    private void setUpInitialZoomOnUser() {
         Vector2 pos;
 //        Log.d(CLASS + USER, "W/H: "+map.getWidth()+"/"+map.getHeight());
-        PhotoViewAttacher viewAttacher = map.getZoomControl();
-
         if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
-            Log.d("MapControl - pschm", "user NOT on the map!" + currentUserLocation);
+            Log.d(CLASS + USER, "user NOT on the map!" + currentUserLocation);
             pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
         } else {
             pos = gpsToMap(currentUserLocation);
-            Log.d("MapControl - pschm", "user on the map!" + pos);
+            Log.d(CLASS + USER, "user on the map!" + pos);
         }
 
-        mapView.setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
 //        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
 //        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
 //        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
@@ -150,9 +140,9 @@ public class MapControl {
 //
 
 
-        viewAttacher.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        mapView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 //        viewAttacher.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
-        viewAttacher.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
+        mapView.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
     }
 
     /**
@@ -160,10 +150,7 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
-        if (!initialized) {
-            setUpInitialZoomOnUser();
-            Log.d("MapControl", "init zoom");
-        }
+        if (!initialized) setUpInitialZoomOnUser();
 
         // filter users according to the selected filters
         this.users = UserFilter.filterUsers(users);
@@ -181,8 +168,7 @@ public class MapControl {
         if (!initialized) {
             // inform listener that the map is initialized
             initialized = true;
-            for (OnMapInitialized l : listeners)
-                l.onMapInitialized();
+            for (OnMapInitialized l : listeners) l.onMapInitialized();
         }
     }
 
@@ -214,10 +200,10 @@ public class MapControl {
             AbstractUser u = users.get(i);
 
 //            // TODO implement to hide expired users
-//            // TODO check remove functions --> loop backwards through the array?
 //            if (!u.isVisible()) {
 //                if (u.getMarker() != null) u.getMarker().setVisibility(false);
 //                users.remove(i);
+//                i--;
 //                continue;
 //            }
 
@@ -237,6 +223,7 @@ public class MapControl {
                 if (u.getMarker() == null || !initialized)
                     u.setMarker(new MovableMarker(activity, u.getName()));
                 u.getMarker().changeLabel(u.getName()); // needed if a user moves out of a group
+
                 // change the look of the marker, if the user is a friend or bot
                 if (u instanceof Bot) u.getMarker().changeLook(MovableMarker.Look.BOT);
                 if (friends.contains(u.getUid())) {
