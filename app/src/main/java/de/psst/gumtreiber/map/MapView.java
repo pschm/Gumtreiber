@@ -1,7 +1,6 @@
 package de.psst.gumtreiber.map;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -162,7 +161,7 @@ public class MapView extends PhotoView {
      */
     public void setMarkers(ArrayList<AbstractUser> markers) {
         this.markers = markers;
-        invalidate(); // repaint the map
+        if (firstDraw) adjustMarker();
     }
 
     /**
@@ -176,14 +175,6 @@ public class MapView extends PhotoView {
 
     public void setPrisonControl(PrisonControl prisonControl) {
         this.prisonControl = prisonControl;
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-//        if (firstDraw) {
-//            adjustMarker();
-//        }
     }
 
     // some Matrix Utility
