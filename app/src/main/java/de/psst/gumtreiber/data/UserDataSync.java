@@ -161,7 +161,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
     public void onActivityStarted(Activity activity) {
         if(!activity.equals(this.activity)) return;
         Log.d("UserDataSync", "onActivityStarted: started updating!");
-        startUpdating();
+//        startUpdating();
     }
 
     @Override

@@ -256,6 +256,7 @@ public class MovableMarker {
      * TODO keep current rotation
      */
     public void setPosition(float x, float y) {
+        setVisibility(true);
         allowMovingThread = false;
         if (!isUsingOwnPosition()) curPos = new Vector2(x, y);
 
@@ -380,7 +381,7 @@ public class MovableMarker {
 
                     // calc scaling of the map and adjust it for
                     // clean marker movement on all zoom level
-                    float mapScaling = mapView.getZoomControl().getScale() * 2.5f;
+                    float mapScaling = mapView.getScale() * 2.5f;
                     mapScaling = (float) Math.log((double)mapScaling);
                     if (mapScaling < 0) mapScaling = 1;
 
