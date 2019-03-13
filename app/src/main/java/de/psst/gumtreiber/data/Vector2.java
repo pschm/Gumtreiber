@@ -105,4 +105,12 @@ public class Vector2 {
         y /= divider;
         return this;
     }
+
+    /**
+     * Set the position of the Vector to the given coordinate
+     */
+    public void setLocation(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
 }

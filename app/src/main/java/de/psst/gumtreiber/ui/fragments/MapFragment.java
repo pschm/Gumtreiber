@@ -19,8 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.AbstractUser;
-import de.psst.gumtreiber.data.Course;
-import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserDataSync;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapControl;
@@ -66,8 +64,6 @@ public class MapFragment extends Fragment {
      * Initialize the Map and UserDataSync
      */
     private void initMap() {
-        Log.d("timing", "initMap()");
-
         MapView mapView = fragmentView.findViewById(R.id.map);
         mapView.setImageResource(R.mipmap.map);
         TextView prisonView = fragmentView.findViewById(R.id.prison);
@@ -77,28 +73,11 @@ public class MapFragment extends Fragment {
         mapView.setZoomControl(viewAttacher);
 
         mapControl = new MapControl(mapView, activity, new PrisonControl(prisonView));
-        Log.d("timing", "initController()");
-
-
-        Log.d("timing", "initDataSync()");
-//        LocationHandler lh = activity.getLocationHandler();
-//        lh.addOnLocationChangedListener(mapControl::updateCurrentUserLocation);
-
-//        uds.addOnUpdateReceivedListener((userList, friendList) -> {
-//            ArrayList<AbstractUser> arrayList;
-//
-//            if (userList == null || userList.isEmpty()) arrayList = new ArrayList<>();
-//            else arrayList = new ArrayList<>(userList);
-//
-//            mapControl.updateFriends(friendList);
-//            mapControl.updateUsers(arrayList);
-//        });
-
         // disable zoom till fully loaded
-//        viewAttacher.setZoomable(false);
         viewAttacher.setMaximumScale(9f);
         viewAttacher.setMediumScale(3f);
         viewAttacher.setMinimumScale(2f);
+//        viewAttacher.setZoomable(false);
 
 //        ViewTreeObserver vto = mapView.getViewTreeObserver();
 //        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -117,7 +96,6 @@ public class MapFragment extends Fragment {
 
 
     private void initListeners() {
-//        new Thread(() -> {
         // map initialized
         onMapInitializedListener = () -> {
             if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
@@ -132,7 +110,6 @@ public class MapFragment extends Fragment {
         lh.addOnLocationChangedListener(mapControl::updateCurrentUserLocation);
 
         // TODO call updateFriends / updateUsers if uds has data (getter needed)
-
         // Firebase updates
         onUpdateReceivedListener = (userList, friendList) -> {
             ArrayList<AbstractUser> arrayList;
@@ -140,18 +117,10 @@ public class MapFragment extends Fragment {
             if (userList == null || userList.isEmpty()) arrayList = new ArrayList<>();
             else arrayList = new ArrayList<>(userList);
 
-//            User u;
-//            u = new User("123452336", "Hans-Peter");
-//            u.setLatitude(51.028);
-//            u.setLongitude(7.56174);
-//            u.setCourse(Course.INF);
-//            arrayList.add(u);
-
             mapControl.updateFriends(friendList);
             mapControl.updateUsers(arrayList);
         };
         activity.getUds().addOnUpdateReceivedListener(onUpdateReceivedListener);
-//        }).start();
     }
 
     private void initLoadingScreen() {
@@ -183,17 +152,6 @@ public class MapFragment extends Fragment {
         } else {
             return Looper.getMainLooper().equals(Looper.myLooper());
         }
-    }
-
-    private void testData() {
-        ArrayList<AbstractUser> users = new ArrayList<>();
-        User u;
-        u = new User("123452336", "Hans-Peter");
-        u.setLatitude(51.028);
-        u.setLongitude(7.56174);
-        u.setCourse(Course.INF);
-        users.add(u);
-        mapControl.updateUsers(users);
     }
 
 }

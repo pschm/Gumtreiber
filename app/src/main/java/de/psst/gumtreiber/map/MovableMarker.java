@@ -262,7 +262,6 @@ public class MovableMarker {
 
         Vector2 zoomed = mapView.adjustToTransformation(curPos);
 
-        Log.d("MapCon", "pos: " + zoomed);
         nameImg.setX(zoomed.x + nameCntrOffset.x);
         nameImg.setY(zoomed.y + nameCntrOffset.y);
 

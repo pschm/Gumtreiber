@@ -3,6 +3,7 @@ package de.psst.gumtreiber.map;
 import android.app.Activity;
 import android.location.Location;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -12,29 +13,34 @@ import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.data.Vector2;
+import uk.co.senab.photoview.PhotoViewAttacher;
+
+import static de.psst.gumtreiber.map.MapView.INITIAL_ZOOM;
 
 public class MapControl {
+    private static final String CLASS = "MapControl ";
+    private static final String USER = "pschm";
+
+
     // constants for gps calculation
-    final static double MAX_LAT = 51.029673; //51.027653;
-    final static double MIN_LAT = 51.019053; //51.020989;
-    final static double MAX_LONG = 7.567960; //7.566508;
-    final static double MIN_LONG = 7.559551; //7.560669;
+    final static double MAX_LAT = 51.029673;
+    final static double MIN_LAT = 51.019053;
+    final static double MAX_LONG = 7.567960;
+    final static double MIN_LONG = 7.559551;
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
-    // TODO Maybe Use Location instead of Coordinate
+
     private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022029, 7.561740);
     public final static Vector2 MAIN_BUILDING_MAP = new Vector2(320.97003f, 1762.0068f);
-    private final static float INITIAL_ZOOM_X_OFFSET = -75;
-    private final static float INITIAL_ZOOM_Y_OFFSET = 160;
 
-    public final static int BOX_SIZE = 100;
+    private final static int BOX_SIZE = 75;
 
     private MapView map;
     private ArrayList<String> friends = new ArrayList<>();
     private Activity activity;
     private PrisonControl prisonControl;
     private ArrayList<AbstractUser> users = new ArrayList<>();
-    private Coordinate currentUserLocation = new Coordinate(0, 0);
+    private Coordinate currentUserLocation = new Coordinate(0, 0);// new Coordinate(51.023, 7.56174);
     private boolean initialized = false;
 
     private ArrayList<OnMapInitialized> listeners = new ArrayList<>();
@@ -61,21 +67,85 @@ public class MapControl {
 
     public void setUpInitialZoomOnUser() {
         Vector2 pos;
+//        Log.d(CLASS + USER, "W/H: "+map.getWidth()+"/"+map.getHeight());
+        PhotoViewAttacher viewAttacher = map.getZoomControl();
 
         if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
-//            Log.d("MapControl - pschm", "user NOT on the map!" + currentUserLocation.getLatitude() + "/" + currentUserLocation.getLongitude());
-//            pos = gpsToMap(currentUserLocation);
-//            Log.d("MapControl - pschm", "user NOT on the map!" + pos);
+            Log.d("MapControl - pschm", "user NOT on the map!" + currentUserLocation);
             pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
         } else {
             pos = gpsToMap(currentUserLocation);
-            pos.x += INITIAL_ZOOM_X_OFFSET;
-            pos.y += INITIAL_ZOOM_Y_OFFSET;
-//            Log.d("MapControl - pschm", "user on the map!" + pos);
+            Log.d("MapControl - pschm", "user on the map!" + pos);
         }
-        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
-        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
-        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
+
+//        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
+//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
+//        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
+//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM);
+//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y, false);
+
+//        Matrix m = viewAttacher.getDisplayMatrix();
+//        Log.d("MapControl - pschm", "ini Mat. "  +m);
+//        m.setScale(MapView.INITIAL_ZOOM, MapView.INITIAL_ZOOM);
+//        Vector2 vec = map.adjustToTransformation(new Vector2(MapView.DEBUG_X, MapView.DEBUG_Y), m);
+//        m.setScale(MapView.INITIAL_ZOOM, MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y);
+
+//        viewAttacher.setScale(MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y, false);
+
+//        RectF r = viewAttacher.getDisplayRect();
+//        Log.d("MapControl", "DisplayRect: "+r); // left, top, right, bottom
+//        float currentX = rect.
+
+//        Log.d("MapControl - pschm", "Zoom Mat. " + m);
+
+//        viewAttacher.setDisplayMatrix(m);
+
+//        Log.d("MapControl - pschm", "Zoom Mat. " + viewAttacher.getDisplayMatrix());
+//        Log.d("MapControl - pschm", "Zoom Mat. " + viewAttacher.getDisplayRect());
+//        Log.d("MapControl - pschm", "---------------------------------------");
+
+
+        // neue Theorie -> erst linke ecke Zoomen und anschließend manuell translatieren
+        // zoom nach center
+//        int width = map.getWidth();
+//        int height = map.getHeight();
+//
+//        Vector2 center = new Vector2(width / 2f, height / 2f);
+//
+//        // zur mitte zentrieren
+//        viewAttacher.setScale(INITIAL_ZOOM, center.x, center.y, false);
+//
+//        // zum punkt bewegen
+//        Vector2 transform = Vector2.sub(DEBUG_POINT, center);
+//
+//        Matrix m = viewAttacher.getDisplayMatrix();
+//        m.preTranslate(transform.x, transform.y);
+//        viewAttacher.setDisplayMatrix(m);
+
+//        Log.d(CLASS+USER, ((View) map.getParent()).getWidth() + "");
+//        Rect r = map.getDrawable().getBounds();
+//        int w = ((BitmapDrawable)map.getDrawable()).getBitmap().getWidth();
+//
+//        int intW = map.getDrawable().getIntrinsicWidth();
+//        Log.d(CLASS+USER, r.width() + " drawable");
+//        Log.d(CLASS+USER, w + " bitmap");
+//        Log.d(CLASS+USER, intW + " drawable Intrisinic");
+//        Log.d(CLASS+USER, map.getMeasuredWidth() + " drawable Intrisinic");
+//
+//
+//        int height = ((View) map.getParent()).getHeight();
+//        int width = ((View) map.getParent()).getWidth();
+//
+//        int mHeight = ((View) map.getParent()).getMeasuredHeight();
+//        int mWidth = ((View) map.getParent()).getMeasuredWidth();
+//
+//        Log.d(CLASS+USER, "w/h: "+width+"/"+height + " - mW/H: "+mWidth+"/"+mHeight);
+//
+
+
+        viewAttacher.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//        viewAttacher.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
+        viewAttacher.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
     }
 
     /**
@@ -83,11 +153,9 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
-        Log.d("timing", "MapControl - updateUsers");
         if (!initialized) {
             setUpInitialZoomOnUser();
             Log.d("MapControl", "init zoom");
-//            initialized = true;
         }
 
         // filter users according to the selected filters
@@ -99,16 +167,6 @@ public class MapControl {
         // merge close users in Groups
         this.users = buildUserGroups(this.users, BOX_SIZE); // comment if you want to use dynamicGroups
 
-
-//        MovableMarker marker = new MovableMarker(activity, "Hier bin ich!");
-//        marker.setVisibility(true);
-//        marker.setPosition(250, 250);
-
-
-        for (AbstractUser u : this.users) {
-            Log.d("MapControl", u.getName() + ": " + u.getLatitude() + "/" + u.getLongitude());
-        }
-
         // show users on the map
         // new ArrayList is needed to avoid ConcurrentModificationExceptions
         map.setMarkers(new ArrayList<>(this.users));
@@ -119,7 +177,6 @@ public class MapControl {
             for (OnMapInitialized l : listeners)
                 l.onMapInitialized();
         }
-        Log.d("timing", "MapControl - finished");
     }
 
     /**

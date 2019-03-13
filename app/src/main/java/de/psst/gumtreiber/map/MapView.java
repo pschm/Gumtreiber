@@ -14,13 +14,16 @@ import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.Vector2;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class MapView extends AppCompatImageView { // PhotoView
+public class MapView extends AppCompatImageView {
 
     // the transformation matrix is not initialized with the unit matrix
     // to correct this, the error is calculated and considered in future calculation
     private static float defaultMatrixError = 1.5827f;
 
-    public static final float INITIAL_ZOOM = 2.5f;
+    public static final float INITIAL_ZOOM = 2.5f; //2.5f;
+    public static final float DEBUG_X = 500f;
+    public static final float DEBUG_Y = 750f;
+    public static final Vector2 DEBUG_POINT = new Vector2(DEBUG_X, DEBUG_Y);
 
     // Users that are drawn on the map
     private ArrayList<AbstractUser> markers;
@@ -205,6 +208,13 @@ public class MapView extends AppCompatImageView { // PhotoView
 
         // translate prison
         prisonControl.updateLocation();
+
+        // some debugging
+//        Vector2 p = adjustToTransformation(new Vector2(DEBUG_X, DEBUG_Y));
+//        Paint paint = new Paint();
+//        paint.setColor(Color.BLACK);
+////        Vector2 p = adjustToTransformation(currentViewPoint);
+//        canvas.drawCircle(p.x, p.y,75f, paint);
 
         // save the current transformation
         copyMatrix(oldTransformation, zoomControl.getDrawMatrix());
