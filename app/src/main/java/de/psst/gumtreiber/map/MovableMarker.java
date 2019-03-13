@@ -256,6 +256,7 @@ public class MovableMarker {
      * TODO keep current rotation
      */
     public void setPosition(float x, float y) {
+        setVisibility(true);
         allowMovingThread = false;
         if (!isUsingOwnPosition()) curPos = new Vector2(x, y);
 

@@ -3,6 +3,7 @@ package de.psst.gumtreiber.map;
 import android.app.Activity;
 import android.location.Location;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -12,22 +13,28 @@ import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.data.Vector2;
+import uk.co.senab.photoview.PhotoViewAttacher;
+
+import static de.psst.gumtreiber.map.MapView.INITIAL_ZOOM;
+import static de.psst.gumtreiber.map.MapView.MapView.INITIAL_ZOOM;
 
 public class MapControl {
+    private static final String CLASS = "MapControl ";
+    private static final String USER = "pschm";
+
+
     // constants for gps calculation
-    final static double MAX_LAT = 51.029673; //51.027653;
-    final static double MIN_LAT = 51.019053; //51.020989;
-    final static double MAX_LONG = 7.567960; //7.566508;
-    final static double MIN_LONG = 7.559551; //7.560669;
+    final static double MAX_LAT = 51.029673;
+    final static double MIN_LAT = 51.019053;
+    final static double MAX_LONG = 7.567960;
+    final static double MIN_LONG = 7.559551;
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
-    // TODO Maybe Use Location instead of Coordinate
+
     private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022029, 7.561740);
     public final static Vector2 MAIN_BUILDING_MAP = new Vector2(320.97003f, 1762.0068f);
-    private final static float INITIAL_ZOOM_X_OFFSET = -75;
-    private final static float INITIAL_ZOOM_Y_OFFSET = 160;
 
-    public final static int BOX_SIZE = 100;
+    private final static int BOX_SIZE = 75;
 
     private MapView mapView;
     private ArrayList<String> friends = new ArrayList<>();
@@ -37,16 +44,18 @@ public class MapControl {
     private Coordinate currentUserLocation = new Coordinate(0, 0);
     private boolean initialized = false;
 
+    private ArrayList<OnMapInitialized> listeners = new ArrayList<>();
+
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.mapView = map;
         this.activity = activity;
         this.prisonControl = prisonControl;
 
-        map.setMapControl(this);
-        map.setPrisonControl(prisonControl);
+        mapView.setMapControl(this);
+        mapView.setPrisonControl(prisonControl);
         prisonControl.setMapControl(this);
 
-        MovableMarker.setMapView(map);
+        MovableMarker.setMapView(mapView);
         initViews();
     }
 
@@ -64,16 +73,86 @@ public class MapControl {
 
     public void setUpInitialZoomOnUser() {
         Vector2 pos;
+//        Log.d(CLASS + USER, "W/H: "+map.getWidth()+"/"+map.getHeight());
+        PhotoViewAttacher viewAttacher = map.getZoomControl();
 
         if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
+            Log.d("MapControl - pschm", "user NOT on the map!" + currentUserLocation);
             pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
         } else {
             pos = gpsToMap(currentUserLocation);
-            pos.x += INITIAL_ZOOM_X_OFFSET;
-            pos.y += INITIAL_ZOOM_Y_OFFSET;
+            Log.d("MapControl - pschm", "user on the map!" + pos);
         }
 
         mapView.setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
+//        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
+//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
+//        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
+//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM);
+//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y, false);
+
+//        Matrix m = viewAttacher.getDisplayMatrix();
+//        Log.d("MapControl - pschm", "ini Mat. "  +m);
+//        m.setScale(MapView.INITIAL_ZOOM, MapView.INITIAL_ZOOM);
+//        Vector2 vec = map.adjustToTransformation(new Vector2(MapView.DEBUG_X, MapView.DEBUG_Y), m);
+//        m.setScale(MapView.INITIAL_ZOOM, MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y);
+
+//        viewAttacher.setScale(MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y, false);
+
+//        RectF r = viewAttacher.getDisplayRect();
+//        Log.d("MapControl", "DisplayRect: "+r); // left, top, right, bottom
+//        float currentX = rect.
+
+//        Log.d("MapControl - pschm", "Zoom Mat. " + m);
+
+//        viewAttacher.setDisplayMatrix(m);
+
+//        Log.d("MapControl - pschm", "Zoom Mat. " + viewAttacher.getDisplayMatrix());
+//        Log.d("MapControl - pschm", "Zoom Mat. " + viewAttacher.getDisplayRect());
+//        Log.d("MapControl - pschm", "---------------------------------------");
+
+
+        // neue Theorie -> erst linke ecke Zoomen und anschließend manuell translatieren
+        // zoom nach center
+//        int width = map.getWidth();
+//        int height = map.getHeight();
+//
+//        Vector2 center = new Vector2(width / 2f, height / 2f);
+//
+//        // zur mitte zentrieren
+//        viewAttacher.setScale(INITIAL_ZOOM, center.x, center.y, false);
+//
+//        // zum punkt bewegen
+//        Vector2 transform = Vector2.sub(DEBUG_POINT, center);
+//
+//        Matrix m = viewAttacher.getDisplayMatrix();
+//        m.preTranslate(transform.x, transform.y);
+//        viewAttacher.setDisplayMatrix(m);
+
+//        Log.d(CLASS+USER, ((View) map.getParent()).getWidth() + "");
+//        Rect r = map.getDrawable().getBounds();
+//        int w = ((BitmapDrawable)map.getDrawable()).getBitmap().getWidth();
+//
+//        int intW = map.getDrawable().getIntrinsicWidth();
+//        Log.d(CLASS+USER, r.width() + " drawable");
+//        Log.d(CLASS+USER, w + " bitmap");
+//        Log.d(CLASS+USER, intW + " drawable Intrisinic");
+//        Log.d(CLASS+USER, map.getMeasuredWidth() + " drawable Intrisinic");
+//
+//
+//        int height = ((View) map.getParent()).getHeight();
+//        int width = ((View) map.getParent()).getWidth();
+//
+//        int mHeight = ((View) map.getParent()).getMeasuredHeight();
+//        int mWidth = ((View) map.getParent()).getMeasuredWidth();
+//
+//        Log.d(CLASS+USER, "w/h: "+width+"/"+height + " - mW/H: "+mWidth+"/"+mHeight);
+//
+
+
+        viewAttacher.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//        viewAttacher.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
+        viewAttacher.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
     }
 
     /**
@@ -83,7 +162,7 @@ public class MapControl {
     public void updateUsers(ArrayList<AbstractUser> users) {
         if (!initialized) {
             setUpInitialZoomOnUser();
-            initialized = true;
+            Log.d("MapControl", "init zoom");
         }
 
         // filter users according to the selected filters
@@ -98,6 +177,13 @@ public class MapControl {
         // show users on the mapView
         // new ArrayList is needed to avoid ConcurrentModificationExceptions
         mapView.setMarkers(new ArrayList<>(this.users));
+
+        if (!initialized) {
+            // inform listener that the map is initialized
+            initialized = true;
+            for (OnMapInitialized l : listeners)
+                l.onMapInitialized();
+        }
     }
 
     /**
@@ -148,7 +234,8 @@ public class MapControl {
             if (sector == null) {
 
                 // u is the first user in this sector
-                if (u.getMarker() == null) u.setMarker(new MovableMarker(activity, u.getName()));
+                if (u.getMarker() == null || !initialized)
+                    u.setMarker(new MovableMarker(activity, u.getName()));
                 u.getMarker().changeLabel(u.getName()); // needed if a user moves out of a group
                 // change the look of the marker, if the user is a friend or bot
                 if (u instanceof Bot) u.getMarker().changeLook(MovableMarker.Look.BOT);
@@ -224,12 +311,39 @@ public class MapControl {
         return mapPos;
     }
 
-    public void updateFriends(ArrayList<String> friendlist) {
-        friends = friendlist;
+    public void updateFriends(ArrayList<String> friendList) {
+        friends = friendList;
     }
 
     public void updateCurrentUserLocation(Location location) {
         if (location != null)
             currentUserLocation.setLocation(location.getLatitude(), location.getLongitude());
+    }
+
+    /**
+     * Listen on this interface to receive an update if the map is initialized
+     */
+    public interface OnMapInitialized {
+        void onMapInitialized();
+    }
+
+    /**
+     * Add a listener who will listen on map init
+     *
+     * @param listener The listener to be added
+     */
+    public void addOnMapInitializedListener(OnMapInitialized listener) {
+        if (listeners == null) listeners = new ArrayList<>();
+        listeners.add(listener);
+    }
+
+    /**
+     * Remove a listener who is listen on map init
+     *
+     * @param listener The listener to be removed
+     */
+    public void removeOnMapInitializedListener(OnMapInitialized listener) {
+        if (listener == null) return;
+        listeners.remove(listener);
     }
 }
