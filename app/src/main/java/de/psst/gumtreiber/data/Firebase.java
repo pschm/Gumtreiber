@@ -854,7 +854,7 @@ public class Firebase {
         return json.toString();
     }
 
-    private static boolean  isNetworkAvailable() {
+    public static boolean  isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) MainActivity.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();

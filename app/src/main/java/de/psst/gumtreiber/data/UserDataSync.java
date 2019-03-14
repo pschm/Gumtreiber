@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import de.psst.gumtreiber.location.LocationHandler;
+import de.psst.gumtreiber.ui.MainActivity;
 
 /**
  * Sends repeatedly the current users location to the server and
@@ -122,6 +123,12 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
         while(allowRunning) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            Log.d("UserDataSync", "Checking Internet connection");
+            if(!Firebase.isNetworkAvailable()){
+                ((MainActivity) activity).returnToLogin();
+            }
+            Log.d("UserDataSync", "Internet available");
 
             if(locationHandler.updatesEnabled() && user != null) {
                 Firebase.setCurrentLocation(user, locationHandler.getCurrentLocation());

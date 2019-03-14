@@ -288,4 +288,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public UserDataSync getUds() {
         return uds;
     }
+
+    public void returnToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 }
