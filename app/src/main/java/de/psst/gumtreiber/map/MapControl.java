@@ -292,8 +292,8 @@ public class MapControl {
 
         // calc x,y values according to screen size
         Vector2 mapPos = new Vector2();
-        mapPos.x = (float) (pos.getLongitude() * (mapView.getWidth() / DELTA_LONG));
-        mapPos.y = (float) (pos.getLatitude() * (mapView.getHeight() / DELTA_LAT));
+        mapPos.x = (float) (pos.getLongitude() * (mapView.getMapViewWidth() / DELTA_LONG));
+        mapPos.y = (float) (pos.getLatitude() * (mapView.getMapViewHeight() / DELTA_LAT));
 
         return mapPos;
     }
