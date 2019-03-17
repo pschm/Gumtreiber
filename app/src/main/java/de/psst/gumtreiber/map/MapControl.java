@@ -14,6 +14,8 @@ import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.data.Vector2;
 
+import static de.psst.gumtreiber.map.MapView.DEBUG_X;
+import static de.psst.gumtreiber.map.MapView.DEBUG_Y;
 import static de.psst.gumtreiber.map.MapView.INITIAL_ZOOM;
 
 public class MapControl {
@@ -29,8 +31,8 @@ public class MapControl {
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
 
-    private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022029, 7.561740);
-    public final static Vector2 MAIN_BUILDING_MAP = new Vector2(320.97003f, 1762.0068f);
+    private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022915, 7.562027);
+    private final static Vector2 MAIN_BUILDING_MAP = new Vector2(278.54633f, 1203.9677f);
 
     private final static int BOX_SIZE = 75;
 
@@ -75,74 +77,9 @@ public class MapControl {
             Log.d(CLASS + USER, "user on the map!" + pos);
         }
 
-//        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
-//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, pos.x, pos.y, true);
-//        Log.d("MapControl", "DrawMat: " + map.getZoomControl().getDrawMatrix());
-//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM);
-//        map.getZoomControl().setScale(MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y, false);
-
-//        Matrix m = viewAttacher.getDisplayMatrix();
-//        Log.d("MapControl - pschm", "ini Mat. "  +m);
-//        m.setScale(MapView.INITIAL_ZOOM, MapView.INITIAL_ZOOM);
-//        Vector2 vec = map.adjustToTransformation(new Vector2(MapView.DEBUG_X, MapView.DEBUG_Y), m);
-//        m.setScale(MapView.INITIAL_ZOOM, MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y);
-
-//        viewAttacher.setScale(MapView.INITIAL_ZOOM, MapView.DEBUG_X, MapView.DEBUG_Y, false);
-
-//        RectF r = viewAttacher.getDisplayRect();
-//        Log.d("MapControl", "DisplayRect: "+r); // left, top, right, bottom
-//        float currentX = rect.
-
-//        Log.d("MapControl - pschm", "Zoom Mat. " + m);
-
-//        viewAttacher.setDisplayMatrix(m);
-
-//        Log.d("MapControl - pschm", "Zoom Mat. " + viewAttacher.getDisplayMatrix());
-//        Log.d("MapControl - pschm", "Zoom Mat. " + viewAttacher.getDisplayRect());
-//        Log.d("MapControl - pschm", "---------------------------------------");
-
-
-        // neue Theorie -> erst linke ecke Zoomen und anschließend manuell translatieren
-        // zoom nach center
-//        int width = map.getWidth();
-//        int height = map.getHeight();
-//
-//        Vector2 center = new Vector2(width / 2f, height / 2f);
-//
-//        // zur mitte zentrieren
-//        viewAttacher.setScale(INITIAL_ZOOM, center.x, center.y, false);
-//
-//        // zum punkt bewegen
-//        Vector2 transform = Vector2.sub(DEBUG_POINT, center);
-//
-//        Matrix m = viewAttacher.getDisplayMatrix();
-//        m.preTranslate(transform.x, transform.y);
-//        viewAttacher.setDisplayMatrix(m);
-
-//        Log.d(CLASS+USER, ((View) map.getParent()).getWidth() + "");
-//        Rect r = map.getDrawable().getBounds();
-//        int w = ((BitmapDrawable)map.getDrawable()).getBitmap().getWidth();
-//
-//        int intW = map.getDrawable().getIntrinsicWidth();
-//        Log.d(CLASS+USER, r.width() + " drawable");
-//        Log.d(CLASS+USER, w + " bitmap");
-//        Log.d(CLASS+USER, intW + " drawable Intrisinic");
-//        Log.d(CLASS+USER, map.getMeasuredWidth() + " drawable Intrisinic");
-//
-//
-//        int height = ((View) map.getParent()).getHeight();
-//        int width = ((View) map.getParent()).getWidth();
-//
-//        int mHeight = ((View) map.getParent()).getMeasuredHeight();
-//        int mWidth = ((View) map.getParent()).getMeasuredWidth();
-//
-//        Log.d(CLASS+USER, "w/h: "+width+"/"+height + " - mW/H: "+mWidth+"/"+mHeight);
-//
-
-
         mapView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-//        viewAttacher.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
-        mapView.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
+//        mapView.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
+        mapView.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
     }
 
     /**
