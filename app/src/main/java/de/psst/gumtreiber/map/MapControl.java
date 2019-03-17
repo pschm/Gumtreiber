@@ -14,8 +14,6 @@ import de.psst.gumtreiber.data.User;
 import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.data.Vector2;
 
-import static de.psst.gumtreiber.map.MapView.DEBUG_X;
-import static de.psst.gumtreiber.map.MapView.DEBUG_Y;
 import static de.psst.gumtreiber.map.MapView.INITIAL_ZOOM;
 
 public class MapControl {
@@ -78,8 +76,8 @@ public class MapControl {
         }
 
         mapView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-//        mapView.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
-        mapView.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
+        mapView.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
+//        mapView.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
     }
 
     /**
