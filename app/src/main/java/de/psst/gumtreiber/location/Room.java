@@ -314,10 +314,14 @@ public enum Room {
     R0402(51.022145, 7.562322, 0, "FERCHAU Saal"),
     R0405(51.022318, 7.562288, 0, "BPW Saal"),
     R1400(51.022318, 7.562288, 1, "OPITZ CONSULTING Saal"),
-    R1301(51.022124, 7.562727, 1, "Bib");
+    R1301(51.022124, 7.562727, 1, "Bib"),
 
     //Ferchau-Gebäude LC6 x.5xx
-    //TODO Schaun, ob wir das so machen wollen, dann Fleißarbeit.
+    R0501(51.0242258, 7.5629291, 0, "Hörsaal"),
+    R0502(51.0242378, 7.5630502, 0, "Hörsaal"),
+    R0503(51.0242153, 7.5630847, 0, "KI-Labor"),
+    R0504(51.0242366, 7.5629356, 0, "Moderationsraum"),
+    R0505(51.024236, 7.5630662, 0, "Moderationsraum");
 
     private String name;
     private double latitude, longitude, altitude;
