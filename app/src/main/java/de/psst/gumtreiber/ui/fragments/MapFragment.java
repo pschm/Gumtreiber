@@ -79,6 +79,7 @@ public class MapFragment extends Fragment {
         mapView.setMaximumScale(9f);
         mapView.setMediumScale(3f);
         mapView.setMinimumScale(2f);
+        mapView.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -133,6 +134,7 @@ public class MapFragment extends Fragment {
             View loadingCircle = fragmentView.findViewById(R.id.loadingCircle);
             loadingCircle.setVisibility(View.GONE);
             loadingScreen.setVisibility(View.GONE);
+            mapView.setVisibility(View.VISIBLE);
             return;
         }
         activity.runOnUiThread(() -> {
@@ -140,6 +142,7 @@ public class MapFragment extends Fragment {
             View loadingCircle = fragmentView.findViewById(R.id.loadingCircle);
             loadingCircle.setVisibility(View.GONE);
             loadingScreen.setVisibility(View.GONE);
+            mapView.setVisibility(View.VISIBLE);
         });
     }
 

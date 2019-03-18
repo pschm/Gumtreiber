@@ -13,14 +13,16 @@ import de.psst.gumtreiber.data.Vector2;
 import uk.co.senab.photoview.PhotoView;
 
 public class MapView extends PhotoView {
+    private static final String CLASS = "MapView";
+    private static final String USER = " pschm";
 
     // the transformation matrix is not initialized with the unit matrix
     // to correct this, the error is calculated and considered in future calculation
     private static float defaultMatrixError = 1.5827f;
 
     public static final float INITIAL_ZOOM = 2.5f;
-    public static final float DEBUG_X = 500f;
-    public static final float DEBUG_Y = 750f;
+    public static final float DEBUG_X = 500f; // 850f;
+    public static final float DEBUG_Y = 1000f; //1750f;
     public static final Vector2 DEBUG_POINT = new Vector2(DEBUG_X, DEBUG_Y);
 
     // Users that are drawn on the map
@@ -45,7 +47,6 @@ public class MapView extends PhotoView {
     private float[] defaultMatrix = new float[9];
     private float[] matrixValues = new float[9];
     private Vector2 mapPos = new Vector2(-50f, -50f);
-
 
     // all constructors needed for Android to build the ImageView correctly
     public MapView(Context context) {
@@ -72,7 +73,7 @@ public class MapView extends PhotoView {
      */
     public void adjustMarker() {
         if (markers == null || markers.isEmpty()) {
-            Log.w("MapView", "There are no Users to display.");
+            Log.w(CLASS + USER, "There are no Users to display.");
             return;
         }
 
@@ -94,7 +95,7 @@ public class MapView extends PhotoView {
             mapPos = mapControl.gpsToMap(pos);
 
             if (marker == null) {
-                Log.w("MapView", "WARNING: User without markers detected! (" + u.getName() + ")");
+                Log.w(CLASS + USER, "WARNING: User without markers detected! (" + u.getName() + ")");
                 return;
             }
 
@@ -127,17 +128,22 @@ public class MapView extends PhotoView {
         // translate prison
         prisonControl.updateLocation();
 
-        // some debugging
+        // save the current transformation
+        copyMatrix(oldTransformation, getDisplayMatrix());
+        firstDraw = false;
+    }
+
+//    @Override
+//    protected void onDraw(Canvas canvas) {
+//        super.onDraw(canvas);
+//
+//        // some debugging
 //        Vector2 p = adjustToTransformation(new Vector2(DEBUG_X, DEBUG_Y));
 //        Paint paint = new Paint();
 //        paint.setColor(Color.BLACK);
 ////        Vector2 p = adjustToTransformation(currentViewPoint);
 //        canvas.drawCircle(p.x, p.y,75f, paint);
-
-        // save the current transformation
-        copyMatrix(oldTransformation, getDisplayMatrix());
-        firstDraw = false;
-    }
+//    }
 
     /**
      * Adjust a given vector to the current zoom of the map
@@ -164,11 +170,81 @@ public class MapView extends PhotoView {
     }
 
     /**
+     * @return the current width of the map in its view
+     */
+    public int getMapViewWidth() {
+        float viewWidth = getWidth();
+        float viewHeight = getHeight();
+        float imgWidth = getDrawable().getIntrinsicWidth();
+        float imgHeight = getDrawable().getIntrinsicHeight();
+        float viewRatio = viewWidth / viewHeight;
+        float imgRatio = imgWidth / imgHeight;
+        float newWidth = viewWidth;
+
+        if (viewRatio > imgRatio) {
+            // img height fits but width doesn't
+            newWidth = viewHeight * imgRatio;
+        }
+
+        return (int) newWidth;
+    }
+
+    /**
+     * @return the current height of the map in its view
+     */
+    public int getMapViewHeight() {
+        float viewWidth = getWidth();
+        float viewHeight = getHeight();
+        float imgWidth = getDrawable().getIntrinsicWidth();
+        float imgHeight = getDrawable().getIntrinsicHeight();
+        float viewRatio = viewWidth / viewHeight;
+        float imgRatio = imgWidth / imgHeight;
+        float newHeight = viewHeight;
+
+        if (viewRatio < imgRatio) {
+            // img height fits but width doesn't
+            newHeight = viewWidth * imgRatio;
+        }
+
+        return (int) newHeight;
+    }
+
+
+    /**
+     * @return the current width and height of the map in its view
+     */
+    private Vector2 getImageDisplacement() {
+        float viewWidth = getWidth();
+        float viewHeight = getHeight();
+        float imgWidth = getDrawable().getIntrinsicWidth();
+        float imgHeight = getDrawable().getIntrinsicHeight();
+        float viewRatio = viewWidth / viewHeight;
+        float imgRatio = imgWidth / imgHeight;
+
+        Vector2 displacement = new Vector2(0, 0);
+
+        if (viewRatio > imgRatio) {
+            // img height fits but width doesn't
+            displacement.x = (viewWidth - (viewHeight * imgRatio)) / 2;
+
+            Log.d(CLASS + USER, "the img is not fitting and must be adjusted (width) " + displacement.x);
+        } else {
+            // img width fits but height doesn't
+            displacement.y = (viewHeight - (viewWidth * imgRatio)) / 2;
+
+            Log.d(CLASS + USER, "the img is not fitting and must be adjusted (height) " + displacement.y);
+        }
+
+        return displacement;
+    }
+
+    /**
+     * Set or update the markers which will be shown on the map
      * @param markers users to be drawn of the map
      */
     public void setMarkers(ArrayList<AbstractUser> markers) {
         this.markers = markers;
-        if (firstDraw) adjustMarker();
+        adjustMarker();
     }
 
     /**
