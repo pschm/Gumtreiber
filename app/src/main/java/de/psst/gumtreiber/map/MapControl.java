@@ -100,6 +100,7 @@ public class MapControl {
         // new ArrayList is needed to avoid ConcurrentModificationExceptions
         mapView.setMarkers(new ArrayList<>(this.users));
 
+        mapView.setTouchable();
         if (!initialized) {
             // inform listener that the map is initialized
             initialized = true;

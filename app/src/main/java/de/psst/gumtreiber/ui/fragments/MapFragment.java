@@ -46,6 +46,8 @@ public class MapFragment extends Fragment {
         activity = (MainActivity) Objects.requireNonNull(getActivity());
         activity.getUds().startUpdating();
 
+        initMap();
+
         return fragmentView;
     }
 
@@ -53,7 +55,6 @@ public class MapFragment extends Fragment {
     public void onStart() {
         super.onStart();
         initLoadingScreen();
-        initMap();
         initListeners();
     }
 
@@ -79,7 +80,6 @@ public class MapFragment extends Fragment {
         mapView.setMaximumScale(9f);
         mapView.setMediumScale(3f);
         mapView.setMinimumScale(2f);
-        mapView.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -134,7 +134,7 @@ public class MapFragment extends Fragment {
             View loadingCircle = fragmentView.findViewById(R.id.loadingCircle);
             loadingCircle.setVisibility(View.GONE);
             loadingScreen.setVisibility(View.GONE);
-            mapView.setVisibility(View.VISIBLE);
+            mapView.setTouchable();
             return;
         }
         activity.runOnUiThread(() -> {
@@ -142,7 +142,7 @@ public class MapFragment extends Fragment {
             View loadingCircle = fragmentView.findViewById(R.id.loadingCircle);
             loadingCircle.setVisibility(View.GONE);
             loadingScreen.setVisibility(View.GONE);
-            mapView.setVisibility(View.VISIBLE);
+            mapView.setTouchable();
         });
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
@@ -39,6 +40,7 @@ public class MapView extends PhotoView {
     private Matrix oldTransformation = new Matrix();
 
     private boolean firstDraw = true;
+    private boolean touchable = false;
 
     // Declare some variables for the onDraw, so we
     // don't have to keep allocating them on the heap
@@ -209,7 +211,6 @@ public class MapView extends PhotoView {
         return (int) newHeight;
     }
 
-
     /**
      * @return the current width and height of the map in its view
      */
@@ -258,6 +259,24 @@ public class MapView extends PhotoView {
 
     public void setPrisonControl(PrisonControl prisonControl) {
         this.prisonControl = prisonControl;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (!isTouchable()) return false;
+        return super.dispatchTouchEvent(event);
+    }
+
+    public boolean isTouchable() {
+        return touchable;
+    }
+
+    public void setTouchable() {
+        setTouchable(true);
+    }
+
+    public void setTouchable(boolean touchable) {
+        this.touchable = touchable;
     }
 
     // some Matrix Utility
