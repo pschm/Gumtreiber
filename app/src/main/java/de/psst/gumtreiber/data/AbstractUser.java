@@ -108,4 +108,9 @@ public abstract class AbstractUser {
     public void setVisible(boolean visible) {
         isVisible = visible;
     }
+
+//    @Override
+//    public String toString(){
+//        return getName() +" Expired:" + isExpired() + " Visible:" + isVisible;
+//    }
 }

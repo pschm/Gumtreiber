@@ -254,7 +254,8 @@ public class Firebase {
     public static void activateSchedule(String uid) {
         //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
-        database.child("users").child(uid).child("usingSchedule").setValue(true);
+        //database.child("users").child(uid).child("usingSchedule").setValue(true);
+        database.child("users").child(uid).child("expirationDate").setValue(generateCurrentDate());
     }
 
     /**
@@ -265,7 +266,8 @@ public class Firebase {
     public static void deactivateSchedule(String uid) {
         //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
-        database.child("users").child(uid).child("usingSchedule").setValue(false);
+        //database.child("users").child(uid).child("usingSchedule").setValue(false);
+        database.child("users").child(uid).child("expirationDate").setValue(generateExpirationDate());
     }
 
     /*
@@ -335,10 +337,10 @@ public class Firebase {
             userReference.setName(each.getName());
             userReference.setUsingSchedule(each.isUsingSchedule());
             userReference.setCourse(each.getCourse());
+            userReference.setExpirationDate(each.getExpirationDate());
 
             //Update Location Data
-
-            if (userReference.isUsingSchedule()) {
+            if (userReference.isExpired()) {
                 //Build User with Current Appointment
                 Appointment currentAppointment = getCurrentAppointment(userReference.getUid(), authToken);
                 if (currentAppointment != null) {
@@ -381,6 +383,8 @@ public class Firebase {
         for (Map.Entry<String, AbstractUser> entry : userList.entrySet()) {
             AbstractUser myUser = entry.getValue();
             if (myUser.isExpired()) myUser.setVisible(false);
+            else myUser.setVisible(true);
+
         }
 
     }
@@ -524,7 +528,10 @@ public class Firebase {
                 myUser.setAltitude(userJSON.getDouble("altitude"));
                 myUser.setLatitude(userJSON.getDouble("latitude"));
                 myUser.setLongitude(userJSON.getDouble("longitude"));
-                myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
+
+                if (userJSON.has("usingSchedule")) {
+                    myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
+                }
 
                 //Wenn Nutzer einen Studiengang hat, dann setze ihn
                 if (userJSON.has("course")) {

@@ -11,12 +11,12 @@ public class Bot extends AbstractUser {
         super(uid, name);
     }
 
-    @Override
-    public String toString() {
-        @SuppressLint("SimpleDateFormat")
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String s = dateFormat.format(getExpirationDate().getTime());
-
-        return getUid() + ": " + getName() + " "+ getAltitude()+ " " + getLongitude() + " " + getLatitude() + " "+ s;
-    }
+//    @Override
+//    public String toString() {
+//        @SuppressLint("SimpleDateFormat")
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String s = dateFormat.format(getExpirationDate().getTime());
+//
+//        return getUid() + ": " + getName() + " "+ getAltitude()+ " " + getLongitude() + " " + getLatitude() + " "+ s;
+//    }
 }
