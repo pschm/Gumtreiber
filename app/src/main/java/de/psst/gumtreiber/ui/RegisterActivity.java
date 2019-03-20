@@ -113,6 +113,8 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         String nickname = txtName.getText().toString();
+        nickname = nickname.trim();
+        txtName.setText(nickname);
         if (TextUtils.isEmpty(nickname)) {
             txtName.setError(getString(R.string.required_field));
             valid = false;

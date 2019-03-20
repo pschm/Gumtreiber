@@ -27,8 +27,8 @@ public class SettingsManipulatorCourse extends SettingsManipulatorFragment {
         txtUserInput1.setVisibility(View.GONE);
 
         spinner.setVisibility(View.VISIBLE);
-        spinner.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Course.values()));
-        spinner.setSelection(model.getCourse().getPosition());
+        spinner.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Course.getAllCourses()));
+        spinner.setSelection(model.getCourse().ordinal());
 
     }
 
@@ -37,13 +37,11 @@ public class SettingsManipulatorCourse extends SettingsManipulatorFragment {
         setToolbarBtnListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                /*if(true) { //TODO Wenn keine Auswahl getroffen, oder nichts geändert ist:
-                    Toast.makeText(activity, "Funktionalität noch nicht verfügbar!", Toast.LENGTH_SHORT).show();
-                    return false;
-                } else {
-                */
-
                 Course course = Course.values()[spinner.getSelectedItemPosition()];
+
+                // course not changed
+                if (model.getCourse().equals(course)) return true;
+
                 model.setCourse(course);
 
                 Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show();

@@ -41,6 +41,8 @@ public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 String newName = txtUserInput1.getText().toString();
+                newName = newName.trim();
+                txtUserInput1.setText(newName);
                 if (TextUtils.isEmpty(newName)) {
                     txtUserInput1.setError(getString(R.string.required_field));
                     return false;
