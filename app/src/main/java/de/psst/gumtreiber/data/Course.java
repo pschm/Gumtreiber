@@ -2,23 +2,17 @@ package de.psst.gumtreiber.data;
 
 public enum Course {
 
-    //TODO Alle Studiegänge reintun, ich habe bisher nur die Bachelor Inf Studiengänge reingetan
-
-    NONE("Keiner", 0),
-    INF("Informatik", 1),
-    ING("Ingenieur", 2),
-    PROF("Professor/Dozent", 3);
-
+    NONE("Keiner"),
+    INF("Informatik"),
+    ING("Ingenieur"),
+    PROF("Professor/Dozent");
     //Attribute
     private final String fullName;
-    private final int position; //TODO Das ist ja völlig doof so, eine enum ist ja genau DAS
 
     //Konstruktor
-    Course(String fullName, int position) {
+    Course(String fullName) {
         this.fullName = fullName;
-        this.position = position;
     }
-
 
     public static String[] getAllCourses() {
         Course[] courses = Course.values();
@@ -36,9 +30,4 @@ public enum Course {
     public String toString() {
         return fullName;
     }
-
-    public int getPosition() {
-        return position;
-    }
-
 }
