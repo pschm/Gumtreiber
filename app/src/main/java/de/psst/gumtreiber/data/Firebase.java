@@ -55,13 +55,13 @@ public class Firebase {
      */
     public static void createUser(String uid, String name) {
         //return, if there is no internet connection
-        if(!isNetworkAvailable()) return;
+//        if(!isNetworkAvailable()) return;
 
         database.child("users").child(uid).child("name").setValue(name);
 
         //Initialize properties of user
         setCurrentLocation(uid, 0, 0, 0);
-        deactivateSchedule(uid);
+//        deactivateSchedule(uid);
     }
 
     public static void createUser(String uid, String name, Course course) {
@@ -190,6 +190,9 @@ public class Firebase {
         try {
             JSONObject reader = new JSONObject(jsonString);
             JSONArray allAppointments = reader.names();
+
+            // user without appointments
+            if (allAppointments == null) return appointmentList;
 
             for (int i = 0; i < allAppointments.length(); i++) {
                 String appointmentID = allAppointments.getString(i);
@@ -559,6 +562,8 @@ public class Firebase {
         if(!isNetworkAvailable()) return null;
 
         String jsonString = getJSON(firebaseURL + "/users/" + uid + ".json" + "?auth=" + authToken);
+
+        Log.d("Firebase - pschm", "JSON-String " + jsonString);
         //return empty null, if JSON is empty
         if (jsonString.equals("")) return null;
 
