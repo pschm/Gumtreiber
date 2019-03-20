@@ -125,9 +125,6 @@ public class LoginActivity extends AppCompatActivity {
     /////////////////////////////////////////////////////////////////
     //                    Authentication                           //
     /////////////////////////////////////////////////////////////////
-    //TODO Manage User (e.g. displayname, passwd reset, etc.): https://firebase.google.com/docs/auth/android/manage-users
-    //TODO Mach das im Settings Fragment !!!
-
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             Intent intent = new Intent(this, MainActivity.class);

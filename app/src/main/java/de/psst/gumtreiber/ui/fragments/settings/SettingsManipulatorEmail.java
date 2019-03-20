@@ -76,7 +76,8 @@ public class SettingsManipulatorEmail extends SettingsManipulatorFragment {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     //Wenn Änderung erfolgreich, alles supi. Zurück zum vorherigem Menü
                                                     if(task.isSuccessful()) {
-                                                        Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show(); //TODO neue Email bei App-Neustart in feld
+                                                        Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show();
+                                                        //TODO neue Email bei App-Neustart in feld -> in shared preference speichern
                                                         activity.onBackPressed();
 
                                                     } else {

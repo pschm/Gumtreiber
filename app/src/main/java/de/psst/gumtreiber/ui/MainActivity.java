@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerNavSwitch = navigationView.getMenu().findItem(R.id.nav_location);
         initDrawerSwitch();
 
-        //TODO updatesEnabled aus config laden
         uds = new UserDataSync(this, getLocationHandler(), false);
     }
 

@@ -94,7 +94,6 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
         updateThread = new Thread(this);
 
         //Get/Refresh auth token
-        //TODO evtl. https://firebase.google.com/docs/auth/admin/manage-sessions
         if(FirebaseAuth.getInstance().getCurrentUser() != null) {
             FirebaseAuth.getInstance().getCurrentUser().getIdToken(true)
                     .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {

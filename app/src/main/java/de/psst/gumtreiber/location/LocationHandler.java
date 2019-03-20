@@ -288,7 +288,7 @@ public class LocationHandler implements Application.ActivityLifecycleCallbacks, 
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        //TODO?
+
     }
 
 

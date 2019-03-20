@@ -36,8 +36,6 @@ import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
 public class AppointmentFragment extends Fragment {
 
-
-
     private String uid;
     private GregorianCalendar c = new GregorianCalendar();
     private MainActivity activity;
@@ -108,11 +106,9 @@ public class AppointmentFragment extends Fragment {
      * Initiates the TextViews with Date & Time Pickers in a barbaric kind of way
      */
     private void initSpinner() {
-
         //Spinner for the Rooms
         spinner = activity.findViewById(R.id.spinn_room);
-        spinner.setAdapter(new ArrayAdapter<>(activity.getApplicationContext(), R.layout.spinner_item, Room.getAllRooms())); //TODO getAllRooms() ggf probleme bei speichern?
-
+        spinner.setAdapter(new ArrayAdapter<>(activity.getApplicationContext(), R.layout.spinner_item, Room.getAllRooms()));
     }
 
     //Building Date and Time Pickers

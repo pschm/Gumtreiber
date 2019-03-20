@@ -61,7 +61,8 @@ public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
                     public void onComplete(@NonNull Task<Void> task) {
                         //Wenn Änderung erfolgreich, alles supi. Zurück zum vorherigem Menü
                         if(task.isSuccessful()) {
-                            Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show(); //TODO updated das auch bei anderen nutzern "sofort"
+                            Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show();
+                            //TODO updated das auch bei anderen nutzern "sofort" --> geht momentan gar nischt!
                             activity.onBackPressed();
 
                         } else {

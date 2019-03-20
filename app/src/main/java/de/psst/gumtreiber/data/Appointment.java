@@ -1,7 +1,5 @@
 package de.psst.gumtreiber.data;
 
-//TODO Make sure that the start time is before the end time
-
 import android.annotation.SuppressLint;
 import android.util.Log;
 
@@ -48,7 +46,6 @@ public class Appointment {
         this.room = room;
     }
 
-    //TODO Christopher fragen warum nicht getFormatetDate(Date date) {...} ???
     /**
      * Returns the start date of the appointment in the form of yyyyMMddHHmmss as a long value
      * @return start date in the form of a long value
@@ -159,20 +156,6 @@ public class Appointment {
 
         return hour + ":" + minute;
     }
-
-    //TODO SVEN fragen wie die Annotation richtig geht !
-
-    /**
-     * Formats a Date given as long "YYYYMMDDHHMMSS" to a nicely readable String
-     * by combining the use of #getReadableTime and #getReadableDate
-     *
-     * @param unreadableDate a formatet date as used in the Database
-     * @return a String with the Format "DD.MM.YYYY - HH:MM"
-     */
-    public String getStringDate(long unreadableDate) {
-        return getReadableDate(unreadableDate) + " - " + getReadableTime(unreadableDate);
-    }
-
 
     //Various getters and setters
 

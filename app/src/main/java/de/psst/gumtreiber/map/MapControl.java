@@ -120,6 +120,9 @@ public class MapControl {
         int ySize = (int) DELTA_LAT;
         Vector2 pos;
 
+        // TODO wenn merge, dann marker sagen, dass er setPosition nutzen soll
+        // TODO rasterkoordinaten
+
         if (activity == null) {
             Log.w("MapControl", "Activity is NULL!!");
             return new ArrayList<>();

@@ -41,7 +41,7 @@ public class UserFilter {
      * @return true, if the course flag is set
      */
     private static boolean isFiltered(Course course) {
-        if (course == null) return true; // TODO delete later
+        if (course == null) return true;
         switch (course) {
             case NONE: return NONE_FILTER;
             case INF: return INF_FILTER;

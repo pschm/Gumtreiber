@@ -97,7 +97,7 @@ public class MapFragment extends Fragment {
 
         // current user location
         LocationHandler lh = activity.getLocationHandler();
-        // TODO lh.getCurrentLocation();
+        // TODO lh.getCurrentLocation(); --> ist momentan null
         lh.addOnLocationChangedListener(mapControl::updateCurrentUserLocation);
 
         // start listening to Firebase updates

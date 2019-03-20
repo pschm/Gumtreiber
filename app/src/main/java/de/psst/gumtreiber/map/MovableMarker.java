@@ -253,7 +253,6 @@ public class MovableMarker {
      * This will cancel a running transition from a {@link #moveTo} call.
      * @param x The visual x position of this marker, in pixels.
      * @param y The visual y position of this marker, in pixels.
-     * TODO keep current rotation
      */
     public void setPosition(float x, float y) {
         setVisibility(true);
@@ -291,30 +290,6 @@ public class MovableMarker {
      */
     public void setRotationOffset(float offset) {
         rotOffset = offset;
-    }
-
-    /**
-     * Set the scale of the marker.
-     * @param scaleFactor Scaling factor, 1 means no scaling.
-     */
-    public void setScale(float scaleFactor) {
-        //if(scaleFactor >= 2) scaleStepSpeedFactor = scaleFactor * .5f;
-        scaleStepSpeedFactor = scaleFactor; //TODO Checken ob das immer noch doof aussieht auf echter Karte
-
-        for(FadingImage img : leftPrints) {
-            img.setScaleX(scaleFactor);
-            img.setScaleY(scaleFactor);
-        }
-        for(FadingImage img : rightPrints) {
-            img.setScaleX(scaleFactor);
-            img.setScaleY(scaleFactor);
-        }
-
-        nameImg.setScaleX(scaleFactor);
-        nameImg.setScaleY(scaleFactor);
-        nameCntrOffset = new Vector2(LBL_CNTR_OFFSET.x, LBL_CNTR_OFFSET.y * scaleFactor);
-        nameImg.setX(curPos.x + nameCntrOffset.x);
-        nameImg.setY(curPos.y + nameCntrOffset.y);
     }
 
     /**

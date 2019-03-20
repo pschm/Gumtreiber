@@ -643,74 +643,74 @@ public class Firebase {
         return userList;
     }
 
-    //TODO nicht mehr gebracuht
 
-    /**
-     * Requests all users with an activated schedule, looks for their current appointment and puts
-     * the user and the location of the current appointment in an ArrayList.
-     *
-     * @param authToken
-     * @return Arraylist with the appointments of all scheduled users.
-     */
-    public static ArrayList<User> getAllScheduledUsers(String authToken) {
-        ArrayList<User> userList = new ArrayList<>();
-
-        //return empty ArrayList, if there is no internet connection
-        if(!isNetworkAvailable()) return userList;
-
-        String jsonString = getJSON(firebaseURL + "/users.json" + "?orderBy=\"usingSchedule\"&startAt=" + true + "&auth=" + authToken);
-        //return empty ArrayList, if JSON is empty
-        if (jsonString.equals("")) return userList;
-
-        try {
-            JSONObject reader = new JSONObject(jsonString);
-            JSONArray allUIDs = reader.names();
-
-            for (int i = 0; i < allUIDs.length(); i++) {
-                String userUid = allUIDs.getString(i);
-                JSONObject userJSON = reader.getJSONObject(userUid);
-                User myUser = new User(userUid, userJSON.getString("name"));
-
-                //Determine the current Appointment
-                ArrayList<Appointment> appointments = getAppointments(userUid, authToken);
-                Appointment currentAppointment = null;
-                long currentDate = generateCurrentDate();
-                for (Appointment each : appointments) {
-                    if (each.getFormatedStartDate() <= currentDate &&
-                            each.getFormatedEndDate() >= currentDate) {
-                        currentAppointment = each;
-                        break;
-                    }
-
-                }
-
-                //Add user with current Appointment to ArrayList
-                if (currentAppointment != null) {
-                    myUser.setAltitude(currentAppointment.getRoom().getAltitude());
-                    myUser.setLatitude(currentAppointment.getRoom().getLatitude());
-                    myUser.setLongitude(currentAppointment.getRoom().getLongitude());
-                    myUser.setUsingSchedule(true);
-
-                    if (userJSON.has("course")) {
-                        String courseString = userJSON.getString("course");
-                        myUser.setCourse(Course.valueOf(courseString));
-                    }
-
-                    myUser.setExpirationDate(currentAppointment.getEndDate());
-
-                    userList.add(myUser);
-                } else {
-                    continue;
-                }
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return userList;
-    }
+    // TODO code sichern und löschen @Christopher
+//    /**
+//     * Requests all users with an activated schedule, looks for their current appointment and puts
+//     * the user and the location of the current appointment in an ArrayList.
+//     *
+//     * @param authToken
+//     * @return Arraylist with the appointments of all scheduled users.
+//     */
+//    public static ArrayList<User> getAllScheduledUsers(String authToken) {
+//        ArrayList<User> userList = new ArrayList<>();
+//
+//        //return empty ArrayList, if there is no internet connection
+//        if(!isNetworkAvailable()) return userList;
+//
+//        String jsonString = getJSON(firebaseURL + "/users.json" + "?orderBy=\"usingSchedule\"&startAt=" + true + "&auth=" + authToken);
+//        //return empty ArrayList, if JSON is empty
+//        if (jsonString.equals("")) return userList;
+//
+//        try {
+//            JSONObject reader = new JSONObject(jsonString);
+//            JSONArray allUIDs = reader.names();
+//
+//            for (int i = 0; i < allUIDs.length(); i++) {
+//                String userUid = allUIDs.getString(i);
+//                JSONObject userJSON = reader.getJSONObject(userUid);
+//                User myUser = new User(userUid, userJSON.getString("name"));
+//
+//                //Determine the current Appointment
+//                ArrayList<Appointment> appointments = getAppointments(userUid, authToken);
+//                Appointment currentAppointment = null;
+//                long currentDate = generateCurrentDate();
+//                for (Appointment each : appointments) {
+//                    if (each.getFormatedStartDate() <= currentDate &&
+//                            each.getFormatedEndDate() >= currentDate) {
+//                        currentAppointment = each;
+//                        break;
+//                    }
+//
+//                }
+//
+//                //Add user with current Appointment to ArrayList
+//                if (currentAppointment != null) {
+//                    myUser.setAltitude(currentAppointment.getRoom().getAltitude());
+//                    myUser.setLatitude(currentAppointment.getRoom().getLatitude());
+//                    myUser.setLongitude(currentAppointment.getRoom().getLongitude());
+//                    myUser.setUsingSchedule(true);
+//
+//                    if (userJSON.has("course")) {
+//                        String courseString = userJSON.getString("course");
+//                        myUser.setCourse(Course.valueOf(courseString));
+//                    }
+//
+//                    myUser.setExpirationDate(currentAppointment.getEndDate());
+//
+//                    userList.add(myUser);
+//                } else {
+//                    continue;
+//                }
+//
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return userList;
+//    }
 
     /**
      * Adds the UID of your friend to your friendlist in firebase.
