@@ -66,7 +66,7 @@ public class Firebase {
 
     public static void createUser(String uid, String name, Course course) {
         //return, if there is no internet connection
-        if(!isNetworkAvailable()) return;
+//        if(!isNetworkAvailable()) return;
 
         createUser(uid, name);
         if (course != null) setCourse(uid, course);
@@ -89,7 +89,7 @@ public class Firebase {
 
     public static void setCourse(String uid, Course course) {
         //return, if there is no internet connection
-        if(!isNetworkAvailable()) return;
+//        if(!isNetworkAvailable()) return;
 
         database.child("users").child(uid).child("course").setValue(course.name());
     }
@@ -119,7 +119,7 @@ public class Firebase {
      */
     public static void setCurrentLocation(String uid, double latitude, double longitude, double altitude) {
         //return, if there is no internet connection
-        if(!isNetworkAvailable()) return;
+//        if(!isNetworkAvailable()) return;
 
         long expirationDate = generateExpirationDate();
         database.child("users").child(uid).child("latitude").setValue(latitude);
@@ -571,7 +571,7 @@ public class Firebase {
             user.setAltitude(reader.getDouble("altitude"));
             user.setLatitude(reader.getDouble("latitude"));
             user.setLongitude(reader.getDouble("longitude"));
-            user.setUsingSchedule(reader.getBoolean("usingSchedule"));
+//            user.setUsingSchedule(reader.getBoolean("usingSchedule"));
 
             //Wenn Nutzer einen Studiengang hat, dann setze ihn
             if (reader.has("course")) {
