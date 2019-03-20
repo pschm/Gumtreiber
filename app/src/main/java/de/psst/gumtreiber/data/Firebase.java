@@ -338,7 +338,6 @@ public class Firebase {
 
             //Update Userdata that may has changed
             userReference.setName(each.getName());
-            userReference.setUsingSchedule(each.isUsingSchedule());
             userReference.setCourse(each.getCourse());
             userReference.setExpirationDate(each.getExpirationDate());
 
@@ -532,10 +531,6 @@ public class Firebase {
                 myUser.setLatitude(userJSON.getDouble("latitude"));
                 myUser.setLongitude(userJSON.getDouble("longitude"));
 
-                if (userJSON.has("usingSchedule")) {
-                    myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
-                }
-
                 //Wenn Nutzer einen Studiengang hat, dann setze ihn
                 if (userJSON.has("course")) {
                     String courseString = userJSON.getString("course");
@@ -627,7 +622,6 @@ public class Firebase {
                 myUser.setAltitude(userJSON.getDouble("altitude"));
                 myUser.setLatitude(userJSON.getDouble("latitude"));
                 myUser.setLongitude(userJSON.getDouble("longitude"));
-                myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
 
                 if (userJSON.has("course")) {
                     String courseString = userJSON.getString("course");
