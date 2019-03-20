@@ -67,7 +67,10 @@ public class RegisterActivity extends AppCompatActivity {
                 if(!inputsValid()) return;
                 btnCompleteRegister.setClickable(false); //Disable buttons to avoid double clicking
 
-                createAccount(txtName.getText().toString(), txtEmail.getText().toString(), txtPwd.getText().toString(), Course.values()[spnCourse.getSelectedItemPosition()] );
+                createAccount(txtName.getText().toString(),
+                        txtEmail.getText().toString(),
+                        txtPwd.getText().toString(),
+                        Course.values()[spnCourse.getSelectedItemPosition() - 2]);
             }
         });
 
