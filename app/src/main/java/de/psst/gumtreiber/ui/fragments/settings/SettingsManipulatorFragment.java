@@ -24,12 +24,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.ui.MainActivity;
+import de.psst.gumtreiber.viewmodels.LoginViewModel;
 import de.psst.gumtreiber.viewmodels.SettingsViewModel;
 
 public abstract class SettingsManipulatorFragment extends Fragment {
 
     MainActivity activity;
-    SettingsViewModel model;
+    SettingsViewModel setingsModel;
+    LoginViewModel loginModel;
 
     TextView txtTitle;
     EditText txtUserInput1, txtUserInput2;
@@ -42,7 +44,7 @@ public abstract class SettingsManipulatorFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         activity = Objects.requireNonNull((MainActivity) getActivity());
-        model = ViewModelProviders.of(activity).get(SettingsViewModel.class);
+        setingsModel = ViewModelProviders.of(activity).get(SettingsViewModel.class);
         return inflater.inflate(R.layout.fragment_settings_manipulator, container, false);
     }
 
