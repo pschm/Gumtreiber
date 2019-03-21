@@ -23,19 +23,17 @@ public class SettingsViewModel extends AndroidViewModel {
     public static final String USERNAME_VALID_CODE = "OK";
 
     private String uid;
-    private String token;
     private FirebaseUser currentUser;
 
     public SettingsViewModel(@NonNull Application application) {
         super(application);
         uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        token = UserDataSync.getUserToken();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     //Getter
     public Course getCourse() {
-        User user = Firebase.getUser(uid, token);
+        User user = Firebase.getUser(uid, UserDataSync.getUserToken());
         if(user != null) return user.getCourse();
         else return null;
     }
