@@ -10,26 +10,15 @@
 
 
     <ImageView
-        android:id="@+id/imgOutlineCircle"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:id="@+id/imgStatusCircle"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
         android:layout_marginStart="8dp"
         android:tint="#868686"
         app:srcCompat="@drawable/circle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imgStatusCircle"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:tint="@color/colorBuildingNbr2"
-        app:srcCompat="@drawable/circle"
-        app:layout_constraintBottom_toBottomOf="@+id/imgOutlineCircle"
-        app:layout_constraintEnd_toEndOf="@+id/imgOutlineCircle"
-        app:layout_constraintStart_toStartOf="@+id/imgOutlineCircle"
-        app:layout_constraintTop_toTopOf="@+id/imgOutlineCircle"/>
 
 
     <TextView
@@ -42,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/imgStatusCircle"
-        android:layout_marginStart="15dp"/>
+        android:layout_marginStart="5dp"/>
 
 
     <Button
@@ -50,11 +39,9 @@
         android:layout_width="28dp"
         android:layout_height="28dp"
 
-        android:background="#7A3131"
-        android:text="X"
+        android:background="@drawable/ic_remove_red_24dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="@color/colorGrayFont"
         android:textAlignment="center"
 
         app:layout_constraintTop_toTopOf="parent"

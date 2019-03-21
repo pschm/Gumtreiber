@@ -39,8 +39,7 @@
         android:layout_width="28dp"
         android:layout_height="28dp"
 
-        android:background="@drawable/ic_add2_24dp"
-        android:backgroundTint="#689E41"
+        android:background="@drawable/ic_add_green_24dp"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textAlignment="center"
