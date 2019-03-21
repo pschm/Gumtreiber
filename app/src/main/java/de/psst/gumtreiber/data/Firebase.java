@@ -57,16 +57,7 @@ public class Firebase {
         database.child("users").child(uid).child("name").setValue(name);
 
         //Initialize properties of user
-        setCurrentLocation(uid, 0, 0, 0);
-//        deactivateSchedule(uid);
-    }
-
-    public static void createUser(String uid, String name, Course course) {
-        //return, if there is no internet connection
-//        if(!isNetworkAvailable()) return;
-
-        createUser(uid, name);
-        if (course != null) setCourse(uid, course);
+        setCurrentLocationUnsafe(uid, 0, 0, 0);
     }
 
     /**
@@ -80,7 +71,7 @@ public class Firebase {
         if(!isNetworkAvailable()) return;
 
         if (user == null || location == null) return;
-        setCurrentLocation(user.getUid(), location.getLatitude(), location.getLongitude(), location.getAltitude());
+        setCurrentLocationUnsafe(user.getUid(), location.getLatitude(), location.getLongitude(), location.getAltitude());
     }
 
     /**
@@ -91,10 +82,7 @@ public class Firebase {
      * @param longitude
      * @param altitude
      */
-    public static void setCurrentLocation(String uid, double latitude, double longitude, double altitude) {
-        //return, if there is no internet connection
-//        if(!isNetworkAvailable()) return;
-
+    private static void setCurrentLocationUnsafe(String uid, double latitude, double longitude, double altitude) {
         long expirationDate = generateExpirationDate();
         database.child("users").child(uid).child("latitude").setValue(latitude);
         database.child("users").child(uid).child("longitude").setValue(longitude);
