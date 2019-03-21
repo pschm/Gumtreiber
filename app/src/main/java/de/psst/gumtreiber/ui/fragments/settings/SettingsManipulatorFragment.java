@@ -45,6 +45,7 @@ public abstract class SettingsManipulatorFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         activity = Objects.requireNonNull((MainActivity) getActivity());
         setingsModel = ViewModelProviders.of(activity).get(SettingsViewModel.class);
+        loginModel = ViewModelProviders.of(activity).get(LoginViewModel.class);
         return inflater.inflate(R.layout.fragment_settings_manipulator, container, false);
     }
 
