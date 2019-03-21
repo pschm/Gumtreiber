@@ -1,5 +1,6 @@
 package de.psst.gumtreiber.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -42,41 +43,62 @@ public class Firebase {
     private static final String firebaseURL = "https://gumtreiber-1fb84.firebaseio.com";
 
     private static final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+    @SuppressLint("SimpleDateFormat")
     private static DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    @SuppressLint("SimpleDateFormat")
     private static DateFormat timeFormat = new SimpleDateFormat("HHmm");
 
 
     /**
-     * Creates a new User in the database and initializes it's userdata.
+     * Creates a new User in the database and initializes it's location.
      * If the user already exists, the name is updated.
      *
-     * @param uid  The user id of the user
+     * @param uid  The uid of the user
      * @param name name of the user
      */
     public static void createUser(String uid, String name) {
-        //return, if there is no internet connection
-//        if(!isNetworkAvailable()) return;
-
         database.child("users").child(uid).child("name").setValue(name);
 
         //Initialize properties of user
-        setCurrentLocation(uid, 0, 0, 0);
-//        deactivateSchedule(uid);
+        setCurrentLocationUnsafe(uid, 0, 0, 0);
     }
 
-    public static void createUser(String uid, String name, Course course) {
+    /**
+     * Updates the location of the user in firebase.
+     *
+     * @param user An instance of the currently logged in {@link FirebaseUser}
+     * @param location The new {@link Location} which will be used as the current location
+     */
+    public static void setCurrentLocation(FirebaseUser user, Location location) {
         //return, if there is no internet connection
-//        if(!isNetworkAvailable()) return;
+        if(!isNetworkAvailable()) return;
 
-        createUser(uid, name);
-        if (course != null) setCourse(uid, course);
+        if (user == null || location == null) return;
+        setCurrentLocationUnsafe(user.getUid(), location.getLatitude(), location.getLongitude(), location.getAltitude());
     }
 
+    /**
+     * Updates the location of the given user in firebase.
+     * This method does not check, whether there is an active network connection.
+     *
+     * @param uid The uid of the user
+     * @param latitude The latitude of the new location
+     * @param longitude The longitude of the new location
+     * @param altitude The altitude of the new location
+     */
+    private static void setCurrentLocationUnsafe(String uid, double latitude, double longitude, double altitude) {
+        long expirationDate = generateExpirationDate();
+        database.child("users").child(uid).child("latitude").setValue(latitude);
+        database.child("users").child(uid).child("longitude").setValue(longitude);
+        database.child("users").child(uid).child("altitude").setValue(altitude);
+        database.child("users").child(uid).child("expirationDate").setValue(expirationDate);
+    }
 
     /**
      * Changes the name of the user in Firebase.
      *
-     * @param uid  The user id of the user
+     * @param uid  The uid of the user
      * @param name name of the user
      */
     public static void changeName(String uid, String name) {
@@ -86,57 +108,22 @@ public class Firebase {
         database.child("users").child(uid).child("name").setValue(name);
     }
 
-
+    /**
+     * Sets the course of the user with the given uid
+     * @param uid The uid of the user
+     * @param course A course from the {@link Room} enum
+     */
     public static void setCourse(String uid, Course course) {
-        //return, if there is no internet connection
-//        if(!isNetworkAvailable()) return;
-
         database.child("users").child(uid).child("course").setValue(course.name());
-    }
-
-
-    /**
-     * Updates the location of the user in firebase.
-     *
-     * @param user
-     * @param location
-     */
-    public static void setCurrentLocation(FirebaseUser user, Location location) {
-        //return, if there is no internet connection
-        if(!isNetworkAvailable()) return;
-
-        if (user == null || location == null) return;
-        setCurrentLocation(user.getUid(), location.getLatitude(), location.getLongitude(), location.getAltitude());
-    }
-
-    /**
-     * Updates the location of the given user in firebase.
-     *
-     * @param uid
-     * @param latitude
-     * @param longitude
-     * @param altitude
-     */
-    public static void setCurrentLocation(String uid, double latitude, double longitude, double altitude) {
-        //return, if there is no internet connection
-//        if(!isNetworkAvailable()) return;
-
-        long expirationDate = generateExpirationDate();
-        database.child("users").child(uid).child("latitude").setValue(latitude);
-        database.child("users").child(uid).child("longitude").setValue(longitude);
-        database.child("users").child(uid).child("altitude").setValue(altitude);
-        database.child("users").child(uid).child("expirationDate").setValue(expirationDate);
     }
 
     /**
      * Adds an appointment to the users schedule in firebase. Keep in mind, that you have to make
      * sure, that the added appointments are consistent. That means, there shouldn't be any
      * overlapping appointments.
-     * Also, you need to use activateSchedule() so that the schedule is actually used for a
-     * virtual user on the map.
      *
-     * @param uid
-     * @param appointment
+     * @param uid The uid of the {@link User}
+     * @param appointment The {@link Appointment} which will be added to the user's schedule
      */
     public static void addAppointmentToSchedule(String uid, Appointment appointment) {
 
@@ -157,8 +144,8 @@ public class Firebase {
     /**
      * Deletes the given appointment from the user's schedule in firebase
      *
-     * @param uid
-     * @param appointment
+     * @param uid The uid of the {@link User}
+     * @param appointment The {@link Appointment} which will be removed from the user's schedule
      */
     public static void deleteAppointment(String uid, Appointment appointment) {
         //return, if there is no internet connection
@@ -169,11 +156,11 @@ public class Firebase {
     }
 
     /**
-     * Requests all appointments of the user from Firebase and returns them as an ArrayList.
+     * Requests all up-to-date appointments of the user from Firebase and returns them as an ArrayList.
      *
-     * @param uid
-     * @param authToken TODO missing desc.
-     * @return ArrayList
+     * @param uid The uid of the {@link User}
+     * @param authToken The token which authenticates the user
+     * @return ArrayList with all up-to-date appointments of the user
      */
     public static ArrayList<Appointment> getAppointments(String uid, String authToken) {
         ArrayList<Appointment> appointmentList = new ArrayList<>();
@@ -216,10 +203,9 @@ public class Firebase {
         return appointmentList;
     }
 
-
     /**
      * Generates an expiration date for the location data in the form of yyyyMMddHHmmss.
-     * The lifetime of the expiration date is determined by the lifetimeMinutes constant.
+     * The lifetime of the expiration date is determined by the {@link #lifetimeMinutes} constant.
      *
      * @return expiration date in the form of yyyyMMddHHmmss
      */
@@ -241,7 +227,11 @@ public class Firebase {
         return date;
     }
 
-    //TODO Javadoc
+    /**
+     * Generates the current date in the form of HHmm.
+     *
+     * @return date in the form of HHmm
+     */
     private static int generateCurrentTime() {
         Calendar cal = Calendar.getInstance();
         int time = Integer.parseInt(timeFormat.format(cal.getTime()));
@@ -250,9 +240,10 @@ public class Firebase {
 
     /**
      * Activates the schedule of the user. By doing so, the user will appear as a bot on the map,
-     * controlled by their schedule
+     * controlled by their schedule. This is done by setting the user's expiration date to the
+     * current date, which causes the program to look for appointments.
      *
-     * @param uid
+     * @param uid The uid of the {@link User}
      */
     public static void activateSchedule(String uid) {
         //return, if there is no internet connection
@@ -263,61 +254,24 @@ public class Firebase {
 
     /**
      * By deactivating the schedule, only the current location data is considered for the user.
+     * This is done by setting the expiration date {@link #lifetimeMinutes} in the future
      *
-     * @param uid
+     * @param uid The uid of the {@link User}
      */
     public static void deactivateSchedule(String uid) {
         //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
-        //database.child("users").child(uid).child("usingSchedule").setValue(false);
+
         database.child("users").child(uid).child("expirationDate").setValue(generateExpirationDate());
     }
 
-    /*
-    public static void updateUserList(String authToken, HashMap<String, User> userList) {
-        String jsonString = getJSON(firebaseURL+ "/users.json" + "?auth=" + authToken);
-        try {
-            JSONObject reader = new JSONObject(jsonString);
-            JSONArray allUIDs = reader.names();
-            //String s = user1.getString(2);
-            //Log.v("mim",""+user1.length());
-
-            for(int i = 0; i < allUIDs.length(); i++) {
-                String userUid = allUIDs.getString(i);
-                JSONObject userJSON = reader.getJSONObject(userUid);
-
-
-                User myUser; //Check if user has a entry in the userList
-                if(userList.containsKey(userUid)) {
-                    myUser = userList.get(userUid); //true, only UPDATE its values
-                } else {
-                    myUser = new User(userUid, userJSON.getString("name")); //false, create the user
-                    userList.put(userUid, myUser); //and add him/her to the list
-                }
-
-
-                myUser.setAltitude(userJSON.getDouble("altitude"));
-                myUser.setLatitude(userJSON.getDouble("latitude"));
-                myUser.setLongitude(userJSON.getDouble("longitude"));
-                myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
-
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(dateFormat.parse(userJSON.getString("expirationDate")));
-                myUser.setExpirationDate(cal);
-
-                if (userJSON.has("course")){
-                    String courseString = userJSON.getString("course");
-                    myUser.setCourse(Course.valueOf(courseString));
-                }
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }*/
-
+    /**
+     * Updates the {@link UserDataSync#userList}. It updates the location data and sets
+     * expired users invisible.
+     *
+     * @param authToken The token which authenticates the user
+     * @param userList The {@link UserDataSync#userList} which will be updated
+     */
     public static void updateUserList(String authToken, HashMap<String, AbstractUser> userList) {
         //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
@@ -338,7 +292,6 @@ public class Firebase {
 
             //Update Userdata that may has changed
             userReference.setName(each.getName());
-            userReference.setUsingSchedule(each.isUsingSchedule());
             userReference.setCourse(each.getCourse());
             userReference.setExpirationDate(each.getExpirationDate());
 
@@ -351,6 +304,12 @@ public class Firebase {
                     userReference.setLongitude(currentAppointment.getRoom().getLongitude());
                     userReference.setLatitude(currentAppointment.getRoom().getLatitude());
                     userReference.setExpirationDate(currentAppointment.getEndDate());
+                } else {
+                    //Use location data from firebase
+                    userReference.setAltitude(each.getAltitude());
+                    userReference.setLatitude(each.getLatitude());
+                    userReference.setLongitude(each.getLongitude());
+                    userReference.setExpirationDate(each.getExpirationDate());
                 }
             } else {
                 //Use location data from firebase
@@ -366,9 +325,9 @@ public class Firebase {
         for (Bot each : activeBots) {
             Bot botReference;
             if (!userList.containsKey(each.getUid())) {
-                //Bot new Bot into userlist
+                //Put new Bot into userList
                 userList.put(each.getUid(), each);
-                botReference = each;
+                //botReference = each;
             } else {
                 //Update already existing bots
                 botReference = (Bot) userList.get(each.getUid());
@@ -382,7 +341,7 @@ public class Firebase {
             }
         }
 
-        //Filter expired users
+        //Filter expired users and bots
         for (Map.Entry<String, AbstractUser> entry : userList.entrySet()) {
             AbstractUser myUser = entry.getValue();
             if (myUser.isExpired()) myUser.setVisible(false);
@@ -392,94 +351,14 @@ public class Firebase {
 
     }
 
-    /*
-    public static void newUpdateUserList(String authToken, HashMap<String, User> userList) {
-        ArrayList<User> allUser = getAllUsers(authToken);
-
-        for (User each : allUser) {
-            User myUser;
-            if (userList.containsKey(each.getUid())) {
-                myUser = userList.get(each.getUid());
-
-                //Update Data, that may has changed.
-                myUser.setUsingSchedule(each.isUsingSchedule());
-
-                myUser.setName(each.getName());
-                myUser.setCourse(each.getCourse());
-
-                if (myUser.isUsingSchedule()) {
-                    //User uses his schedule:
-                    Appointment currentAppointment = getCurrentAppointment(myUser.getUid(), authToken);
-
-                    if (currentAppointment != null) {
-                        if (myUser.getMarker() != null) myUser.getMarker().setVisibility(true);
-                        myUser.setAltitude(currentAppointment.getRoom().getAltitude());
-                        myUser.setLatitude(currentAppointment.getRoom().getLatitude());
-                        myUser.setLongitude(currentAppointment.getRoom().getLongitude());
-                        myUser.setExpirationDate(currentAppointment.getEndDate());
-
-                    } else {
-                        //User has no current Appointment
-                        if (myUser.getMarker() != null) myUser.getMarker().setVisibility(false);
-                    }
-
-
-                } else {
-                    //User uses location data:
-
-                    if (myUser.isExpired()) {
-                        //Make User invisible if he is expired:
-                        if (myUser.getMarker() != null) myUser.getMarker().setVisibility(false);
-                    } else {
-                        //Make User visible if he is not expired and update user data:
-                        if (myUser.getMarker() != null) myUser.getMarker().setVisibility(true);
-
-                        myUser.setAltitude(each.getAltitude());
-                        myUser.setLatitude(each.getLatitude());
-                        myUser.setLongitude(each.getLongitude());
-                        myUser.setExpirationDate(each.getExpirationDate());
-
-                    }
-                }
-
-
-            } else {
-                if(each.isUsingSchedule()) {
-                    //User uses his schedule:
-                    Appointment currentAppointment = getCurrentAppointment(each.getUid(), authToken);
-
-                    if(currentAppointment != null) {
-
-                        each.setAltitude(currentAppointment.getRoom().getAltitude());
-                        each.setLatitude(currentAppointment.getRoom().getLatitude());
-                        each.setLongitude(currentAppointment.getRoom().getLongitude());
-                        each.setExpirationDate(currentAppointment.getEndDate());
-
-                        userList.put(each.getUid(), each);
-
-                    } else {
-                        //User has no current Appointment
-                        //User is ignored
-                    }
-
-
-                } else {
-                    //User uses location data:
-
-                    if (each.isExpired()){
-                        //Make User invisible if he is expired:
-                        //User is ignored
-                    } else {
-                        //Make User visible if he is not expired and update user data:
-                        userList.put(each.getUid(), each);
-                    }
-                }
-            }
-
-        }
-    }*/
-
-    //TODO JavaDoc
+    /**
+     * Looks for the earlieast up-to-date appointment of the user and returns it. Returns null,
+     * if the user has no up-to-date appointment.
+     *
+     * @param uid The uid of the {@link User}
+     * @param authToken The token which authenticates the user
+     * @return The earliest up-to-date appointment of the given user. Returns null if the user has no up-tp-date appointment
+     */
     private static Appointment getCurrentAppointment(String uid, String authToken) {
 
         //return null, if there is no internet connection
@@ -506,7 +385,7 @@ public class Firebase {
      * Requests all useres from firebase and returns them with their location data in an
      * ArrayList.
      *
-     * @param authToken
+     * @param authToken The token which authenticates the user
      * @return all useres with their location data
      */
     public static ArrayList<User> getAllUsers(String authToken) {
@@ -532,10 +411,6 @@ public class Firebase {
                 myUser.setLatitude(userJSON.getDouble("latitude"));
                 myUser.setLongitude(userJSON.getDouble("longitude"));
 
-                if (userJSON.has("usingSchedule")) {
-                    myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
-                }
-
                 //Wenn Nutzer einen Studiengang hat, dann setze ihn
                 if (userJSON.has("course")) {
                     String courseString = userJSON.getString("course");
@@ -556,14 +431,19 @@ public class Firebase {
         return userList;
     }
 
-
+    /**
+     * Returns the userdata from the user with the given uid
+     *
+     * @param uid The uid of the {@link User}
+     * @param authToken The token which authenticates the user
+     * @return userdata from the user with the given uid
+     */
     public static User getUser(String uid, String authToken) {
         //return null, if there is no internet connection
         if(!isNetworkAvailable()) return null;
 
         String jsonString = getJSON(firebaseURL + "/users/" + uid + ".json" + "?auth=" + authToken);
 
-        Log.d("Firebase - pschm", "JSON-String " + jsonString);
         //return empty null, if JSON is empty
         if (jsonString.equals("")) return null;
 
@@ -576,7 +456,6 @@ public class Firebase {
             user.setAltitude(reader.getDouble("altitude"));
             user.setLatitude(reader.getDouble("latitude"));
             user.setLongitude(reader.getDouble("longitude"));
-//            user.setUsingSchedule(reader.getBoolean("usingSchedule"));
 
             //Wenn Nutzer einen Studiengang hat, dann setze ihn
             if (reader.has("course")) {
@@ -595,128 +474,6 @@ public class Firebase {
         return user;
     }
 
-
-    /**
-     * Requests all useres from firebase with valid locations and returns them with their
-     * location data in an ArrayList. Users with expired location data will be ignored.
-     *
-     * @param authToken
-     * @return all active useres with their location data
-     */
-    public static ArrayList<User> getAllActiveUsers(String authToken) {
-        ArrayList<User> userList = new ArrayList<>();
-
-        //return empty ArrayList, if there is no internet connection
-        if(!isNetworkAvailable()) return userList;
-
-        final long date = generateCurrentDate();
-        String jsonString = getJSON(firebaseURL + "/users.json" + "?orderBy=\"expirationDate\"&startAt=" + date + "&auth=" + authToken);
-
-        //return empty ArrayList, if JSON is empty
-        if (jsonString.equals("")) return userList;
-
-        try {
-            JSONObject reader = new JSONObject(jsonString);
-            JSONArray allUIDs = reader.names();
-
-            for (int i = 0; i < allUIDs.length(); i++) {
-                String userUid = allUIDs.getString(i);
-                JSONObject userJSON = reader.getJSONObject(userUid);
-
-                User myUser = new User(userUid, userJSON.getString("name"));
-                myUser.setAltitude(userJSON.getDouble("altitude"));
-                myUser.setLatitude(userJSON.getDouble("latitude"));
-                myUser.setLongitude(userJSON.getDouble("longitude"));
-                myUser.setUsingSchedule(userJSON.getBoolean("usingSchedule"));
-
-                if (userJSON.has("course")) {
-                    String courseString = userJSON.getString("course");
-                    myUser.setCourse(Course.valueOf(courseString));
-                }
-
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(dateFormat.parse("" + userJSON.getLong("expirationDate")));
-                myUser.setExpirationDate(cal);
-
-                userList.add(myUser);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return userList;
-    }
-
-
-    // TODO code sichern und löschen @Christopher
-//    /**
-//     * Requests all users with an activated schedule, looks for their current appointment and puts
-//     * the user and the location of the current appointment in an ArrayList.
-//     *
-//     * @param authToken
-//     * @return Arraylist with the appointments of all scheduled users.
-//     */
-//    public static ArrayList<User> getAllScheduledUsers(String authToken) {
-//        ArrayList<User> userList = new ArrayList<>();
-//
-//        //return empty ArrayList, if there is no internet connection
-//        if(!isNetworkAvailable()) return userList;
-//
-//        String jsonString = getJSON(firebaseURL + "/users.json" + "?orderBy=\"usingSchedule\"&startAt=" + true + "&auth=" + authToken);
-//        //return empty ArrayList, if JSON is empty
-//        if (jsonString.equals("")) return userList;
-//
-//        try {
-//            JSONObject reader = new JSONObject(jsonString);
-//            JSONArray allUIDs = reader.names();
-//
-//            for (int i = 0; i < allUIDs.length(); i++) {
-//                String userUid = allUIDs.getString(i);
-//                JSONObject userJSON = reader.getJSONObject(userUid);
-//                User myUser = new User(userUid, userJSON.getString("name"));
-//
-//                //Determine the current Appointment
-//                ArrayList<Appointment> appointments = getAppointments(userUid, authToken);
-//                Appointment currentAppointment = null;
-//                long currentDate = generateCurrentDate();
-//                for (Appointment each : appointments) {
-//                    if (each.getFormatedStartDate() <= currentDate &&
-//                            each.getFormatedEndDate() >= currentDate) {
-//                        currentAppointment = each;
-//                        break;
-//                    }
-//
-//                }
-//
-//                //Add user with current Appointment to ArrayList
-//                if (currentAppointment != null) {
-//                    myUser.setAltitude(currentAppointment.getRoom().getAltitude());
-//                    myUser.setLatitude(currentAppointment.getRoom().getLatitude());
-//                    myUser.setLongitude(currentAppointment.getRoom().getLongitude());
-//                    myUser.setUsingSchedule(true);
-//
-//                    if (userJSON.has("course")) {
-//                        String courseString = userJSON.getString("course");
-//                        myUser.setCourse(Course.valueOf(courseString));
-//                    }
-//
-//                    myUser.setExpirationDate(currentAppointment.getEndDate());
-//
-//                    userList.add(myUser);
-//                } else {
-//                    continue;
-//                }
-//
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return userList;
-//    }
-
     /**
      * Adds the UID of your friend to your friendlist in firebase.
      *
@@ -726,6 +483,7 @@ public class Firebase {
     public static void addUserToFriendlist(String myUID, String friendsUID) {
         //return, if there is no internet connection
         if(!isNetworkAvailable()) return;
+
         database.child("friendlists").child(myUID).child(friendsUID).setValue(true);
     }
 
@@ -748,7 +506,7 @@ public class Firebase {
      *
      * @param uid       UID of the friendlist's owner
      * @param authToken token of the friendlist's owner
-     * @return
+     * @return String Array with all UIDs of your friends
      */
     public static ArrayList<String> getFriendlist(String uid, String authToken) {
 
@@ -780,6 +538,13 @@ public class Firebase {
 
     }
 
+    /**
+     * Builds an {@link User} ArrayList containing all friends from {@link #getFriendlist(String, String)}
+     *
+     * @param uid       UID of the friendlist's owner
+     * @param authToken token of the friendlist's owner
+     * @return {@link User} ArrayList containing all friends from {@link #getFriendlist(String, String)}
+     */
     public static ArrayList<User> getAllFriends(String uid, String authToken){
         ArrayList<User> allFriends = new ArrayList<User>();
 
@@ -803,6 +568,8 @@ public class Firebase {
 
     /**
      * Makes a GET request to Firebase and returns a JSON
+     *
+     * @param urlGet The string from which a JSON is requested
      *
      * @return JSON-String
      */
@@ -843,8 +610,9 @@ public class Firebase {
                         try {
                             sem.release();
                         } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        ;
+
                     }
 
                     conn.disconnect();
@@ -861,11 +629,17 @@ public class Firebase {
         try {
             sem.acquire();
         } catch (Exception e) {
+            e.printStackTrace();
         }
-        ;
+
         return json.toString();
     }
 
+    /**
+     * Checks if the smartphone is connected to a network.
+     *
+     * @return true, if there is a network connection
+     */
     public static boolean  isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) MainActivity.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
