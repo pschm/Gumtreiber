@@ -1,9 +1,5 @@
 package de.psst.gumtreiber.data;
 
-import android.annotation.SuppressLint;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 import androidx.annotation.Nullable;
 
