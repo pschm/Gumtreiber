@@ -17,7 +17,6 @@ import de.psst.gumtreiber.data.UserDataSync;
 public class FriendsViewModel extends AndroidViewModel {
 
     private String uid;
-    private String token;
 
     //private MutableLiveData<List<String>> friends = new MutableLiveData<>();
     private List<User> friendList; //Local copy of firendlist; No need to fetch the whole list on add or deletion
@@ -25,8 +24,6 @@ public class FriendsViewModel extends AndroidViewModel {
     public FriendsViewModel(@NonNull Application application) {
         super(application);
         uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        token = UserDataSync.getUserToken();
-
         friendList = getOrCreateFriends();
     }
 
@@ -36,7 +33,7 @@ public class FriendsViewModel extends AndroidViewModel {
 
     private List<User> getOrCreateFriends() {
         //Firebase friendList
-        return new ArrayList<>(Objects.requireNonNull(Firebase.getAllFriends(uid, token)));
+        return new ArrayList<>(Objects.requireNonNull(Firebase.getAllFriends(uid, UserDataSync.getUserToken())));
     }
 
     /**

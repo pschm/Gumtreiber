@@ -40,8 +40,10 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
 
-            android:layout_alignTop="@+id/circle_image2"
-            android:layout_marginTop="6dp"
+            android:layout_alignStart="@+id/circle_image"
+            android:layout_alignTop="@+id/circle_image"
+            android:layout_alignEnd="@+id/circle_image"
+
             android:text="R"
             android:textAlignment="center"
             android:textColor="@color/colorGrayFont"
@@ -54,9 +56,9 @@
             android:layout_height="wrap_content"
 
             android:layout_below="@+id/txtR"
-            android:layout_alignBottom="@+id/circle_image2"
-            android:layout_marginTop="-3dp"
-            android:layout_marginBottom="25dp"
+            android:layout_alignStart="@+id/circle_image"
+            android:layout_alignBottom="@+id/circle_image"
+            android:layout_toStartOf="@+id/txtStartName"
             android:text="3.100"
             android:textAlignment="center"
             android:textColor="@color/colorGrayFont"

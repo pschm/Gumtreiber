@@ -28,7 +28,7 @@ public class SettingsManipulatorCourse extends SettingsManipulatorFragment {
 
         spinner.setVisibility(View.VISIBLE);
         spinner.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, Course.getAllCourses()));
-        spinner.setSelection(model.getCourse().ordinal());
+        spinner.setSelection(setingsModel.getCourse().ordinal());
 
     }
 
@@ -40,9 +40,9 @@ public class SettingsManipulatorCourse extends SettingsManipulatorFragment {
                 Course course = Course.values()[spinner.getSelectedItemPosition()];
 
                 // course not changed
-                if (model.getCourse().equals(course)) return true;
+                if (setingsModel.getCourse().equals(course)) return true;
 
-                model.setCourse(course);
+                setingsModel.setCourse(course);
 
                 Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show();
                     activity.onBackPressed();

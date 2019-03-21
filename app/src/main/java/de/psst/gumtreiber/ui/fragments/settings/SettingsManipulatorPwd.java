@@ -101,7 +101,9 @@ public class SettingsManipulatorPwd extends SettingsManipulatorFragment {
                                                     //Wenn Änderung erfolgreich, alles supi. Zurück zum vorherigem Menü
                                                     if(task.isSuccessful()) {
                                                         Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show();
-                                                        //TODO neues pwd bei App-Neustart in feld siehe Email!
+
+                                                        loginModel.setPassword(txtUserInput1.getText().toString());
+
                                                         activity.onBackPressed();
 
                                                     } else {
