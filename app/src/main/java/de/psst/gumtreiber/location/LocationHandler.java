@@ -3,9 +3,11 @@ package de.psst.gumtreiber.location;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -142,6 +144,16 @@ public class LocationHandler implements Application.ActivityLifecycleCallbacks, 
                 l.onLocationChanged(location);
             }
         }
+    }
+
+    /**
+     * Check if the location detection via GPS is enabled
+     *
+     * @return true, if the location detection via GPS is enabled
+     */
+    public boolean isGpsEnabled() {
+        final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     /**
