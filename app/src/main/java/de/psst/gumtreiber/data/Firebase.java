@@ -1,5 +1,6 @@
 package de.psst.gumtreiber.data;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -42,15 +43,18 @@ public class Firebase {
     private static final String firebaseURL = "https://gumtreiber-1fb84.firebaseio.com";
 
     private static final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+    @SuppressLint("SimpleDateFormat")
     private static DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    @SuppressLint("SimpleDateFormat")
     private static DateFormat timeFormat = new SimpleDateFormat("HHmm");
 
 
     /**
-     * Creates a new User in the database and initializes it's userdata.
+     * Creates a new User in the database and initializes it's location.
      * If the user already exists, the name is updated.
      *
-     * @param uid  The user id of the user
+     * @param uid  The uid of the user
      * @param name name of the user
      */
     public static void createUser(String uid, String name) {
@@ -63,8 +67,8 @@ public class Firebase {
     /**
      * Updates the location of the user in firebase.
      *
-     * @param user
-     * @param location
+     * @param user An instance of the currently logged in {@link FirebaseUser}
+     * @param location The new {@link Location} which will be used as the current location
      */
     public static void setCurrentLocation(FirebaseUser user, Location location) {
         //return, if there is no internet connection
@@ -76,11 +80,12 @@ public class Firebase {
 
     /**
      * Updates the location of the given user in firebase.
+     * This method does not check, whether there is an active network connection.
      *
-     * @param uid
-     * @param latitude
-     * @param longitude
-     * @param altitude
+     * @param uid The uid of the user
+     * @param latitude The latitude of the new location
+     * @param longitude The longitude of the new location
+     * @param altitude The altitude of the new location
      */
     private static void setCurrentLocationUnsafe(String uid, double latitude, double longitude, double altitude) {
         long expirationDate = generateExpirationDate();
@@ -116,11 +121,9 @@ public class Firebase {
      * Adds an appointment to the users schedule in firebase. Keep in mind, that you have to make
      * sure, that the added appointments are consistent. That means, there shouldn't be any
      * overlapping appointments.
-     * Also, you need to use activateSchedule() so that the schedule is actually used for a
-     * virtual user on the map.
      *
-     * @param uid
-     * @param appointment
+     * @param uid The uid of the {@link User}
+     * @param appointment The {@link Appointment} which will be added to the user's schedule
      */
     public static void addAppointmentToSchedule(String uid, Appointment appointment) {
 
@@ -141,8 +144,8 @@ public class Firebase {
     /**
      * Deletes the given appointment from the user's schedule in firebase
      *
-     * @param uid
-     * @param appointment
+     * @param uid The uid of the {@link User}
+     * @param appointment The {@link Appointment} which will be removed from the user's schedule
      */
     public static void deleteAppointment(String uid, Appointment appointment) {
         //return, if there is no internet connection
@@ -202,7 +205,7 @@ public class Firebase {
 
     /**
      * Generates an expiration date for the location data in the form of yyyyMMddHHmmss.
-     * The lifetime of the expiration date is determined by the lifetimeMinutes constant.
+     * The lifetime of the expiration date is determined by the {@link #lifetimeMinutes} constant.
      *
      * @return expiration date in the form of yyyyMMddHHmmss
      */
@@ -224,7 +227,11 @@ public class Firebase {
         return date;
     }
 
-    //TODO Javadoc
+    /**
+     * Generates the current date in the form of HHmm.
+     *
+     * @return date in the form of HHmm
+     */
     private static int generateCurrentTime() {
         Calendar cal = Calendar.getInstance();
         int time = Integer.parseInt(timeFormat.format(cal.getTime()));
@@ -233,9 +240,10 @@ public class Firebase {
 
     /**
      * Activates the schedule of the user. By doing so, the user will appear as a bot on the map,
-     * controlled by their schedule
+     * controlled by their schedule. This is done by setting the user's expiration date to the
+     * current date, which causes the program to look for appointments.
      *
-     * @param uid
+     * @param uid The uid of the {@link User}
      */
     public static void activateSchedule(String uid) {
         //return, if there is no internet connection
@@ -246,8 +254,9 @@ public class Firebase {
 
     /**
      * By deactivating the schedule, only the current location data is considered for the user.
+     * This is done by setting the expiration date {@link #lifetimeMinutes} in the future
      *
-     * @param uid
+     * @param uid The uid of the {@link User}
      */
     public static void deactivateSchedule(String uid) {
         //return, if there is no internet connection
@@ -295,6 +304,12 @@ public class Firebase {
                     userReference.setLongitude(currentAppointment.getRoom().getLongitude());
                     userReference.setLatitude(currentAppointment.getRoom().getLatitude());
                     userReference.setExpirationDate(currentAppointment.getEndDate());
+                } else {
+                    //Use location data from firebase
+                    userReference.setAltitude(each.getAltitude());
+                    userReference.setLatitude(each.getLatitude());
+                    userReference.setLongitude(each.getLongitude());
+                    userReference.setExpirationDate(each.getExpirationDate());
                 }
             } else {
                 //Use location data from firebase
@@ -370,7 +385,7 @@ public class Firebase {
      * Requests all useres from firebase and returns them with their location data in an
      * ArrayList.
      *
-     * @param authToken
+     * @param authToken The token which authenticates the user
      * @return all useres with their location data
      */
     public static ArrayList<User> getAllUsers(String authToken) {
@@ -416,7 +431,13 @@ public class Firebase {
         return userList;
     }
 
-
+    /**
+     * Returns the userdata from the user with the given uid
+     *
+     * @param uid The uid of the {@link User}
+     * @param authToken The token which authenticates the user
+     * @return userdata from the user with the given uid
+     */
     public static User getUser(String uid, String authToken) {
         //return null, if there is no internet connection
         if(!isNetworkAvailable()) return null;
@@ -485,7 +506,7 @@ public class Firebase {
      *
      * @param uid       UID of the friendlist's owner
      * @param authToken token of the friendlist's owner
-     * @return
+     * @return String Array with all UIDs of your friends
      */
     public static ArrayList<String> getFriendlist(String uid, String authToken) {
 
@@ -517,6 +538,13 @@ public class Firebase {
 
     }
 
+    /**
+     * Builds an {@link User} ArrayList containing all friends from {@link #getFriendlist(String, String)}
+     *
+     * @param uid       UID of the friendlist's owner
+     * @param authToken token of the friendlist's owner
+     * @return {@link User} ArrayList containing all friends from {@link #getFriendlist(String, String)}
+     */
     public static ArrayList<User> getAllFriends(String uid, String authToken){
         ArrayList<User> allFriends = new ArrayList<User>();
 
@@ -582,8 +610,9 @@ public class Firebase {
                         try {
                             sem.release();
                         } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        ;
+
                     }
 
                     conn.disconnect();
@@ -600,11 +629,17 @@ public class Firebase {
         try {
             sem.acquire();
         } catch (Exception e) {
+            e.printStackTrace();
         }
-        ;
+
         return json.toString();
     }
 
+    /**
+     * Checks if the smartphone is connected to a network.
+     *
+     * @return true, if there is a network connection
+     */
     public static boolean  isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) MainActivity.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
