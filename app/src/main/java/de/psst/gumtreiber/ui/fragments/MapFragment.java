@@ -1,6 +1,8 @@
 package de.psst.gumtreiber.ui.fragments;
 
 import android.graphics.Color;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -87,32 +89,38 @@ public class MapFragment extends Fragment {
      * and initialization of the MapView
      */
     private void initListeners() {
-        // map initialized
-        onMapInitializedListener = () -> {
-            if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
-            else Log.d("MapFrag.", "other Thread.");
-            hideLoadingScreen();
-        }; //this::hideLoadingScreen;
-        mapControl.addOnMapInitializedListener(onMapInitializedListener);
+        // needs to run in an async task to wait for the location handler
+        AsyncTask.execute(() -> {
+            // map initialized
+            onMapInitializedListener = () -> {
+                if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
+                else Log.d("MapFrag.", "other Thread.");
+                hideLoadingScreen();
+            }; //this::hideLoadingScreen;
+            mapControl.addOnMapInitializedListener(onMapInitializedListener);
 
-        // current user location
-        LocationHandler lh = activity.getLocationHandler();
-        // TODO lh.getCurrentLocation(); --> ist momentan null
-        lh.addOnLocationChangedListener(mapControl::updateCurrentUserLocation);
+            // current user location
+            LocationHandler lh = activity.getLocationHandler();
+            Location h = null;
+            // wait to receive a location, if GPS and updates are enabled
+            if (lh.isGpsEnabled() && lh.updatesEnabled())
+                while (h == null) h = lh.getCurrentLocation();
+            mapControl.updateCurrentUserLocation(h);
 
-        // start listening to Firebase updates
-        // TODO call updateFriends / updateUsers if uds has data (getter needed)
-        // Firebase updates
-        onUpdateReceivedListener = (userList, friendList) -> {
-            ArrayList<AbstractUser> arrayList;
+            // start listening to Firebase updates
+            // TODO call updateFriends / updateUsers if uds has data (getter needed)
+            // Firebase updates
+            onUpdateReceivedListener = (userList, friendList) -> {
+                ArrayList<AbstractUser> arrayList;
 
-            if (userList == null || userList.isEmpty()) arrayList = new ArrayList<>();
-            else arrayList = new ArrayList<>(userList);
+                if (userList == null || userList.isEmpty()) arrayList = new ArrayList<>();
+                else arrayList = new ArrayList<>(userList);
 
-            mapControl.updateFriends(friendList);
-            mapControl.updateUsers(arrayList);
-        };
-        activity.getUds().addOnUpdateReceivedListener(onUpdateReceivedListener);
+                mapControl.updateFriends(friendList);
+                mapControl.updateUsers(arrayList);
+            };
+            activity.getUds().addOnUpdateReceivedListener(onUpdateReceivedListener);
+        });
     }
 
     /**

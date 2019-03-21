@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import androidx.annotation.Nullable;
 import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.Bot;
 import de.psst.gumtreiber.data.Coordinate;
@@ -241,7 +242,12 @@ public class MapControl {
         friends = friendList;
     }
 
-    public void updateCurrentUserLocation(Location location) {
+    /**
+     * Update the position of the current active user
+     *
+     * @param location current location of the user, if null the user is positioned outside the map
+     */
+    public void updateCurrentUserLocation(@Nullable Location location) {
         if (location != null)
             currentUserLocation.setLocation(location.getLatitude(), location.getLongitude());
     }
