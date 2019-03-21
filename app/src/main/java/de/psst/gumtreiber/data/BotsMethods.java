@@ -1,5 +1,6 @@
 package de.psst.gumtreiber.data;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 import android.util.Log;
 
@@ -19,18 +20,45 @@ import java.util.Calendar;
 
 public class BotsMethods {
 
+    @SuppressLint("SimpleDateFormat")
     private static DateFormat timeFormat = new SimpleDateFormat("HHmm");
     private static final String firebaseURL = "https://gumtreiber-1fb84.firebaseio.com";
     private static final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
+    /**
+     * Creates a bot with the given name and botID. It's your responsibility to check if a id is
+     * already used, hen you use this method. If you input a used id, you will overwrite the name
+     * of the bot.
+     *
+     * @param botID UID of the bot
+     * @param name name of the bot. Will be displayed on the map
+     */
     public static void createBot(String botID, String name) {
         database.child("bots").child(botID).child("name").setValue(name);
     }
 
+    /**
+     * Adds a routine to the bot
+     *
+     * @param botID id of the bot
+     * @param startTime start time of the routine in the form of HHmm
+     * @param endTime end time of the routine in the form of HHmm
+     * @param location location of the routine
+     */
     public static void addRoutineToBot(String botID, int startTime, int endTime, Location location) {
         addRoutineToBot(botID,startTime,endTime,location.getLatitude(),location.getLongitude(), location.getAltitude());
     }
 
+    /**
+     * Adds a routine to the bot
+     *
+     * @param botID id of the bot
+     * @param startTime start time of the routine in the form of HHmm
+     * @param endTime end time of the routine in the form of HHmm
+     * @param latitude latitude of the routine
+     * @param longitude longitude of the routine
+     * @param altitude altitude of the routine
+     */
     public static void addRoutineToBot(String botID, int startTime, int endTime, double latitude, double longitude, double altitude) {
 
         database.child("bots").child(botID).child("routines").child(""+startTime).child("startTime").setValue(startTime);
@@ -40,6 +68,12 @@ public class BotsMethods {
         database.child("bots").child(botID).child("routines").child(""+startTime).child("altitude").setValue(altitude);
     }
 
+    /**
+     * Builds an ArrayList with all active bots and their current location data.
+     *
+     * @param authToken The token which authenticates the user
+     * @return ArrayList with all active bots and their current location data
+     */
     public static ArrayList<Bot> getActiveBots(String authToken) {
         String jsonString = Firebase.getJSON(firebaseURL + "/bots" + ".json"  + "?auth=" + authToken);
 
@@ -94,6 +128,11 @@ public class BotsMethods {
         return activeBots;
     }
 
+    /**
+     * Generates the current date in the form of HHmm.
+     *
+     * @return date in the form of HHmm
+     */
     private static int getCurrentTime(){
         Calendar cal = Calendar.getInstance();
         int date = Integer.parseInt(timeFormat.format(cal.getTime()));
