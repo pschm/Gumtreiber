@@ -71,7 +71,7 @@ public class FindFriendsFragment extends Fragment {
         userList.add(new User("ABC", "Prof. Flitvikor"));
         userList.add(new User("ABC", "Die bittere Birgit"));
         */
-        adapter = new RecyclerAdapter(this, new ArrayList<>(model.getFilterdUserList()));
+        adapter = new RecyclerAdapter(this, new ArrayList<>(model.getFilteredUserList()));
         recyclerView.setAdapter(adapter);
 
     }

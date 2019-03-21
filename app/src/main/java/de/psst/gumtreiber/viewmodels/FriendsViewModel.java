@@ -17,27 +17,32 @@ import de.psst.gumtreiber.data.UserDataSync;
 public class FriendsViewModel extends AndroidViewModel {
 
     private String uid;
-    private String token;
 
     //private MutableLiveData<List<String>> friends = new MutableLiveData<>();
-    private List<User> friendList; //Local copy of firendlist; No need to fetch the whole list on add or deletion
+    //bth Lists are local Copies and need to be Updated manually an add, remove, ect.
+    private List<User> friendList;
 
     public FriendsViewModel(@NonNull Application application) {
         super(application);
         uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        token = UserDataSync.getUserToken();
-
-        friendList = getOrCreateFriends();
+        fetchFriendList();
     }
 
     public List<User> getFriendListRef() {
         return friendList;
     }
 
-    private List<User> getOrCreateFriends() {
+
+    //FriendList of User Objects
+    private List<User> getOrCreateFriendList() {
         //Firebase friendList
-        return new ArrayList<>(Objects.requireNonNull(Firebase.getAllFriends(uid, token)));
+        return new ArrayList<>(Objects.requireNonNull(Firebase.getAllFriends(uid, UserDataSync.getUserToken())));
     }
+
+    private void fetchFriendList() {
+        friendList = getOrCreateFriendList();
+    }
+
 
     /**
      * Delets a user from FriendList
@@ -58,6 +63,7 @@ public class FriendsViewModel extends AndroidViewModel {
         //Add to Firebase
         Firebase.addUserToFriendlist(uid, user.getUid());
         friendList.add(user);
+
     }
 
     //Getting and Filtering UserList
@@ -77,11 +83,10 @@ public class FriendsViewModel extends AndroidViewModel {
      */
     private List<User> filterUserList(List<User> userList) {
         //filter the Friends out of it
-        for (int i = userList.size() - 1; i >= 0; i--) {
-            if (Objects.requireNonNull(friendList.contains(userList.get(i).getUid())) || userList.get(i).getUid().equals(uid)) {
-                userList.remove(i);
-            }
-        }
+
+        userList.removeAll(friendList);
+        userList.remove(Firebase.getUser(uid, UserDataSync.getUserToken()));
+
         return userList;
     }
 
@@ -89,7 +94,7 @@ public class FriendsViewModel extends AndroidViewModel {
      * Returns a the userList without the useres who are already in the friendList
      * @return the filtered userList
      */
-    public List<User> getFilterdUserList() {
+    public List<User> getFilteredUserList() {
         return filterUserList(getUserList());
     }
 
