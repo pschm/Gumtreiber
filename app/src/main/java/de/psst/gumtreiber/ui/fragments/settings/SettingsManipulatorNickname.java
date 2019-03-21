@@ -11,10 +11,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import de.psst.gumtreiber.R;
+import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.ui.LoginActivity;
 import de.psst.gumtreiber.ui.RegisterActivity;
 import de.psst.gumtreiber.viewmodels.SettingsViewModel;
@@ -58,13 +60,17 @@ public class SettingsManipulatorNickname extends SettingsManipulatorFragment {
 
                 }
 
-                RegisterActivity.updateDisplayName(FirebaseAuth.getInstance().getCurrentUser(), newName).addOnCompleteListener(new OnCompleteListener<Void>() {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if(currentUser == null) throw new RuntimeException("Trying to change nickname when current user is null!");
+
+                RegisterActivity.updateDisplayName(currentUser, newName).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         //Wenn Änderung erfolgreich, alles supi. Zurück zum vorherigem Menü
                         if(task.isSuccessful()) {
+                            Firebase.changeName(currentUser.getUid(), currentUser.getDisplayName());
                             Toast.makeText(activity, getString(R.string.update_successful), Toast.LENGTH_SHORT).show();
-                            //TODO updated das auch bei anderen nutzern "sofort" --> geht momentan gar nischt!
+                            //TODO updated das auch bei anderen nutzern "sofort"? Oder ist uns das egal?
                             activity.onBackPressed();
 
                         } else {
