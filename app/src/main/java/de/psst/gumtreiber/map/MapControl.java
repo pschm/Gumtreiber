@@ -162,13 +162,6 @@ public class MapControl {
                 // u is the first user in this sector
                 if (u.getMarker() == null || !initialized)
                     u.setMarker(new MovableMarker(activity, u.getName()));
-                u.getMarker().changeLabel(u.getName()); // needed if a user moves out of a group
-
-                // change the look of the marker, if the user is a friend or bot
-                if (u instanceof Bot) u.getMarker().changeLook(MovableMarker.Look.BOT);
-                if (friends.contains(u.getUid())) {
-                    u.getMarker().changeLook(MovableMarker.Look.FRIEND);
-                }
 
                 map[(int) pos.x][(int) pos.y] = u;
             } else if (sector.getUid() != null) {
@@ -186,10 +179,9 @@ public class MapControl {
                 // create new "User-Group"
                 User mergedUsers = new User(null, "2");
                 mergedUsers.setMarker(sector.getMarker());
-                mergedUsers.getMarker().changeLabel("2");
-                mergedUsers.getMarker().changeLook(MovableMarker.Look.DEFAULT);
                 mergedUsers.setLatitude(sector.getLatitude());
                 mergedUsers.setLongitude(sector.getLongitude());
+                mergedUsers.getMarker().setAlreadyDrawn(false); // merged users should not move
 
                 // save merge user to the grid
                 map[(int) pos.x][(int) pos.y] = mergedUsers;
@@ -209,12 +201,28 @@ public class MapControl {
                 // increase the user counter
                 String label = "" + (Integer.parseInt(sector.getName()) + 1);
                 sector.setName(label);
-                sector.getMarker().changeLabel(label);
             }
         }
 
         // add all mergedUsers to the list
         users.addAll(mergedUserList);
+
+        // update label names and color
+        for (AbstractUser u : users) {
+            // set marker label
+            u.getMarker().changeLabel(u.getName());
+
+            // change color of the marker depending on friend/bot/other
+            if (u.getUid() == null)
+                u.getMarker().changeLook(MovableMarker.Look.DEFAULT);
+            else if (u instanceof Bot)
+                u.getMarker().changeLook(MovableMarker.Look.BOT);
+            else if (friends.contains(u.getUid()))
+                u.getMarker().changeLook(MovableMarker.Look.FRIEND);
+            else
+                u.getMarker().changeLook(MovableMarker.Look.DEFAULT);
+        }
+
         return users;
     }
 
