@@ -105,11 +105,10 @@ public class MapFragment extends Fragment {
             // wait to receive a location, if GPS and updates are enabled
             if (lh.isGpsEnabled() && lh.updatesEnabled())
                 while (h == null) h = lh.getCurrentLocation();
+            else Log.w("MapFragment pschm", "GPS is deactivated");
             mapControl.updateCurrentUserLocation(h);
 
             // start listening to Firebase updates
-            // TODO call updateFriends / updateUsers if uds has data (getter needed)
-            // Firebase updates
             onUpdateReceivedListener = (userList, friendList) -> {
                 ArrayList<AbstractUser> arrayList;
 

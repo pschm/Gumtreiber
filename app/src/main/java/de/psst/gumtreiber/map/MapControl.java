@@ -73,7 +73,7 @@ public class MapControl {
             pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
         } else {
             pos = gpsToMap(currentUserLocation);
-            Log.d(CLASS + USER, "user on the map!" + pos);
+            Log.d(CLASS + USER, "user on the map!" + pos + " GPS " + currentUserLocation);
         }
 
         mapView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -171,7 +171,10 @@ public class MapControl {
                 users.remove(u);
 
                 // hide label if existing
-                if (u.getMarker() != null) u.getMarker().setVisibility(false);
+                if (u.getMarker() != null) {
+                    u.getMarker().setVisibility(false);
+                    u.getMarker().setAlreadyDrawn(false);
+                }
 
                 // reduce index according to deleted users
                 i -= 2;
@@ -211,6 +214,9 @@ public class MapControl {
         for (AbstractUser u : users) {
             // set marker label
             u.getMarker().changeLabel(u.getName());
+
+            // make sure every marker is shown
+            u.getMarker().setVisibility(true);
 
             // change color of the marker depending on friend/bot/other
             if (u.getUid() == null)

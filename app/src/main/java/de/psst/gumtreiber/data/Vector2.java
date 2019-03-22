@@ -113,4 +113,12 @@ public class Vector2 {
         this.x = x;
         this.y = y;
     }
+
+    /**
+     * Set the position of the vector equal to the position of the given vector
+     * Note: the vector will not be copied
+     */
+    public void setLocation(Vector2 v) {
+        setLocation(v.x, v.y);
+    }
 }
