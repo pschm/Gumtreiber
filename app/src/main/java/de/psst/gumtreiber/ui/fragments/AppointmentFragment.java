@@ -42,6 +42,9 @@ public class AppointmentFragment extends Fragment {
     private CalendarViewModel model;
     private Spinner spinner;
 
+    private TextView tvStartDate, tvStartTime;
+    private TextView tvEndDate, tvEndTime;
+
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("E, dd.MM.yyyy");
     @SuppressLint("SimpleDateFormat")
@@ -71,6 +74,12 @@ public class AppointmentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //Find Views
+        tvStartDate = activity.findViewById(R.id.tv_start_date);
+        tvStartTime = activity.findViewById(R.id.tv_start_time);
+        tvEndDate = activity.findViewById(R.id.tv_end_date);
+        tvEndTime = activity.findViewById(R.id.tv_end_time);
 
         //Spinner aka DropDownMenu for the Rooms
         initSpinner();
@@ -106,9 +115,11 @@ public class AppointmentFragment extends Fragment {
      * Initiates the TextViews with Date & Time Pickers in a barbaric kind of way
      */
     private void initSpinner() {
+
         //Spinner for the Rooms
         spinner = activity.findViewById(R.id.spinn_room);
-        spinner.setAdapter(new ArrayAdapter<>(activity.getApplicationContext(), R.layout.spinner_item, Room.getAllRooms()));
+        spinner.setAdapter(new ArrayAdapter<>(activity.getApplicationContext(), R.layout.spinner_item, Room.getAllRooms())); //TODO getAllRooms() ggf probleme bei speichern?
+
     }
 
     //Building Date and Time Pickers
@@ -118,7 +129,6 @@ public class AppointmentFragment extends Fragment {
     private void initStartDatePickers() {
 
         //Termin Anfang
-        TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
         tvStartDate.setText(DATE_FORMAT.format(c.getTime()));
         tvStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,10 +141,10 @@ public class AppointmentFragment extends Fragment {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(activity,
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
-
                                 Calendar calendar = new GregorianCalendar(year, month, day);
                                 tvStartDate.setText(DATE_FORMAT.format(calendar.getTime()));
+
+                                tvEndDate.setText(DATE_FORMAT.format(calendar.getTime())); //Set end date to start date
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -142,7 +152,6 @@ public class AppointmentFragment extends Fragment {
         });
 
 
-        TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
         tvStartTime.setText("12:00");
         tvStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,10 +160,12 @@ public class AppointmentFragment extends Fragment {
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                                TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
-
                                 Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
                                 tvStartTime.setText(TIME_FORMAT.format(calendar.getTime()));
+
+                                //Set end time to start time plus one hour
+                                calendar.add(Calendar.HOUR_OF_DAY, 1);
+                                tvEndTime.setText(TIME_FORMAT.format(calendar.getTime()));
                             }
                         }, 12, 00, true);
                 timePickerDialog.show();
@@ -167,7 +178,6 @@ public class AppointmentFragment extends Fragment {
      */
     private void initEndDatePickers() {
         //Termin Ende
-        TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
         tvEndDate.setText(DATE_FORMAT.format(c.getTime()));
         tvEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,8 +190,6 @@ public class AppointmentFragment extends Fragment {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(activity,
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
-
                                 Calendar calendar = new GregorianCalendar(year, month, day);
                                 tvEndDate.setText(DATE_FORMAT.format(calendar.getTime()));
                             }
@@ -190,7 +198,6 @@ public class AppointmentFragment extends Fragment {
             }
         });
 
-        TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
         tvEndTime.setText("13:00");
         tvEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,8 +206,6 @@ public class AppointmentFragment extends Fragment {
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                                TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
-
                                 Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
                                 tvEndTime.setText(TIME_FORMAT.format(calendar.getTime()));
                             }
@@ -224,17 +229,11 @@ public class AppointmentFragment extends Fragment {
         Room room = Room.values()[spinner.getSelectedItemPosition()];
 
         //Start Date
-        TextView tvStartDate = activity.findViewById(R.id.tv_start_date);
-        TextView tvStartTime = activity.findViewById(R.id.tv_start_time);
-
         long startDate = formatDate(tvStartDate.getText().toString(), tvStartTime.getText().toString());
 
-
         //End Date
-        TextView tvEndDate = activity.findViewById(R.id.tv_end_date);
-        TextView tvEndTime = activity.findViewById(R.id.tv_end_time);
-
         long endDate = formatDate(tvEndDate.getText().toString(), tvEndTime.getText().toString());
+
         return new Appointment(startDate, endDate, room);
     }
 
@@ -260,7 +259,7 @@ public class AppointmentFragment extends Fragment {
 
         String day = date.substring(5, 7);
         String month = date.substring(8, 10);
-        String year = date.substring(11, 15);
+        String year = date.substring(11, 13);
 
         String hours = time.substring(0, 2);
         String minutes = time.substring(3, 5);
