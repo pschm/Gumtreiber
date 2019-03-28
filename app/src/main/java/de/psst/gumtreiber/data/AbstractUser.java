@@ -17,6 +17,11 @@ public abstract class AbstractUser {
     private double longitude;
     private double altitude;
 
+    /**
+     * User location on the map
+     */
+    private Vector2 position = new Vector2();
+
     //After this date the location data becomes invalid
     private Calendar expirationDate;
 
@@ -87,6 +92,13 @@ public abstract class AbstractUser {
         this.altitude = altitude;
     }
 
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector2 position) {
+        this.position = position;
+    }
 
     public Calendar getExpirationDate() {
         return expirationDate;
