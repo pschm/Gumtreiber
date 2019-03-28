@@ -33,7 +33,7 @@ public class MapControl {
     public final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022915, 7.562027);
     public final static Vector2 MAIN_BUILDING_MAP = new Vector2(278.54633f, 1203.9677f);
 
-    private final static int BOX_SIZE = 75;
+    private final static int BOX_SIZE = 30;
 
     private MapView mapView;
     private ArrayList<String> friends = new ArrayList<>();
@@ -72,30 +72,11 @@ public class MapControl {
         return mapView;
     }
 
-
-    private void setUpInitialZoomOnUser() {
-        Vector2 pos;
-//        Log.d(CLASS + USER, "W/H: "+map.getWidth()+"/"+map.getHeight());
-        if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
-            Log.d(CLASS + USER, "user NOT on the map!" + currentUserLocation);
-            pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
-        } else {
-            pos = gpsToMap(currentUserLocation);
-            Log.d(CLASS + USER, "user on the map!" + pos + " GPS " + currentUserLocation);
-        }
-
-        mapView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        mapView.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
-//        mapView.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
-    }
-
     /**
      * Update the user list and show the new filtered users on the mapView
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
-//        if (!initialized) setUpInitialZoomOnUser();
-
         // filter users according to the selected filters
         this.users = UserFilter.filterUsers(users);
 
@@ -130,7 +111,7 @@ public class MapControl {
      * Merge multiple geographically close users to a group
      * As well as add MovableMarkers to each user/group
      *
-     * @param boxSize distance before users are merged
+     * @param boxSize distance before users will be merged
      */
     private ArrayList<AbstractUser> buildUserGroups(ArrayList<AbstractUser> users, int boxSize) {
         // reduce gps coordinates to the area (GM)
@@ -138,13 +119,17 @@ public class MapControl {
         int ySize = (int) DELTA_LAT;
         Vector2 pos;
 
+        // adjust boxSize to x/y difference
+        int xBoxSize = boxSize;
+        int yBoxSize = boxSize * 2;
+
         if (activity == null) {
             Log.w("MapControl", "Activity is NULL!!");
             return new ArrayList<>();
         }
 
         // create a grid to detect close users
-        AbstractUser[][] map = new AbstractUser[xSize / boxSize][ySize / boxSize];
+        AbstractUser[][] map = new AbstractUser[xSize / xBoxSize][ySize / yBoxSize];
 
         // list for all merged users
         ArrayList<User> mergedUserList = new ArrayList<>();
@@ -163,10 +148,11 @@ public class MapControl {
 
             // transform user coordinates to the area
             pos = gpsToMap(new Coordinate(u.getLatitude(), u.getLongitude()));
+            u.getPosition().setLocation(pos);
 
             // calc grid position
-            pos.x /= boxSize;
-            pos.y /= boxSize;
+            pos.x /= xBoxSize;
+            pos.y /= yBoxSize;
 
             // load possible users already in this grid sector
             AbstractUser sector = map[(int) pos.x][(int) pos.y];
@@ -198,7 +184,14 @@ public class MapControl {
                 mergedUsers.setMarker(sector.getMarker());
                 mergedUsers.setLatitude(sector.getLatitude());
                 mergedUsers.setLongitude(sector.getLongitude());
-                mergedUsers.getMarker().setAlreadyDrawn(false); // merged users should not move
+//                mergedUsers.setPosition(sector.getPosition());
+                // set the location of the group in the middle of the grid
+                mergedUsers.getPosition().setLocation(
+                        pos.x * xBoxSize + xBoxSize / 2f,
+                        pos.y * yBoxSize + yBoxSize / 2f
+                );
+
+                mergedUsers.getMarker().setAlreadyDrawn(false); // merged users shouldn't move
 
                 // save merge user to the grid
                 map[(int) pos.x][(int) pos.y] = mergedUsers;

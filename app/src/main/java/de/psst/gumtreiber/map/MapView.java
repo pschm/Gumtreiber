@@ -94,7 +94,9 @@ public class MapView extends PhotoView {
             pos.setLocation(u.getLatitude(), u.getLongitude());
 
             // map the coordinate according to the Gumtreiber area
-            mapPos = mapControl.gpsToMap(pos);
+            mapPos = u.getPosition(); //  mapControl.gpsToMap(pos);
+
+//            Log.d(CLASS+USER, "N: "+ u.getName()+" - " +mapPos + " vs. " + u.getPosition());
 
             if (marker == null) {
                 Log.w(CLASS + USER, "WARNING: User without markers detected! (" + u.getName() + ")");
