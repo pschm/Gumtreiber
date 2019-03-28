@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.ui.MainActivity;
 
@@ -43,6 +44,10 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
     private Thread updateThread;
     private boolean allowRunning = true;
+
+    // last known user data
+    private ArrayList<AbstractUser> users = null;
+    private ArrayList<String> friends = null;
 
 
     /**
@@ -116,6 +121,22 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
         return userToken;
     }
 
+    /**
+     * @return the last known list of active users
+     */
+    @Nullable
+    public ArrayList<AbstractUser> getUsers() {
+        return users;
+    }
+
+    /**
+     * @return the last known list of friends of the current user
+     */
+    @Nullable
+    public ArrayList<String> getFriends() {
+        return friends;
+    }
+
     @Override
     public void run() {
         Log.d("UserDataSync", "Sync-Thread started!");
@@ -139,6 +160,9 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
                 ArrayList<String> friends = Firebase.getFriendlist(user.getUid(), userToken);
                 UserFilter.setFriendList(friends);
 
+                // save last known values
+                this.friends = friends;
+                this.users = new ArrayList<>(userList.values());
 
                 if(listeners != null) {
                     for(OnUpdateReceivedListener l: listeners) {

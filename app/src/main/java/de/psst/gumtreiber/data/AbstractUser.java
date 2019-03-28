@@ -1,5 +1,7 @@
 package de.psst.gumtreiber.data;
 
+import android.annotation.SuppressLint;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -10,7 +12,7 @@ public abstract class AbstractUser {
     private String uid;
     private String name;
 
-    //Location Data
+    //Location Data (GPS)
     private double latitude;
     private double longitude;
     private double altitude;
@@ -24,6 +26,7 @@ public abstract class AbstractUser {
     //marker to show the position on the map
     private MovableMarker marker;
 
+    @SuppressLint("SimpleDateFormat")
     private final static DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
     public AbstractUser(String uid, String name) {
