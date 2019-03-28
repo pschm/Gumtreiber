@@ -22,11 +22,14 @@ import androidx.fragment.app.Fragment;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.UserDataSync;
+import de.psst.gumtreiber.data.UserFilter;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapControl;
 import de.psst.gumtreiber.map.MapView;
 import de.psst.gumtreiber.map.PrisonControl;
 import de.psst.gumtreiber.ui.MainActivity;
+
+import static de.psst.gumtreiber.ui.MainActivity.STG_FRAGMENT_TAG;
 
 public class MapFragment extends Fragment {
     private View fragmentView;
@@ -49,6 +52,7 @@ public class MapFragment extends Fragment {
         activity.getUds().startUpdating();
 
         initMap();
+        initFilterMsg();
 
         return fragmentView;
     }
@@ -65,6 +69,24 @@ public class MapFragment extends Fragment {
         super.onStop();
         mapControl.removeOnMapInitializedListener(onMapInitializedListener);
         activity.getUds().removeOnUpdateReceivedListener(onUpdateReceivedListener);
+    }
+
+    /**
+     * initialize filter TextView
+     */
+    private void initFilterMsg() {
+        TextView filterMsg = fragmentView.findViewById(R.id.filterMsg);
+
+        if (UserFilter.filterActive()) filterMsg.setText(getString(R.string.filter_msg_text));
+        else filterMsg.setText("");
+
+
+        filterMsg.setOnClickListener(view ->
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, new SettingsFragment(), STG_FRAGMENT_TAG)
+                        .addToBackStack(null).commit()
+        );
     }
 
     /**

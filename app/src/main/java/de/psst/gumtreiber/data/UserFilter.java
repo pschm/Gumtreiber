@@ -54,4 +54,16 @@ public class UserFilter {
     public static void setFriendList(ArrayList<String> friendList) {
         UserFilter.friendList = friendList;
     }
+
+    /**
+     * @return true if any filter is active
+     */
+    public static boolean filterActive() {
+        return !FRIEND_FILTER ||
+                !BOT_FILTER ||
+                !NONE_FILTER ||
+                !INF_FILTER ||
+                !ING_FILTER ||
+                !PROF_FILTER;
+    }
 }

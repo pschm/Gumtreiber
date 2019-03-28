@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String MAP_FRAGMENT_TAG = "MAP_FRAGMENT";
     private static final String CAL_FRAGMENT_TAG = "CALENDAR_FRAGMENT";
     private static final String FND_FRAGMENT_TAG = "FRIEND_LIST_FRAGMENT";
-    private static final String STG_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
+    public static final String STG_FRAGMENT_TAG = "SETTINGS_FRAGMENT";
 
     //LocationState stuff
     private MainViewModel model;

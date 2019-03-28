@@ -100,4 +100,8 @@
     <string name="username_error_starts_with">Der Nutzername muss mit einem Buchstaben anfangen.</string>
     <string name="username_error_allowed_characters">Der Nutzername darf nur aus großen und kleinen Buchstaben sowie "-" und "_" bestehen.</string>
 
+
+    <!-- filterMsg -->
+    <string name="filter_msg_text">Ansicht ist gefiltert</string>
+
 </resources>
