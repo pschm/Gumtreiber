@@ -1,8 +1,6 @@
 package de.psst.gumtreiber.ui.fragments;
 
 import android.graphics.Color;
-import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -10,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,12 +22,13 @@ import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.UserDataSync;
 import de.psst.gumtreiber.data.UserFilter;
-import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.map.MapControl;
 import de.psst.gumtreiber.map.MapView;
 import de.psst.gumtreiber.map.PrisonControl;
 import de.psst.gumtreiber.ui.MainActivity;
 
+import static de.psst.gumtreiber.map.MapControl.MAIN_BUILDING_MAP;
+import static de.psst.gumtreiber.map.MapView.INITIAL_ZOOM;
 import static de.psst.gumtreiber.ui.MainActivity.STG_FRAGMENT_TAG;
 
 public class MapFragment extends Fragment {
@@ -97,13 +97,24 @@ public class MapFragment extends Fragment {
         mapView = fragmentView.findViewById(R.id.map);
         prisonView = fragmentView.findViewById(R.id.prison);
 
-        mapControl = new MapControl(mapView, activity, new PrisonControl(prisonView));
-
         // configure mapView
         mapView.setImageResource(R.mipmap.map);
         mapView.setMaximumScale(9f);
         mapView.setMediumScale(3f);
         mapView.setMinimumScale(2f);
+
+        // initialize zoom on MainBuilding
+        ViewTreeObserver vto = mapView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mapView.setScale(INITIAL_ZOOM, MAIN_BUILDING_MAP.x, MAIN_BUILDING_MAP.y, false);
+            }
+        });
+
+        // init mapControl
+        mapControl = new MapControl(mapView, activity, new PrisonControl(prisonView));
     }
 
     /**
@@ -111,36 +122,43 @@ public class MapFragment extends Fragment {
      * and initialization of the MapView
      */
     private void initListeners() {
-        // needs to run in an async task to wait for the location handler
-        AsyncTask.execute(() -> {
-            // map initialized
-            onMapInitializedListener = () -> {
-                if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
-                else Log.d("MapFrag.", "other Thread.");
-                hideLoadingScreen();
-            }; //this::hideLoadingScreen;
-            mapControl.addOnMapInitializedListener(onMapInitializedListener);
+        // map initialized
+        onMapInitializedListener = () -> {
+            if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
+            else Log.d("MapFrag.", "other Thread.");
+            hideLoadingScreen();
+        };
+        mapControl.addOnMapInitializedListener(onMapInitializedListener);
 
-            // current user location
-            LocationHandler lh = activity.getLocationHandler();
-            Location h = null;
-            // wait to receive a location, if GPS and updates are enabled
-            if (lh.isGpsEnabled() && lh.updatesEnabled())
-                while (h == null) h = lh.getCurrentLocation();
-            else Log.w("MapFragment pschm", "GPS is deactivated");
-            mapControl.updateCurrentUserLocation(h);
+        // start listening to Firebase updates
+        onUpdateReceivedListener = (userList, friendList) -> {
+            ArrayList<AbstractUser> arrayList;
 
-            // start listening to Firebase updates
-            onUpdateReceivedListener = (userList, friendList) -> {
-                ArrayList<AbstractUser> arrayList;
+            if (userList == null || userList.isEmpty()) arrayList = new ArrayList<>();
+            else arrayList = new ArrayList<>(userList);
 
-                if (userList == null || userList.isEmpty()) arrayList = new ArrayList<>();
-                else arrayList = new ArrayList<>(userList);
+            mapControl.updateFriends(friendList);
+            mapControl.updateUsers(arrayList);
+        };
+        activity.getUds().addOnUpdateReceivedListener(onUpdateReceivedListener);
 
-                mapControl.updateFriends(friendList);
-                mapControl.updateUsers(arrayList);
-            };
-            activity.getUds().addOnUpdateReceivedListener(onUpdateReceivedListener);
+        // wait for the layout to finish before updating markers
+        ViewTreeObserver vto = mapView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                // get possible available data
+                ArrayList<AbstractUser> users = activity.getUds().getUsers();
+                ArrayList<String> friends = activity.getUds().getFriends();
+
+                // if user data is available update immediately
+                if (users != null && friends != null) {
+                    mapControl.updateFriends(friends);
+                    mapControl.updateUsers(users);
+                }
+            }
         });
     }
 

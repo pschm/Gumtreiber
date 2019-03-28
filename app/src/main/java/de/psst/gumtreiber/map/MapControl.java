@@ -30,8 +30,8 @@ public class MapControl {
     private final static double DELTA_LAT = (MAX_LAT - MIN_LAT) * 1000000;
     private final static double DELTA_LONG = (MAX_LONG - MIN_LONG) * 1000000;
 
-    private final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022915, 7.562027);
-    private final static Vector2 MAIN_BUILDING_MAP = new Vector2(278.54633f, 1203.9677f);
+    public final static Coordinate MAIN_BUILDING_GPS = new Coordinate(51.022915, 7.562027);
+    public final static Vector2 MAIN_BUILDING_MAP = new Vector2(278.54633f, 1203.9677f);
 
     private final static int BOX_SIZE = 75;
 
@@ -45,6 +45,14 @@ public class MapControl {
 
     private ArrayList<OnMapInitialized> listeners = new ArrayList<>();
 
+    /**
+     * Initialize the MapControl which calculates GPS in map coordinates and
+     * manages user and friend lists.
+     *
+     * @param map           MapView which is used to display the markers
+     * @param activity      activity holding the MapView / PrisonView
+     * @param prisonControl PrisonControl which is used to display users not in the area of the map
+     */
     public MapControl(MapView map, Activity activity, PrisonControl prisonControl) {
         this.mapView = map;
         this.activity = activity;
@@ -86,7 +94,7 @@ public class MapControl {
      * @param users new user list
      */
     public void updateUsers(ArrayList<AbstractUser> users) {
-        if (!initialized) setUpInitialZoomOnUser();
+//        if (!initialized) setUpInitialZoomOnUser();
 
         // filter users according to the selected filters
         this.users = UserFilter.filterUsers(users);
@@ -110,19 +118,25 @@ public class MapControl {
     }
 
     /**
+     * Update the friend list which is used to highlight friends
+     *
+     * @param friendList new friend list
+     */
+    public void updateFriends(ArrayList<String> friendList) {
+        friends = friendList;
+    }
+
+    /**
      * Merge multiple geographically close users to a group
      * As well as add MovableMarkers to each user/group
      *
      * @param boxSize distance before users are merged
      */
-    public ArrayList<AbstractUser> buildUserGroups(ArrayList<AbstractUser> users, int boxSize) {
+    private ArrayList<AbstractUser> buildUserGroups(ArrayList<AbstractUser> users, int boxSize) {
         // reduce gps coordinates to the area (GM)
         int xSize = (int) DELTA_LONG;
         int ySize = (int) DELTA_LAT;
         Vector2 pos;
-
-        // TODO wenn merge, dann marker sagen, dass er setPosition nutzen soll
-        // TODO rasterkoordinaten
 
         if (activity == null) {
             Log.w("MapControl", "Activity is NULL!!");
@@ -235,6 +249,8 @@ public class MapControl {
     /**
      * Calculates the given coordinate from GPS Position to mapView coordinates
      * and returns it
+     *
+     * Note: the mapView has to be fully loaded or the return will be (0,0)
      */
     public Vector2 gpsToMap(Coordinate pos) {
         // limit gps to the relevant ares
@@ -250,20 +266,6 @@ public class MapControl {
         mapPos.y = (float) (pos.getLatitude() * (mapView.getMapViewHeight() / DELTA_LAT));
 
         return mapPos;
-    }
-
-    public void updateFriends(ArrayList<String> friendList) {
-        friends = friendList;
-    }
-
-    /**
-     * Update the position of the current active user
-     *
-     * @param location current location of the user, if null the user is positioned outside the map
-     */
-    public void updateCurrentUserLocation(@Nullable Location location) {
-        if (location != null)
-            currentUserLocation.setLocation(location.getLatitude(), location.getLongitude());
     }
 
     /**
@@ -292,4 +294,53 @@ public class MapControl {
         if (listener == null) return;
         listeners.remove(listener);
     }
+
+
+    // ----------------
+    // -- Deprecated --
+    // ----------------
+
+    /**
+     * setup an initial zoom on the current user, if the user is not on the map
+     * the zoom is instead on the main TH building.
+     */
+    @Deprecated
+    private void setUpInitialZoomOnUser() {
+        Vector2 pos;
+//        Log.d(CLASS + USER, "W/H: "+map.getWidth()+"/"+map.getHeight());
+        if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {
+            Log.d(CLASS + USER, "user NOT on the map!" + currentUserLocation);
+            pos = MAIN_BUILDING_MAP; // gpsToMap(MAIN_BUILDING_GPS);
+        } else {
+            pos = gpsToMap(currentUserLocation);
+            Log.d(CLASS + USER, "user on the map!" + pos + " GPS " + currentUserLocation);
+        }
+
+//        final Vector2 fPos = pos;
+//        ViewTreeObserver vto = mapView.getViewTreeObserver();
+//        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                mapView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                mapView.setScale(INITIAL_ZOOM, fPos.x, fPos.y, false);
+//                Log.d(CLASS+USER, "ZoomZoom" + fPos);
+//            }
+//        });
+        mapView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        mapView.setScale(INITIAL_ZOOM, pos.x, pos.y, false);
+//        mapView.setScale(INITIAL_ZOOM, DEBUG_X, DEBUG_Y, false);
+    }
+
+    /**
+     * Update the position of the current active user
+     *
+     * @param location current location of the user, if null the user is positioned outside the map
+     */
+    @Deprecated
+    public void updateCurrentUserLocation(@Nullable Location location) {
+        if (location != null)
+            currentUserLocation.setLocation(location.getLatitude(), location.getLongitude());
+    }
+
 }
