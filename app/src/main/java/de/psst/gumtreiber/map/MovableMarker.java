@@ -49,15 +49,12 @@ public class MovableMarker {
     private ArrayList<FadingImage> leftPrints, rightPrints;
     private int lastLeftIndex, lastRightIndex;
 
-    private Vector2 nameCntrOffset = LBL_CNTR_OFFSET; //Centering offset based on scaling
     private float stepSpeed = 30;
     private float animationSpeed = 2.2f;
-    private float rotOffset = 0f;
-    private float scaleStepSpeedFactor = 1f;
 
     private boolean alreadyDrawn = false;
     private boolean usingOwnPosition = false;
-    private static MapView mapView;
+    private static MapView mapView; //TODO Warum static?
 
     /**
      * Creates a new movable marker.
@@ -261,8 +258,8 @@ public class MovableMarker {
 
         Vector2 zoomed = mapView.adjustToTransformation(curPos);
 
-        nameImg.setX(zoomed.x + nameCntrOffset.x);
-        nameImg.setY(zoomed.y + nameCntrOffset.y);
+        nameImg.setX(zoomed.x + LBL_CNTR_OFFSET.x);
+        nameImg.setY(zoomed.y + LBL_CNTR_OFFSET.y);
 
         zoomed.x += IMG_CNTR_OFFSET.x;
         zoomed.y += IMG_CNTR_OFFSET.y;
@@ -280,28 +277,6 @@ public class MovableMarker {
         setPosition(position.x, position.y);
     }
 
-    public Vector2 getPosition() {
-        return curPos;
-    }
-
-    /**
-     * Set the rotation offset angle in degree of the label.
-     * @param offset Offset in degree.
-     */
-    public void setRotationOffset(float offset) {
-        rotOffset = offset;
-    }
-
-    /**
-     * Set the rotation/orientation of the marker.
-     * The rotation offset set by {@link #setRotationOffset} is applied.
-     * @param angle Rotation angle in degree.
-     */
-    public void setRotation(float angle) {
-        getLeftFixPrint().setRotation(angle);
-        getRightFixPrint().setRotation(angle);
-        nameImg.setRotation(angle + rotOffset);
-    }
 
     /**
      * @return true if the marker is moving
@@ -366,7 +341,7 @@ public class MovableMarker {
                     curPos.y = curPos.y + direction.y * currentSpeed;
 
                     if(targetPos.distance(curPos) > animationSpeed) {
-                        if (counter >= stepSpeed * scaleStepSpeedFactor) {
+                        if (counter >= stepSpeed) {
                             //Log.d("curPos", curPos.toString());
                             rotation = direction.angle() + 90f;
 
@@ -385,7 +360,7 @@ public class MovableMarker {
 
                     } else {
 
-                        if(counter >= stepSpeed * scaleStepSpeedFactor && !isSecondTime) {
+                        if(counter >= stepSpeed && !isSecondTime) {
                             rotation = direction.angle() + 90f;
 
                             Vector2 zoomed = mapView.adjustToTransformation(targetPos);
@@ -405,7 +380,7 @@ public class MovableMarker {
                         }
 
 
-                        if(counter >= stepSpeed * scaleStepSpeedFactor && isSecondTime) {
+                        if(counter >= stepSpeed && isSecondTime) {
 
                             stepImgL.makeVisible();
                             stepImgR.makeVisible();
@@ -418,9 +393,8 @@ public class MovableMarker {
                     }
 
                     Vector2 zoomed = mapView.adjustToTransformation(curPos);
-                    nameImg.setX(zoomed.x + nameCntrOffset.x);
-                    nameImg.setY(zoomed.y + nameCntrOffset.y);
-                    nameImg.setRotation(rotOffset);
+                    nameImg.setX(zoomed.x + LBL_CNTR_OFFSET.x);
+                    nameImg.setY(zoomed.y + LBL_CNTR_OFFSET.y);
 
                     try {
                         Thread.sleep(15);
