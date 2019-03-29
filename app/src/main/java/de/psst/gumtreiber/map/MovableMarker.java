@@ -49,8 +49,8 @@ public class MovableMarker {
     private ArrayList<FadingImage> leftPrints, rightPrints;
     private int lastLeftIndex, lastRightIndex;
 
-    private float stepSpeed = 30;
-    private float animationSpeed = 2.2f;
+    private float stepSpeed = 30; //How fast we move
+    private float stepSize = 2.2f; //How big are the steps
 
     private boolean alreadyDrawn = false;
     private boolean usingOwnPosition = false;
@@ -294,121 +294,134 @@ public class MovableMarker {
      * @param y The visual target y position of this marker, in pixels.
      */
     public void moveTo(float x, float y) {
-        targetPos = new Vector2(x, y);
-        if(isMoving()) return;
-        if(curPos.equals(targetPos)) return;
+        targetPos = new Vector2(x, y); //Set the target position
+        if(isMoving()) return; //If we are already moving, return. We re-set the target pos above, the current movement will to to there now.
+        if(curPos.equals(targetPos)) return; //We don't want to move, if we are already at our destination
 
-        allowMovingThread = true;
-        moveThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //This is were the magic happens!
-                Log.d("MoveThread","Thread started!");
-                long counter = 0;
+        allowMovingThread = true; //Flag for allowing the following loop-thread
+        moveThread = new Thread(() -> {
+            //This is were the magic happens!
+            Log.d("MoveThread","Thread started!");
+            long counter = 0;
 
-                final FadingImage stepImgL = getLeftFixPrint();
-                final FadingImage stepImgR = getRightFixPrint();
+            //These are not used for walking animation, only for stationary visualization.
+            final FadingImage stepImgL = getLeftFixPrint();
+            final FadingImage stepImgR = getRightFixPrint();
 
-                boolean isSecondTime = false;
-                boolean isLeftStep = false;
-                float rotation;
-                FadingImage stepImg;
+            //Some more magic flags
+            boolean isSecondTime = false;
+            boolean isLeftStep = false;
 
+            //Loop running variables
+            float rotation;
+            FadingImage stepImg;
 
-                stepImgL.startFadeOut();
-                stepImgR.startFadeOut();
+            //Start fading out the stationary footprints
+            stepImgL.startFadeOut();
+            stepImgR.startFadeOut();
 
-                while(!curPos.equals(targetPos) && allowMovingThread) {
-                    // hold the current position if the users zooms
-                    if (isUsingOwnPosition()) {
-                        stopFadeAnimation();
-                        setPosition(curPos);
-                        return;
-                    }
-
-                    //Log.d("Loop1", "Counter: " + counter);
-                    Vector2 direction = Vector2.sub(targetPos, curPos);
-
-                    // calc scaling of the map and adjust it for
-                    // clean marker movement on all zoom level
-                    float mapScaling = mapView.getScale() * 2.5f;
-                    mapScaling = (float) Math.log((double)mapScaling);
-                    if (mapScaling < 0) mapScaling = 1;
-
-                    direction = direction.normalize().divide(mapScaling);
-                    float currentSpeed = animationSpeed / mapScaling;
-                    curPos.x = curPos.x + direction.x * currentSpeed;
-                    curPos.y = curPos.y + direction.y * currentSpeed;
-
-                    if(targetPos.distance(curPos) > animationSpeed) {
-                        if (counter >= stepSpeed) {
-                            //Log.d("curPos", curPos.toString());
-                            rotation = direction.angle() + 90f;
-
-                            stepImg = getNextPrint(isLeftStep);
-
-                            Vector2 zoomed = mapView.adjustToTransformation(curPos);
-
-                            stepImg.setX(zoomed.x + IMG_CNTR_OFFSET.x);
-                            stepImg.setY(zoomed.y + IMG_CNTR_OFFSET.y);
-                            stepImg.setRotation(rotation);
-                            stepImg.startFadeOut();
-
-                            isLeftStep = !isLeftStep;
-                            counter = 0;
-                        }
-
-                    } else {
-
-                        if(counter >= stepSpeed && !isSecondTime) {
-                            rotation = direction.angle() + 90f;
-
-                            Vector2 zoomed = mapView.adjustToTransformation(targetPos);
-                            stepImgL.setX(zoomed.x + IMG_CNTR_OFFSET.x);
-                            stepImgL.setY(zoomed.y + IMG_CNTR_OFFSET.y);
-                            stepImgL.setRotation(rotation);
-
-                            stepImgR.setX(zoomed.x + IMG_CNTR_OFFSET.x);
-                            stepImgR.setY(zoomed.y + IMG_CNTR_OFFSET.y);
-                            stepImgR.setRotation(rotation);
-
-                            if (isLeftStep) stepImgL.makeVisible();
-                            else stepImgR.makeVisible();
-
-                            counter = 0;
-                            isSecondTime = true;
-                        }
-
-
-                        if(counter >= stepSpeed && isSecondTime) {
-
-                            stepImgL.makeVisible();
-                            stepImgR.makeVisible();
-
-                            Log.d("2nd if", "curPos = targetPos");
-                            curPos = targetPos;
-                            counter = 0;
-                        }
-
-                    }
-
-                    Vector2 zoomed = mapView.adjustToTransformation(curPos);
-                    nameImg.setX(zoomed.x + LBL_CNTR_OFFSET.x);
-                    nameImg.setY(zoomed.y + LBL_CNTR_OFFSET.y);
-
-                    try {
-                        Thread.sleep(15);
-                        counter++;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            //Here we do all the fancy animation stuff as long we are not there and we are allowed to move.
+            while(!curPos.equals(targetPos) && allowMovingThread) {
+                //Hold the current position if the users zooms
+                if (isUsingOwnPosition()) {
+                    stopFadeAnimation();
+                    setPosition(curPos);
+                    return;
                 }
 
-                Log.d("MoveThread","Thread finished!");
-            }
-        });
-        moveThread.start();
+                //Calculate scaling of the map and adjust it for clean marker movement on all zoom levels.
+                float mapScaling = mapView.getScale() * 2.5f;
+                mapScaling = (float) Math.log((double)mapScaling);
+                if (mapScaling < 0) mapScaling = 1;
 
+
+                //Calculate the direction in which we are moving.
+                Vector2 direction = Vector2.sub(targetPos, curPos);
+                direction = direction.normalize().divide(mapScaling);
+
+                //Add the covered track to our current position.
+                //Speed depends on map zoom.
+                float scaledStepSize = stepSize / mapScaling;
+                curPos.x = curPos.x + direction.x * scaledStepSize;
+                curPos.y = curPos.y + direction.y * scaledStepSize;
+
+                //As long as the distance to the destination is bigger then our step size.
+                if(targetPos.distance(curPos) > stepSize) {
+                    //Its time to display a new, further ahead, footprint .
+                    if (counter >= stepSpeed) {
+                        //Log.d("curPos", curPos.toString());
+                        rotation = direction.angle() + 90f; //Its rotation depend on the moving direction.
+
+                        stepImg = getNextPrint(isLeftStep); //Get a free FS-Image.
+
+                        //Set the FS position based on map zoom and the centering offset.
+                        //Center-Offset because 0,0 is top left corner, not in the center of the img.
+                        Vector2 zoomed = mapView.adjustToTransformation(curPos);
+                        stepImg.setX(zoomed.x + IMG_CNTR_OFFSET.x);
+                        stepImg.setY(zoomed.y + IMG_CNTR_OFFSET.y);
+
+                        stepImg.setRotation(rotation); //Set rotation.
+                        stepImg.startFadeOut(); //Start fading it out.
+
+                        isLeftStep = !isLeftStep; //Toggle left/right for next run.
+                        counter = 0; //Rest counter.
+                    }
+
+                //We are almost there. The distance is to small to another two steps.
+                } else {
+                    //Time to animate. Only make one of the two stationary FS visible.
+                    if(counter >= stepSpeed && !isSecondTime) {
+                        rotation = direction.angle() + 90f;
+
+                        Vector2 zoomed = mapView.adjustToTransformation(targetPos);
+                        stepImgL.setX(zoomed.x + IMG_CNTR_OFFSET.x);
+                        stepImgL.setY(zoomed.y + IMG_CNTR_OFFSET.y);
+                        stepImgL.setRotation(rotation);
+
+                        stepImgR.setX(zoomed.x + IMG_CNTR_OFFSET.x);
+                        stepImgR.setY(zoomed.y + IMG_CNTR_OFFSET.y);
+                        stepImgR.setRotation(rotation);
+
+                        if (isLeftStep) stepImgL.makeVisible();
+                        else stepImgR.makeVisible();
+
+                        counter = 0;
+                        isSecondTime = true;
+                    }
+
+                    //Second run, now make the other FS visible too.
+                    if(counter >= stepSpeed && isSecondTime) {
+
+                        stepImgL.makeVisible();
+                        stepImgR.makeVisible();
+
+                        //Log.d("2nd if", "curPos = targetPos");
+                        curPos = targetPos;
+                        counter = 0;
+                    }
+
+                }
+
+                //Within all the hustle an bustle, don't forget to move the banner too :)
+                Vector2 zoomed = mapView.adjustToTransformation(curPos);
+                nameImg.setX(zoomed.x + LBL_CNTR_OFFSET.x);
+                nameImg.setY(zoomed.y + LBL_CNTR_OFFSET.y);
+
+                //One animation step ist done. Now wait a sec, increment the counter and loop again.
+                try {
+                    Thread.sleep(15);
+                    counter++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //We are either at destination or the cancel-flag was set.
+            Log.d("MoveThread","Thread finished!");
+        });
+
+        //Most important thing: Start the animation-thread ;)
+        moveThread.start();
     }
 
 
