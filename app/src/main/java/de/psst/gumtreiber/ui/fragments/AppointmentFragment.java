@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
@@ -42,6 +42,7 @@ public class AppointmentFragment extends Fragment {
     private CalendarViewModel model;
     private Spinner spinner;
 
+    private TextView selRoom;
     private TextView tvStartDate, tvStartTime;
     private TextView tvEndDate, tvEndTime;
 
@@ -81,8 +82,19 @@ public class AppointmentFragment extends Fragment {
         tvEndDate = activity.findViewById(R.id.tv_end_date);
         tvEndTime = activity.findViewById(R.id.tv_end_time);
 
-        //Spinner aka DropDownMenu for the Rooms
-        initSpinner();
+        selRoom = activity.findViewById(R.id.txtSelectedRoom);
+        selRoom.setText(model.selectedRoom.toString());
+        selRoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getFragmentManager();
+
+                if (fragmentManager != null) {
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, new RoomSelectionFragment()).addToBackStack(null).commit();
+                }
+            }
+        });
+
 
         //Date and TimePickers for start and endDate
         initStartDatePickers();
@@ -110,17 +122,6 @@ public class AppointmentFragment extends Fragment {
 
     }
 
-
-    /**
-     * Initiates the TextViews with Date & Time Pickers in a barbaric kind of way
-     */
-    private void initSpinner() {
-
-        //Spinner for the Rooms
-        spinner = activity.findViewById(R.id.spinn_room);
-        spinner.setAdapter(new ArrayAdapter<>(activity.getApplicationContext(), R.layout.spinner_item, Room.getAllRooms())); //TODO getAllRooms() ggf probleme bei speichern?
-
-    }
 
     //Building Date and Time Pickers
     /**
@@ -226,7 +227,7 @@ public class AppointmentFragment extends Fragment {
     private Appointment buildAppointment() {
 
         //Room
-        Room room = Room.values()[spinner.getSelectedItemPosition()];
+        Room room = model.selectedRoom;
 
         //Start Date
         long startDate = formatDate(tvStartDate.getText().toString(), tvStartTime.getText().toString());

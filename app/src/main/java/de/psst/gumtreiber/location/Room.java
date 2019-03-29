@@ -343,7 +343,7 @@ public enum Room {
 
         String[] allRooms = new String[rooms.length];
         for(int i = 0; i < allRooms.length; i++) {
-            allRooms[i] = "R" + rooms[i].getNumberDot() + " (" + rooms[i].getName() + ")";
+            allRooms[i] = rooms[i].toString();
         }
 
         return allRooms;
@@ -414,7 +414,6 @@ public enum Room {
     @Override
     @NonNull
     public String toString() {
-        return name;
-
+        return "R" + getNumberDot() + " (" + getName() + ")";
     }
 }

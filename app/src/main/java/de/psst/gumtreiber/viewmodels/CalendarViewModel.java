@@ -11,11 +11,13 @@ import androidx.lifecycle.AndroidViewModel;
 import de.psst.gumtreiber.data.Appointment;
 import de.psst.gumtreiber.data.Firebase;
 import de.psst.gumtreiber.data.UserDataSync;
+import de.psst.gumtreiber.location.Room;
 
 public class CalendarViewModel extends AndroidViewModel {
 
     private ArrayList<Appointment> appointments;
     private String uid;
+    public Room selectedRoom = Room.R0300;
 
     public CalendarViewModel(@NonNull Application application) {
         super(application);

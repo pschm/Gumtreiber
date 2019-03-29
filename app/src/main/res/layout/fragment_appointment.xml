@@ -18,6 +18,20 @@
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/txtSelectedRoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="R0.122 (ZBV Dokumentation Kartenraum)"
+        android:textSize="18sp"
+        android:textColor="#FFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/txtRoom"
+        app:layout_constraintTop_toBottomOf="@+id/txtRoom" />
+
+    <!--
     <Spinner
         android:id="@+id/spinn_room"
         android:layout_width="match_parent"
@@ -28,14 +42,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/txtRoom"
-        app:layout_constraintTop_toBottomOf="@+id/txtRoom" />
+        app:layout_constraintTop_toBottomOf="@+id/txtRoom" /> -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorAccent"
         android:layout_marginTop="2dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinn_room"/>
+        app:layout_constraintTop_toBottomOf="@+id/txtSelectedRoom"/>
 
     <TextView
         android:id="@+id/txtBegin"
@@ -47,7 +61,7 @@
         android:textStyle="bold"
         android:textColor="@color/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinn_room" />
+        app:layout_constraintTop_toBottomOf="@+id/txtSelectedRoom" />
 
 
     <TextView

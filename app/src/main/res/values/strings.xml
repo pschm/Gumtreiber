@@ -52,6 +52,7 @@
     <!-- Toolbar Überschriften -->
     <string name="title_greeting_1">Hallo, %1$s!</string>
     <string name="title_create_appointment">Termin erstellen</string>
+    <string name="title_select_room">Raum wählen</string>
     <string name="title_appointment_overview">Termin Übersicht</string>
     <string name="title_add_friends">Freunde hinzufügen</string>
     <string name="title_my_friends">Meine Freunde</string>
@@ -89,6 +90,8 @@
     <string name="appo_from_datetime">%1$s \n %2$s Uhr</string>
     <string name="appo_to_dayname">BIS %1$s</string>
     <string name="appo_to_datetime">%1$s \n %2$s Uhr</string>
+
+    <string name="search">Suchen</string>
 
     <!-- Freunde -->
     <string name="popup_del_friend">Du bist dabei "%1$s" aus deiner Freundesliste zu entfernen!</string>
