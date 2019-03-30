@@ -107,7 +107,7 @@ public class AppointmentFragment extends Fragment {
                 Appointment appointment = new Appointment(startDate, endDate, model.selectedRoom);
 
                 if (appointment.getFormatedStartDate() > appointment.getFormatedEndDate()) {
-                    Toast checkDate = Toast.makeText(activity, "Zeitreisen sind unmöglich", Toast.LENGTH_SHORT);
+                    Toast checkDate = Toast.makeText(activity, getString(R.string.time_travel_not_allowed), Toast.LENGTH_SHORT);
                     checkDate.show();
                 } else {
                     saveAppointment(appointment);
