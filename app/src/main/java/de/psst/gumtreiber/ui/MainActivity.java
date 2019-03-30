@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Toast backToast;
 
-    private static Context instance;
+    private static MainActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //Setting Layout and MapFragment
         setContentView(R.layout.activity_main);
-        fragmentManager.beginTransaction().add(R.id.content_frame, new MapFragment(), MAP_FRAGMENT_TAG).commit();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, new MapFragment(), MAP_FRAGMENT_TAG).commit();
 
 
         //Setting Uid
