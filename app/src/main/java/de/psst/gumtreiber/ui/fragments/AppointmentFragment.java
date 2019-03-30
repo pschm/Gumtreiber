@@ -24,12 +24,10 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.Appointment;
-import de.psst.gumtreiber.location.Room;
 import de.psst.gumtreiber.ui.MainActivity;
 import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
@@ -46,6 +44,9 @@ public class AppointmentFragment extends Fragment {
     private TextView tvStartDate, tvStartTime;
     private TextView tvEndDate, tvEndTime;
 
+    private GregorianCalendar startDate;
+    private GregorianCalendar endDate;
+
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("E, dd.MM.yyyy");
     @SuppressLint("SimpleDateFormat")
@@ -58,7 +59,7 @@ public class AppointmentFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_appointment, container, false);
         activity = (MainActivity) getActivity();
         uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        model = ViewModelProviders.of((FragmentActivity) activity).get(CalendarViewModel.class);
+        model = ViewModelProviders.of(activity).get(CalendarViewModel.class);
         return fragmentView;
 
     }
@@ -103,11 +104,10 @@ public class AppointmentFragment extends Fragment {
         activity.getToolbarDoneBTN().setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
-                Appointment appointment = buildAppointment();
+                Appointment appointment = new Appointment(startDate, endDate, model.selectedRoom);
 
                 if (appointment.getFormatedStartDate() > appointment.getFormatedEndDate()) {
-                    Toast checkDate = Toast.makeText(activity, "Zeitreisen sind unmöglich", Toast.LENGTH_SHORT);
+                    Toast checkDate = Toast.makeText(activity, getString(R.string.time_travel_not_allowed), Toast.LENGTH_SHORT);
                     checkDate.show();
                 } else {
                     saveAppointment(appointment);
@@ -130,7 +130,9 @@ public class AppointmentFragment extends Fragment {
     private void initStartDatePickers() {
 
         //Termin Anfang
-        tvStartDate.setText(DATE_FORMAT.format(c.getTime()));
+        startDate = new GregorianCalendar();
+
+        tvStartDate.setText(DATE_FORMAT.format(startDate.getTime()));
         tvStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,14 +148,19 @@ public class AppointmentFragment extends Fragment {
                                 tvStartDate.setText(DATE_FORMAT.format(calendar.getTime()));
 
                                 tvEndDate.setText(DATE_FORMAT.format(calendar.getTime())); //Set end date to start date
+
+                                startDate.set(Calendar.YEAR, year);
+                                startDate.set(Calendar.MONTH, month);
+                                startDate.set(Calendar.DAY_OF_MONTH, day);
                             }
                         }, year, month, day);
                 datePickerDialog.show();
             }
         });
 
-
-        tvStartTime.setText("12:00");
+        startDate.set(Calendar.HOUR_OF_DAY, 12);
+        startDate.set(Calendar.MINUTE, 0);
+        tvStartTime.setText(TIME_FORMAT.format(startDate.getTime()));
         tvStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,6 +174,9 @@ public class AppointmentFragment extends Fragment {
                                 //Set end time to start time plus one hour
                                 calendar.add(Calendar.HOUR_OF_DAY, 1);
                                 tvEndTime.setText(TIME_FORMAT.format(calendar.getTime()));
+
+                                startDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                startDate.set(Calendar.MINUTE, minute);
                             }
                         }, 12, 00, true);
                 timePickerDialog.show();
@@ -179,7 +189,9 @@ public class AppointmentFragment extends Fragment {
      */
     private void initEndDatePickers() {
         //Termin Ende
-        tvEndDate.setText(DATE_FORMAT.format(c.getTime()));
+        endDate = new GregorianCalendar();
+
+        tvEndDate.setText(DATE_FORMAT.format(endDate.getTime()));
         tvEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,15 +203,20 @@ public class AppointmentFragment extends Fragment {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(activity,
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                Calendar calendar = new GregorianCalendar(year, month, day);
-                                tvEndDate.setText(DATE_FORMAT.format(calendar.getTime()));
+                                endDate.set(Calendar.YEAR, year);
+                                endDate.set(Calendar.MONTH, month);
+                                endDate.set(Calendar.DAY_OF_MONTH, day);
+
+                                tvEndDate.setText(DATE_FORMAT.format(endDate.getTime()));
                             }
                         }, year, month, day);
                 datePickerDialog.show();
             }
         });
 
-        tvEndTime.setText("13:00");
+        endDate.set(Calendar.HOUR_OF_DAY, 13);
+        endDate.set(Calendar.MINUTE, 0);
+        tvEndTime.setText(TIME_FORMAT.format(endDate.getTime()));
         tvEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,8 +224,10 @@ public class AppointmentFragment extends Fragment {
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                                Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
-                                tvEndTime.setText(TIME_FORMAT.format(calendar.getTime()));
+                                endDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                endDate.set(Calendar.MINUTE, minute);
+
+                                tvEndTime.setText(TIME_FORMAT.format(endDate.getTime()));
                             }
                         }, 13, 00, true);
                 timePickerDialog.show();
@@ -219,26 +238,6 @@ public class AppointmentFragment extends Fragment {
     //Appointment building and saving
 
     /**
-     * Builds an appointment object with the Values of the
-     * TextViews: tv_start_ date, tv_start_ time, tv_end_ date, tv_end_ time
-     * and the room from the spinner spinn_room
-     * @return an Appointment object with the chosen values
-     */
-    private Appointment buildAppointment() {
-
-        //Room
-        Room room = model.selectedRoom;
-
-        //Start Date
-        long startDate = formatDate(tvStartDate.getText().toString(), tvStartTime.getText().toString());
-
-        //End Date
-        long endDate = formatDate(tvEndDate.getText().toString(), tvEndTime.getText().toString());
-
-        return new Appointment(startDate, endDate, room);
-    }
-
-    /**
      * Delegates the Saving og the Appointment to the ViewModel
      *
      * @param appointment the appointment object to save
@@ -247,25 +246,5 @@ public class AppointmentFragment extends Fragment {
         model.saveAppointment(appointment);
     }
 
-    //Date formatting
-
-    /**
-     * Formats a date given as "DD.MM.YYYY","HH:MM" to a long with the Format "YYYYMMDDHHMMSS"
-     *
-     * @param date the String date "DD.MM.YYYY"
-     * @param time the String time "HH:MM"
-     * @return a long Formated to fit Firebase
-     */
-    private long formatDate(String date, String time) {
-
-        String day = date.substring(5, 7);
-        String month = date.substring(8, 10);
-        String year = date.substring(11, 13);
-
-        String hours = time.substring(0, 2);
-        String minutes = time.substring(3, 5);
-
-        return Long.valueOf(year + month + day + hours + minutes + "00");
-    }
 
 }

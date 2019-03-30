@@ -425,7 +425,7 @@ public class MovableMarker {
     }
 
 
-    //https://stackoverflow.com/questions/11100428/add-text-to-image-in-android-programmatically
+    //https://stackoverflow.com/questions/11100428/add-text-to-image-in-android-programmatically/11100582#11100582 [Stand: 29.03.2019]
     private BitmapDrawable writeTextOnDrawable(int drawableId, String text, int size) {
 
         Bitmap bm = BitmapFactory.decodeResource(activity.getResources(), drawableId)
