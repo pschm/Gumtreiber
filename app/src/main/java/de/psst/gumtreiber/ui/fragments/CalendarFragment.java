@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.psst.gumtreiber.R;
@@ -56,7 +57,7 @@ public class CalendarFragment extends Fragment {
         activity.setActionBarTitle(getString(R.string.title_appointment_overview));
 
         //Init ViewModel
-        model = new CalendarViewModel(activity.getApplication());
+        model = ViewModelProviders.of(activity).get(CalendarViewModel.class);
 
 
         //RecyclerView
