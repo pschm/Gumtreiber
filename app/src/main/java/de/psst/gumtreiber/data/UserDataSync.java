@@ -6,17 +6,13 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import de.psst.gumtreiber.location.LocationHandler;
 import de.psst.gumtreiber.ui.MainActivity;
@@ -33,6 +29,8 @@ import de.psst.gumtreiber.ui.MainActivity;
  * To receive updated data, register an {@link OnUpdateReceivedListener} listener.
  */
 public class UserDataSync implements Runnable, Application.ActivityLifecycleCallbacks {
+
+    private static final String TAG = "UserDataSync";
 
     private HashMap<String, AbstractUser> userList = new HashMap<>();
     private ArrayList<OnUpdateReceivedListener> listeners = new ArrayList<>();
@@ -92,27 +90,24 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
     public void startUpdating() {
         allowRunning = true;
 
-        if(updateThread != null && updateThread.isAlive()) {
-            return;
+        if(updateThread == null || !updateThread.isAlive()) {
+            updateThread = new Thread(this);
+            updateThread.start();
         }
 
-        updateThread = new Thread(this);
-
-        //Get/Refresh auth token
-        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
-            FirebaseAuth.getInstance().getCurrentUser().getIdToken(true)
-                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                        public void onComplete(@NonNull Task<GetTokenResult> task) {
+        if(userToken == null || TextUtils.isEmpty(userToken)) {
+            //Get/Refresh auth token
+            if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+                FirebaseAuth.getInstance().getCurrentUser().getIdToken(true)
+                        .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 userToken = task.getResult().getToken();
-
-                                updateThread.start(); //Start syncing when token is there
 
                             } else {
                                 task.getException().printStackTrace();
                             }
-                        }
-                    });
+                        });
+            }
         }
 
     }
@@ -144,12 +139,13 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
         while(allowRunning) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            Log.d("UserDataSync", "Checking Internet connection");
+            //Log.d("UserDataSync", "Checking Internet connection");
             if(!Firebase.isNetworkAvailable()){
                 ((MainActivity) activity).returnToLogin();
             }
-            Log.d("UserDataSync", "Internet available");
+            //Log.d("UserDataSync", "Internet available");
 
+            //Log.d(TAG, locationHandler.updatesEnabled() + "|" + user + " -> " + locationHandler.getCurrentLocation());
             if(locationHandler.updatesEnabled() && user != null) {
                 Firebase.setCurrentLocation(user, locationHandler.getCurrentLocation());
             }
@@ -189,14 +185,14 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
     @Override
     public void onActivityStarted(Activity activity) {
-        if(!activity.equals(this.activity)) return;
-        Log.d("UserDataSync", "onActivityStarted: started updating!");
-//        startUpdating();
+
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
-
+        if(!activity.equals(this.activity)) return;
+        Log.d("UserDataSync", "onActivityStarted: started updating!");
+        startUpdating();
     }
 
     @Override
