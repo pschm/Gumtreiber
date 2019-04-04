@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,9 +100,9 @@ public class AppointmentFragment extends Fragment {
                 Calendar c = new GregorianCalendar();
                 Appointment appointment = new Appointment(startDate, endDate, model.selectedRoom);
 
-                Log.e("..START",appointment.getStartDate().getTimeInMillis() + "   " + TIME_FORMAT.format(appointment.getStartDate().getTime() ));
-                Log.e("....END",appointment.getEndDate().getTimeInMillis() + "   " + TIME_FORMAT.format(appointment.getEndDate().getTime() ));
-                Log.e("CURRENT", c.getTimeInMillis() + "   " + TIME_FORMAT.format(c.getTime()) );
+//                Log.e("..START",appointment.getStartDate().getTimeInMillis() + "   " + TIME_FORMAT.format(appointment.getStartDate().getTime() ));
+//                Log.e("....END",appointment.getEndDate().getTimeInMillis() + "   " + TIME_FORMAT.format(appointment.getEndDate().getTime() ));
+//                Log.e("CURRENT", c.getTimeInMillis() + "   " + TIME_FORMAT.format(c.getTime()) );
 
                 if (appointment.getEndDate().getTimeInMillis() < c.getTimeInMillis() || appointment.getStartDate().getTimeInMillis() > appointment.getEndDate().getTimeInMillis()) {
                     Toast checkDate = Toast.makeText(activity, getString(R.string.time_travel_not_allowed), Toast.LENGTH_SHORT);
