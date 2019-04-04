@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#EA5800</color>
+    <color name="colorPrimary">#B94000</color>
     <color name="colorPrimaryDark">#c81e0f</color>
-    <color name="colorAccent">#B43092</color>
+    <color name="colorAccent">#B96000</color>
     <color name="colorGrayFont">#C8C8C8</color>
-    <color name="colorAuthFont">#4D3D2F</color>
-    <color name="colorLightBrown">#D2C8A3</color>
+    <color name="colorAuthFont">#4E330C</color>
+    <color name="colorLightBrown">#B1916C</color>
 
     <!-- Appointment Color-->
-    <color name="colorBuildingNbr1">#806820</color>
-    <color name="colorBuildingNbr2">#1A6126</color>
-    <color name="colorBuildingNbr3">#1C555E</color>
-    <color name="colorBuildingNbr4">#1B3572</color>
-    <color name="colorBuildingNbr5">#412979</color>
+    <color name="colorBuildingNbr1">#185012</color>
+    <color name="colorBuildingNbr2">#803625</color>
+    <color name="colorBuildingNbr3">#9B5F22</color>
+    <color name="colorBuildingNbr4">#303061</color>
+    <color name="colorBuildingNbr5">#542E5F</color>
 
     <!-- MovableMarker -->
-    <color name="colorStepsDefault">#ba6748</color>
-    <color name="colorLabelDefault">#ef6c00</color>
+    <color name="colorStepsDefault">#4E330C</color>
+    <color name="colorLabelDefault">#947444</color>
 
-    <color name="colorStepsFriend">#6eba48</color>
-    <color name="colorLabelFriend">#76ff03</color>
+    <color name="colorStepsFriend">#297132</color>
+    <color name="colorLabelFriend">#297132</color>
 
-    <color name="colorStepsBot">#4872BA</color>
-    <color name="colorLabelBot">#035FFF</color>
+    <color name="colorStepsBot">#422C08</color>
+    <color name="colorLabelBot">#947444</color>
 
     <!-- Friend color-->
     <color name="friendOnline">#3B9425</color>

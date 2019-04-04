@@ -11,6 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
+        <Button
+            android:id="@+id/btnDeleteAppointment"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/ic_remove_red_24dp"
+            android:textAlignment="center"
+
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/circle_image2"
             android:layout_width="80dp"
@@ -24,8 +39,8 @@
 
         <ImageView
             android:id="@+id/circle_image"
-            android:layout_width="74dp"
-            android:layout_height="74dp"
+            android:layout_width="73dp"
+            android:layout_height="75dp"
             android:layout_marginStart="3dp"
             android:layout_marginTop="3dp"
             android:tint="@color/colorBuildingNbr3"
@@ -80,13 +95,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:text="Mensa Essensausgabe"
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
             android:textStyle="italic|bold"
-            app:layout_constraintEnd_toStartOf="@+id/btnDeleteAppointment"
             app:layout_constraintStart_toEndOf="@+id/txtR"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -118,22 +131,6 @@
             app:layout_constraintStart_toEndOf="@+id/txtStartName"
             app:layout_constraintTop_toBottomOf="@+id/txtRoomName" />
 
-        <Button
-            android:id="@+id/btnDeleteAppointment"
-            android:layout_width="28dp"
-            android:layout_height="27dp"
-
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="#7A3131"
-            android:text="X"
-            android:textAlignment="center"
-            android:textColor="@color/colorGrayFont"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/txtStartTime"
             android:layout_width="125dp"
@@ -158,6 +155,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtEndTime" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </RelativeLayout>
 
 
