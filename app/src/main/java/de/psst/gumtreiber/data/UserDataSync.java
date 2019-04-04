@@ -145,8 +145,8 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             }
             //Log.d("UserDataSync", "Internet available");
 
-            //Log.d(TAG, locationHandler.updatesEnabled() + "|" + user + " -> " + locationHandler.getCurrentLocation());
             if(locationHandler.updatesEnabled() && user != null) {
+                Log.d(TAG, locationHandler.updatesEnabled() + " -> " + locationHandler.getCurrentLocation());
                 Firebase.setCurrentLocation(user, locationHandler.getCurrentLocation());
             }
 
@@ -197,14 +197,14 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
 
     @Override
     public void onActivityPaused(Activity activity) {
-
+        if(!activity.equals(this.activity)) return;
+        Log.d("UserDataSync", "onActivityStopped: stopped updating!");
+        stopUpdating();
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-        if(!activity.equals(this.activity)) return;
-        Log.d("UserDataSync", "onActivityStopped: stopped updating!");
-        stopUpdating();
+
     }
 
     @Override
