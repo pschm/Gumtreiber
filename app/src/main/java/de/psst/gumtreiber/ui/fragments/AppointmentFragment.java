@@ -4,22 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,11 +31,9 @@ import de.psst.gumtreiber.viewmodels.CalendarViewModel;
 
 public class AppointmentFragment extends Fragment {
 
-    private String uid;
     private GregorianCalendar c = new GregorianCalendar();
     private MainActivity activity;
     private CalendarViewModel model;
-    private Spinner spinner;
 
     private TextView selRoom;
     private TextView tvStartDate, tvStartTime;
@@ -58,7 +53,6 @@ public class AppointmentFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View fragmentView = inflater.inflate(R.layout.fragment_appointment, container, false);
         activity = (MainActivity) getActivity();
-        uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         model = ViewModelProviders.of(activity).get(CalendarViewModel.class);
         return fragmentView;
 
@@ -104,9 +98,14 @@ public class AppointmentFragment extends Fragment {
         activity.getToolbarDoneBTN().setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                Calendar c = new GregorianCalendar();
                 Appointment appointment = new Appointment(startDate, endDate, model.selectedRoom);
 
-                if (appointment.getFormatedStartDate() > appointment.getFormatedEndDate()) {
+                Log.e("..START",appointment.getStartDate().getTimeInMillis() + "   " + TIME_FORMAT.format(appointment.getStartDate().getTime() ));
+                Log.e("....END",appointment.getEndDate().getTimeInMillis() + "   " + TIME_FORMAT.format(appointment.getEndDate().getTime() ));
+                Log.e("CURRENT", c.getTimeInMillis() + "   " + TIME_FORMAT.format(c.getTime()) );
+
+                if (appointment.getEndDate().getTimeInMillis() < c.getTimeInMillis() || appointment.getStartDate().getTimeInMillis() > appointment.getEndDate().getTimeInMillis()) {
                     Toast checkDate = Toast.makeText(activity, getString(R.string.time_travel_not_allowed), Toast.LENGTH_SHORT);
                     checkDate.show();
                 } else {
@@ -145,13 +144,18 @@ public class AppointmentFragment extends Fragment {
                         new DatePickerDialog.OnDateSetListener() {
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                                 Calendar calendar = new GregorianCalendar(year, month, day);
+
                                 tvStartDate.setText(DATE_FORMAT.format(calendar.getTime()));
-
-                                tvEndDate.setText(DATE_FORMAT.format(calendar.getTime())); //Set end date to start date
-
                                 startDate.set(Calendar.YEAR, year);
                                 startDate.set(Calendar.MONTH, month);
                                 startDate.set(Calendar.DAY_OF_MONTH, day);
+
+                                //Set end date to start date
+                                tvEndDate.setText(DATE_FORMAT.format(calendar.getTime()));
+                                endDate.set(Calendar.YEAR, year);
+                                endDate.set(Calendar.MONTH, month);
+                                endDate.set(Calendar.DAY_OF_MONTH, day);
+
                             }
                         }, year, month, day);
                 datePickerDialog.show();
@@ -170,13 +174,15 @@ public class AppointmentFragment extends Fragment {
                             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                                 Calendar calendar = new GregorianCalendar(0,0,0, hourOfDay, minute);
                                 tvStartTime.setText(TIME_FORMAT.format(calendar.getTime()));
+                                startDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                startDate.set(Calendar.MINUTE, minute);
 
                                 //Set end time to start time plus one hour
                                 calendar.add(Calendar.HOUR_OF_DAY, 1);
                                 tvEndTime.setText(TIME_FORMAT.format(calendar.getTime()));
+                                endDate.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+                                endDate.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
 
-                                startDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                startDate.set(Calendar.MINUTE, minute);
                             }
                         }, 12, 00, true);
                 timePickerDialog.show();
