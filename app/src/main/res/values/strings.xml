@@ -92,7 +92,6 @@
     <string name="appo_to_datetime">%1$s \n %2$s Uhr</string>
 
     <string name="search">Suchen</string>
-    <string name="time_travel_not_allowed">Zeitreisen sind unmöglich</string>
 
     <!-- Freunde -->
     <string name="popup_del_friend">Du bist dabei "%1$s" aus deiner Freundesliste zu entfernen!</string>
