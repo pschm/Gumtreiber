@@ -37,7 +37,6 @@ public class MapFragment extends Fragment {
     private TextView prisonView;
     private MapControl mapControl;
     private MainActivity activity;
-    private TextView filterMsg;
 
     private MapControl.OnMapInitialized onMapInitializedListener;
     private UserDataSync.OnUpdateReceivedListener onUpdateReceivedListener;
@@ -76,13 +75,11 @@ public class MapFragment extends Fragment {
      * initialize filter TextView
      */
     private void initFilterMsg() {
-        filterMsg = fragmentView.findViewById(R.id.filterMsg);
+        TextView filterMsg = fragmentView.findViewById(R.id.filterMsg);
 
         if (UserFilter.filterActive()) filterMsg.setText(getString(R.string.filter_msg_text));
         else filterMsg.setText("");
 
-        // hide msg till loading screen is fully loaded
-        filterMsg.setVisibility(View.INVISIBLE);
 
         filterMsg.setOnClickListener(view ->
                 activity.getSupportFragmentManager()
@@ -184,7 +181,6 @@ public class MapFragment extends Fragment {
             View loadingCircle = fragmentView.findViewById(R.id.loadingCircle);
             loadingCircle.setVisibility(View.GONE);
             loadingScreen.setVisibility(View.GONE);
-            filterMsg.setVisibility(View.VISIBLE);
             mapView.setTouchable();
             return;
         }
@@ -193,7 +189,6 @@ public class MapFragment extends Fragment {
             View loadingCircle = fragmentView.findViewById(R.id.loadingCircle);
             loadingCircle.setVisibility(View.GONE);
             loadingScreen.setVisibility(View.GONE);
-            filterMsg.setVisibility(View.VISIBLE);
             mapView.setTouchable();
         });
     }

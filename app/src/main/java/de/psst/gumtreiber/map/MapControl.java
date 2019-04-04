@@ -58,7 +58,6 @@ public class MapControl {
         this.activity = activity;
         this.prisonControl = prisonControl;
 
-        mapView.setMapControl(this);
         mapView.setPrisonControl(prisonControl);
         prisonControl.setMapControl(this);
 
