@@ -146,7 +146,7 @@ public class UserDataSync implements Runnable, Application.ActivityLifecycleCall
             //Log.d("UserDataSync", "Internet available");
 
             if(locationHandler.updatesEnabled() && user != null) {
-                Log.d(TAG, locationHandler.updatesEnabled() + " -> " + locationHandler.getCurrentLocation());
+                //Log.d(TAG, locationHandler.updatesEnabled() + " -> " + locationHandler.getCurrentLocation());
                 Firebase.setCurrentLocation(user, locationHandler.getCurrentLocation());
             }
 
