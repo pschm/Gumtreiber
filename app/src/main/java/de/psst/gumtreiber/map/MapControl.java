@@ -144,7 +144,7 @@ public class MapControl {
         for (int i = 0; i < users.size(); i++) {
             AbstractUser u = users.get(i);
 
-//            // TODO implement to hide expired users
+//            // implement to hide expired users
 //            if (!u.isVisible()) {
 //                if (u.getMarker() != null) u.getMarker().setVisibility(false);
 //                users.remove(i);

@@ -92,7 +92,7 @@ public class PrisonControl {
             Log.w(CLASS + USER, "size not initialized...");
             return;
         }
-        Log.d(CLASS + USER, "Adjust to scale: " + scale);
+//        Log.d(CLASS + USER, "Adjust to scale: " + scale);
 
         int width = (int) (initialWidth * scale);
         int height = (int) (initialHeight * scale);
@@ -107,7 +107,7 @@ public class PrisonControl {
 
         view.setLayoutParams(param);
 
-        Log.d(CLASS + USER, "Height: " + view.getHeight());
+//        Log.d(CLASS + USER, "Height: " + view.getHeight());
 
         // textSize
         view.setTextSize(initialTextSize * scale);

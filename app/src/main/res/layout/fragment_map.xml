@@ -22,7 +22,6 @@
         android:layout_height="93dp"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/prison"
         android:fontFamily="@font/almendra_sc"
         android:textColor="@color/colorAuthFont"
         app:layout_constraintBottom_toBottomOf="parent"
