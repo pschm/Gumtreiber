@@ -35,6 +35,10 @@
             android:label=""
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:screenOrientation="portrait" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
