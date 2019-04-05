@@ -103,6 +103,8 @@ public class MapFragment extends Fragment {
         mapView.setMediumScale(3f);
         mapView.setMinimumScale(2f);
 
+        PrisonControl prisonControl = new PrisonControl(prisonView);
+
         // initialize zoom on MainBuilding
         ViewTreeObserver vto = mapView.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -110,11 +112,13 @@ public class MapFragment extends Fragment {
             public void onGlobalLayout() {
                 mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mapView.setScale(INITIAL_ZOOM, MAIN_BUILDING_MAP.x, MAIN_BUILDING_MAP.y, false);
+
+                prisonControl.initSize();
             }
         });
 
         // init mapControl
-        mapControl = new MapControl(mapView, activity, new PrisonControl(prisonView));
+        mapControl = new MapControl(mapView, activity, prisonControl);
     }
 
     /**
@@ -193,7 +197,7 @@ public class MapFragment extends Fragment {
         });
     }
 
-    private boolean isUiThread() {
+    public static boolean isUiThread() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return Looper.getMainLooper().isCurrentThread();
         } else {

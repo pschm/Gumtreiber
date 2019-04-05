@@ -72,6 +72,13 @@ public class MapControl {
     }
 
     /**
+     * @return the Activity which created this MapControl
+     */
+    public Activity getActivity() {
+        return activity;
+    }
+
+    /**
      * Update the user list and show the new filtered users on the mapView
      * @param users new user list
      */

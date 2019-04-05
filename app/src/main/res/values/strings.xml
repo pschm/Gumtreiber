@@ -107,5 +107,6 @@
 
     <!-- filterMsg -->
     <string name="filter_msg_text">Ansicht ist gefiltert</string>
+    <string name="prison_empty">Niemand hier.</string>
 
 </resources>
