@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
@@ -144,9 +146,9 @@ public class MovableMarker {
         nameImg.setAdjustViewBounds(true);
         nameImg.setMaxWidth(DEFAULT_SIZE * 2);
 
-        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend), PorterDuff.Mode.MULTIPLY);
-        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot), PorterDuff.Mode.MULTIPLY);
-        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault), PorterDuff.Mode.MULTIPLY);
+        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend), PorterDuff.Mode.SCREEN);
+        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot), PorterDuff.Mode.SCREEN);
+        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault), PorterDuff.Mode.SCREEN);
 
         changeLabel(label);
     }
@@ -203,9 +205,17 @@ public class MovableMarker {
             else image.setColorFilter(ContextCompat.getColor(activity, R.color.colorStepsDefault));
         }
 
-        if(look == Look.FRIEND) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelFriend), PorterDuff.Mode.MULTIPLY);
-        else if(look == Look.BOT) nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelBot), PorterDuff.Mode.MULTIPLY);
-        else nameImg.setColorFilter(ContextCompat.getColor(activity, R.color.colorLabelDefault), PorterDuff.Mode.MULTIPLY);
+        if(look == Look.FRIEND) nameImg.setColorFilter(screen(ContextCompat.getColor(activity, R.color.colorLabelFriend)));
+        else if(look == Look.BOT) nameImg.setColorFilter(screen(ContextCompat.getColor(activity, R.color.colorLabelBot)));
+        else nameImg.setColorFilter(screen(ContextCompat.getColor(activity, R.color.colorLabelDefault)));
+
+        //screen(ContextCompat.getColor(activity, R.color.colorLabelFriend));
+
+    }
+
+    //https://stackoverflow.com/questions/14463384/android-how-to-prevent-colorfilter-with-porterduff-mode-screen-from-blending-a
+    private static ColorFilter screen(int c) {
+        return new LightingColorFilter(0xFFFFFFFF - c, c);
     }
 
 
@@ -435,7 +445,7 @@ public class MovableMarker {
 
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.WHITE);
         paint.setTypeface(tf);
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(convertToPixels(activity.getApplicationContext(), size));

@@ -16,13 +16,13 @@
 
     <!-- MovableMarker -->
     <color name="colorStepsDefault">#4E330C</color>
-    <color name="colorLabelDefault">#947444</color>
+    <color name="colorLabelDefault">#4E330C</color>
 
     <color name="colorStepsFriend">#297132</color>
     <color name="colorLabelFriend">#297132</color>
 
     <color name="colorStepsBot">#422C08</color>
-    <color name="colorLabelBot">#947444</color>
+    <color name="colorLabelBot">#422C08</color>
 
     <!-- Friend color-->
     <color name="friendOnline">#3B9425</color>
