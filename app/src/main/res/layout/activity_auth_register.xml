@@ -1,142 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:theme="@style/AppTheme">
+    android:fillViewport="true">
 
-    <include
-        layout="@layout/activity_auth_background"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <EditText
-        android:id="@+id/txtRegEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="230dp"
-        android:ems="10"
-        android:hint="@string/e_mail"
-        android:inputType="textEmailAddress"
-        android:textColor="@color/colorAuthFont"
-        android:textColorHint="@color/colorAuthFont"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/txtRegPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:textColor="@color/colorAuthFont"
-        android:textColorHint="@color/colorAuthFont"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtRegEmail" />
-
-    <EditText
-        android:id="@+id/txtRegPasswordRpt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:textColor="@color/colorAuthFont"
-        android:textColorHint="@color/colorAuthFont"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtRegPassword" />
-
-    <ImageView
-        android:id="@+id/imgRegLine"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:src="#FFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtRegPasswordRpt"
-        android:layout_marginTop="25dp"
-        android:layout_marginStart="42dp"
-        android:layout_marginEnd="42dp"/>
-
-    <EditText
-        android:id="@+id/txtRegNickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/nickname"
-        android:inputType="textPersonName"
-        android:textColor="@color/colorAuthFont"
-        android:textColorHint="@color/colorAuthFont"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgRegLine"
-        android:layout_marginTop="20dp"/>
-
-    <Spinner
-        android:id="@+id/spnRegCourse"
-        android:layout_width="0dp"
-        android:layout_height="35dp"
-
-        android:layout_marginTop="5dp"
-        android:dropDownWidth="match_parent"
-
-        android:popupBackground="@color/colorLightBrown"
-        android:spinnerMode="dropdown"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@id/txtRegNickname"
-        app:layout_constraintStart_toStartOf="@id/txtRegNickname"
-        app:layout_constraintTop_toBottomOf="@+id/txtRegNickname" />
-
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="3dp"
-        android:layout_marginEnd="3dp"
-        android:src="#FFF"
-        app:layout_constraintEnd_toEndOf="@+id/spnRegCourse"
-        app:layout_constraintStart_toStartOf="@+id/spnRegCourse"
-        app:layout_constraintTop_toBottomOf="@+id/spnRegCourse" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:theme="@style/AppTheme">
 
 
-    <!-- Register Button with Image-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutRegBtnRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spnRegCourse"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp">
+        <include
+            layout="@layout/activity_auth_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/txtRegEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="230dp"
+            android:ems="10"
+            android:hint="@string/e_mail"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/colorAuthFont"
+            android:textColorHint="@color/colorAuthFont"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/txtRegPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textColor="@color/colorAuthFont"
+            android:textColorHint="@color/colorAuthFont"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtRegEmail" />
+
+        <EditText
+            android:id="@+id/txtRegPasswordRpt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:textColor="@color/colorAuthFont"
+            android:textColorHint="@color/colorAuthFont"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtRegPassword" />
 
         <ImageView
-            android:id="@+id/imgRegRegister"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/wand_icon"
-            android:tint="@color/colorAuthFont"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/imgRegLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="42dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="42dp"
+            android:src="#FFF"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/txtRegPasswordRpt" />
 
-        <Button
-            android:id="@+id/btnCompleteRegister"
-            android:layout_width="240dp"
+        <EditText
+            android:id="@+id/txtRegNickname"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:backgroundTint="@color/colorAuthFont"
-            android:text="@string/gain_access"
-            android:textAllCaps="false"
-            android:textColor="@color/colorGrayFont"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imgRegRegister"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:hint="@string/nickname"
+            android:inputType="textPersonName"
+            android:textColor="@color/colorAuthFont"
+            android:textColorHint="@color/colorAuthFont"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgRegLine" />
+
+        <Spinner
+            android:id="@+id/spnRegCourse"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+
+            android:layout_marginTop="5dp"
+            android:dropDownWidth="match_parent"
+
+            android:popupBackground="@color/colorLightBrown"
+            android:spinnerMode="dropdown"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@id/txtRegNickname"
+            app:layout_constraintStart_toStartOf="@id/txtRegNickname"
+            app:layout_constraintTop_toBottomOf="@+id/txtRegNickname" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:src="#FFF"
+            app:layout_constraintEnd_toEndOf="@+id/spnRegCourse"
+            app:layout_constraintStart_toStartOf="@+id/spnRegCourse"
+            app:layout_constraintTop_toBottomOf="@+id/spnRegCourse" />
+
+
+        <!-- Register Button with Image-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutRegBtnRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="40dp"
+            android:paddingBottom="30dp"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spnRegCourse">
+
+            <ImageView
+                android:id="@+id/imgRegRegister"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/wand_icon"
+                android:tint="@color/colorAuthFont"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btnCompleteRegister"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:backgroundTint="@color/colorAuthFont"
+                android:text="@string/gain_access"
+                android:textAllCaps="false"
+                android:textColor="@color/colorGrayFont"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imgRegRegister"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
