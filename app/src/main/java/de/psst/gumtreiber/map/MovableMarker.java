@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -90,6 +91,13 @@ public class MovableMarker {
                 //activity.addContentView(nameImg, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
                 setPosition(curPos);
+
+                //Random rotation
+                int rngRot = (int) (new Random().nextFloat() * 360);
+                getLeftFixPrint().setRotation(rngRot);
+                getRightFixPrint().setRotation(rngRot);
+
+
                 synchronized(this) {
                     notify();
                 }
