@@ -323,7 +323,7 @@ public class MovableMarker {
             boolean isLeftStep = false;
 
             //Loop running variables
-            float rotation;
+            float rotation = 0f;
             FadingImage stepImg;
 
             //Start fading out the stationary footprints
@@ -356,7 +356,7 @@ public class MovableMarker {
                 curPos.y = curPos.y + direction.y * scaledStepSize;
 
                 //As long as the distance to the destination is bigger then our step size.
-                if(targetPos.distance(curPos) > stepSize) {
+                if(targetPos.distance(curPos) > stepSize * 2) {
                     //Its time to display a new, further ahead, footprint .
                     if (counter >= stepSpeed) {
                         //Log.d("curPos", curPos.toString());
@@ -381,7 +381,7 @@ public class MovableMarker {
                 } else {
                     //Time to animate. Only make one of the two stationary FS visible.
                     if(counter >= stepSpeed && !isSecondTime) {
-                        rotation = direction.angle() + 90f;
+                        //rotation = direction.angle() + 90f;
 
                         Vector2 zoomed = mapView.adjustToTransformation(targetPos);
                         stepImgL.setX(zoomed.x + IMG_CNTR_OFFSET.x);
