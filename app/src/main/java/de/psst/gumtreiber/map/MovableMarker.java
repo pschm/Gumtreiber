@@ -464,7 +464,7 @@ public class MovableMarker {
         Canvas canvas = new Canvas(bm);
 
         //If the text is bigger than the canvas , reduce the font size
-        while(textRect.width() >= (canvas.getWidth() - 200)) {    //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        while(textRect.width() >= (canvas.getWidth() - 250)) {    //the padding on either sides is considered as 4, so as to appropriately fit in the text
             size -= 4;
             paint.setTextSize(convertToPixels(activity, size));        //Scaling needs to be used for different dpi's
             paint.getTextBounds(text, 0, text.length(), textRect);
