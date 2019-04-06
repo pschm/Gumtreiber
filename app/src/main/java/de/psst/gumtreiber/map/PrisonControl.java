@@ -4,6 +4,9 @@ import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -154,37 +157,63 @@ public class PrisonControl {
     private void updateView() {
         shownInmates.clear();
 
-        // add at most #PRISON_COUNT people to the shownInmates list
-        if (inmates.size() < PRISON_COUNT)
-            for (AbstractUser u : inmates) shownInmates.add(u.getName());
-        else {
-            // only show the first #PRISON_COUNT
-            for (int i = 0; i < PRISON_COUNT; i++) {
-                shownInmates.add(inmates.get(i).getName());
-            }
-        }
-
-        if (shownInmates.isEmpty()) {
+        // prison is empty
+        if (inmates.isEmpty()) {
             view.setText(mapControl.getActivity().getString(R.string.prison_empty));
             return;
         }
 
+        // remember if all inmates are shown in prison or not
+        boolean allAdded = false;
+
+        // #prison members less than the PRISON_COUNT --> add all
+        if (inmates.size() < PRISON_COUNT) {
+            for (AbstractUser u : inmates) shownInmates.add(u.getName());
+            allAdded = true;
+        }
+        else {
+
+            // check if the own user is in prison
+            // in that case, show him for sure
+            FirebaseUser fb = FirebaseAuth.getInstance().getCurrentUser();
+            String myName = null;
+
+            if (fb != null) {
+                String myUid = fb.getUid();
+
+                for (AbstractUser u : inmates) {
+                    if (u.getUid().equals(myUid)) {
+                        myName = u.getName();
+                        shownInmates.add(myName);
+                        break;
+                    }
+                }
+            }
+
+            // only show the first #PRISON_COUNT
+            for (int i = 0; i < PRISON_COUNT; i++) {
+                // skip own name, if already added
+                if (inmates.get(i).getName().equals(myName)) continue;
+                shownInmates.add(inmates.get(i).getName());
+            }
+        }
+
         StringBuilder sb = new StringBuilder();
 
-        // counter
+        // build text for the counter
         sb.append("\n");
         sb.append(inmates.size());
         sb.append(" Insassen");
         sb.append("\n");
 
-        // build a String to show inmates in TextView
+        // add picked inmates
         for (String name : shownInmates) {
             sb.append("- ");
             sb.append(name);
             sb.append(" \n");
         }
 
-        sb.append("...");
+        if (!allAdded) sb.append("...");
 
 //        Log.d(CLASS+USER, "Text: " + sb);
         view.setText(sb);

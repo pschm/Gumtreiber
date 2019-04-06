@@ -304,7 +304,7 @@ public class MapControl {
      * the zoom is instead on the main TH building.
      */
     @Deprecated
-    private void setUpInitialZoomOnUser() {
+    public void setUpInitialZoomOnUser() {
         Vector2 pos;
 //        Log.d(CLASS + USER, "W/H: "+map.getWidth()+"/"+map.getHeight());
         if (PrisonControl.notOnMap(currentUserLocation.getLatitude(), currentUserLocation.getLongitude())) {

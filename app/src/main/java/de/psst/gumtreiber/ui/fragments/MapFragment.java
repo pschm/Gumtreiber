@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,8 +127,8 @@ public class MapFragment extends Fragment {
     private void initListeners() {
         // map initialized
         onMapInitializedListener = () -> {
-            if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
-            else Log.d("MapFrag.", "other Thread.");
+//            if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
+//            else Log.d("MapFrag.", "other Thread.");
             hideLoadingScreen();
         };
         mapControl.addOnMapInitializedListener(onMapInitializedListener);
