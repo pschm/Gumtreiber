@@ -1,6 +1,7 @@
 package de.psst.gumtreiber.map;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,7 +26,6 @@ public class MapView extends PhotoView {
     // Users that are drawn on the map
     private ArrayList<AbstractUser> markers;
 //    private ArrayList<AbstractUser> markers2; // needed for dynamicGroups
-
 
     // Needed to update the location of the prison on translation
     private PrisonControl prisonControl;
@@ -126,17 +126,13 @@ public class MapView extends PhotoView {
         firstDraw = false;
     }
 
-//    @Override
-//    protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
-//
-//        // some debugging
-//        Vector2 p = adjustToTransformation(new Vector2(DEBUG_X, DEBUG_Y));
-//        Paint paint = new Paint();
-//        paint.setColor(Color.BLACK);
-////        Vector2 p = adjustToTransformation(currentViewPoint);
-//        canvas.drawCircle(p.x, p.y,75f, paint);
-//    }
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        // paint the prison on the map
+        prisonControl.paintInmates(canvas);
+    }
 
     /**
      * Adjust a given vector to the current zoom of the map

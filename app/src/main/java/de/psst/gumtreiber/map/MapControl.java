@@ -60,6 +60,7 @@ public class MapControl {
 
         mapView.setPrisonControl(prisonControl);
         prisonControl.setMapControl(this);
+        prisonControl.initTextLooks();
 
         MovableMarker.setMapView(mapView);
     }
@@ -101,6 +102,9 @@ public class MapControl {
             // inform listener that the map is initialized
             initialized = true;
             for (OnMapInitialized l : listeners) l.onMapInitialized();
+
+            // repaint the map (prison)
+            mapView.invalidate();
         }
     }
 

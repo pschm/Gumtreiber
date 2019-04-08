@@ -104,6 +104,8 @@ public class MapFragment extends Fragment {
 
         PrisonControl prisonControl = new PrisonControl(prisonView);
 
+        prisonView.setVisibility(View.INVISIBLE); // TODO ... DELETE TextView completely
+
         // initialize zoom on MainBuilding
         ViewTreeObserver vto = mapView.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -126,11 +128,7 @@ public class MapFragment extends Fragment {
      */
     private void initListeners() {
         // map initialized
-        onMapInitializedListener = () -> {
-//            if (isUiThread()) Log.d("MapFrag.", "UI Thread!!!");
-//            else Log.d("MapFrag.", "other Thread.");
-            hideLoadingScreen();
-        };
+        onMapInitializedListener = this::hideLoadingScreen;
         mapControl.addOnMapInitializedListener(onMapInitializedListener);
 
         // start listening to Firebase updates
