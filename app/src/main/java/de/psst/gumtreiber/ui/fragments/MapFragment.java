@@ -1,6 +1,5 @@
 package de.psst.gumtreiber.ui.fragments;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -162,7 +161,7 @@ public class MapFragment extends Fragment {
         ProgressBar loadingCircle = fragmentView.findViewById(R.id.loadingCircle);
 
         // change progessbar color
-        loadingCircle.getIndeterminateDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.MULTIPLY);
+        loadingCircle.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.colorAuthFont), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
     /**
