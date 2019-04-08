@@ -33,7 +33,6 @@ import static de.psst.gumtreiber.ui.MainActivity.STG_FRAGMENT_TAG;
 public class MapFragment extends Fragment {
     private View fragmentView;
     private MapView mapView;
-    private TextView prisonView;
     private MapControl mapControl;
     private MainActivity activity;
 
@@ -94,17 +93,12 @@ public class MapFragment extends Fragment {
     private void initMap() {
         // load views
         mapView = fragmentView.findViewById(R.id.map);
-        prisonView = fragmentView.findViewById(R.id.prison);
 
         // configure mapView
         mapView.setImageResource(R.mipmap.map);
         mapView.setMaximumScale(9f);
         mapView.setMediumScale(3f);
         mapView.setMinimumScale(2f);
-
-        PrisonControl prisonControl = new PrisonControl(prisonView);
-
-        prisonView.setVisibility(View.INVISIBLE); // TODO ... DELETE TextView completely
 
         // initialize zoom on MainBuilding
         ViewTreeObserver vto = mapView.getViewTreeObserver();
@@ -113,13 +107,11 @@ public class MapFragment extends Fragment {
             public void onGlobalLayout() {
                 mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mapView.setScale(INITIAL_ZOOM, MAIN_BUILDING_MAP.x, MAIN_BUILDING_MAP.y, false);
-
-                prisonControl.initSize();
             }
         });
 
-        // init mapControl
-        mapControl = new MapControl(mapView, activity, prisonControl);
+        // init mapControl & prisonControl
+        mapControl = new MapControl(mapView, activity, new PrisonControl(activity));
     }
 
     /**

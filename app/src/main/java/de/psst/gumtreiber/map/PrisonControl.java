@@ -1,25 +1,22 @@
 package de.psst.gumtreiber.map;
 
+import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.util.Log;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import de.psst.gumtreiber.R;
 import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.Coordinate;
 import de.psst.gumtreiber.data.Vector2;
-import de.psst.gumtreiber.ui.fragments.MapFragment;
 
 import static de.psst.gumtreiber.map.MapControl.MAX_LAT;
 import static de.psst.gumtreiber.map.MapControl.MAX_LONG;
@@ -37,38 +34,28 @@ public class PrisonControl {
     private static final double PRISON_LONGITUDE = 7.560826; // 7.561225;
     private static int PRISON_COUNT = 3; //#users to show in the prison
 
+    private Activity activity;
+    private MapControl mapControl;
+
     private Vector2 position = new Vector2(0, 0);
     private Paint paint = new Paint();
     private float scale = MapView.INITIAL_ZOOM;
 
-    private final TextView view;
-    private MapControl mapControl;
     private ArrayList<AbstractUser> inmates = new ArrayList<>();
     private ArrayList<AbstractUser> freeFolk = new ArrayList<>();
-    private ArrayList<String> shownInmates = new ArrayList<>();
+    private ArrayList<String> displayedText = new ArrayList<>();
 
-    private int initialWidth;
-    private int initialHeight;
-    private float initialTextSize;
+    public PrisonControl(Activity activity) {
+        this.activity = activity;
 
-    public PrisonControl(TextView view) {
-        this.view = view;
-    }
-
-    public void initTextLooks() {
-        // init text color and type
-        Typeface tf = ResourcesCompat.getFont(mapControl.getActivity(), R.font.almendra_sc);
-        paint.setTypeface(tf);
-        paint.setColor(ContextCompat.getColor(mapControl.getActivity(), R.color.colorAuthFont));
-    }
-
-    public void setMapControl(MapControl mapControl) {
-        this.mapControl = mapControl;
+        // init text font and color
+        paint.setTypeface(ResourcesCompat.getFont(activity, R.font.almendra_sc));
+        paint.setColor(ContextCompat.getColor(activity, R.color.colorAuthFont));
     }
 
     /**
      * Separate all Users from the given ArrayList which aren't
-     * in the geographically area of the map and show them in the {@link #view}
+     * in the geographically area of the map and show them one the map
      *
      * @param users ArrayList to filter
      * @return userList without inmates
@@ -76,8 +63,7 @@ public class PrisonControl {
     public ArrayList<AbstractUser> updateInmates(ArrayList<AbstractUser> users) {
         filterList(users);
 
-        if (MapFragment.isUiThread()) updateView();
-        else mapControl.getActivity().runOnUiThread(this::updateView);
+        updateDisplayedText();
 
         return freeFolk;
     }
@@ -94,59 +80,27 @@ public class PrisonControl {
 
         // consider possible translation
         position = mapControl.getMapView().adjustToTransformation(position);
-
-        // set the new location
-        view.setX(position.x - view.getWidth() / 2f);
-        view.setY(position.y - view.getHeight() / 2f);
-
-        // adjust size
-        if (MapFragment.isUiThread()) adjustSize();
-        else mapControl.getActivity().runOnUiThread(this::adjustSize);
     }
 
     /**
-     * adjust the size of the TextView according to the current scale of {@link MapView}
+     * paint {@link #displayedText} on the given canvas
      */
-    private void adjustSize() {
-        float scale = mapControl.getMapView().getScale();
-        if (initialWidth <= 0 || initialHeight <= 0) {
-            Log.w(CLASS + USER, "size not initialized...");
-            return;
-        }
-//        Log.d(CLASS + USER, "Adjust to scale: " + scale);
-
-        int width = (int) (initialWidth * scale);
-        int height = (int) (initialHeight * scale);
-        LayoutParams param = new ConstraintLayout.LayoutParams(
-                (int) (initialWidth * scale),
-                (int) (initialHeight * scale)
-        );
-        view.setMaxWidth(width);
-        view.setMinWidth(width);
-        view.setMaxHeight(height);
-        view.setMinHeight(height);
-
-        view.setLayoutParams(param);
-
-//        Log.d(CLASS + USER, "Height: " + view.getHeight());
-
-        // textSize
-        view.setTextSize(initialTextSize * scale);
-    }
-
     public void paintInmates(Canvas canvas) {
-        // set text size according to zoom
+        // set text size according to current zoom
         paint.setTextSize(scale * 9f);
 
         float stepSize = 15f;
-        for (int i = 0; i < shownInmates.size(); i++) {
+        for (int i = 0; i < displayedText.size(); i++) {
             canvas.drawText(
-                    shownInmates.get(i),
+                    displayedText.get(i),
                     position.x,
                     position.y + i * stepSize * scale,
                     paint
             );
         }
+
+//        Log.d(CLASS+USER, "Scale: "+scale);
+//        Log.d(CLASS+USER, "Text: "+displayedText);
     }
 
     /**
@@ -156,7 +110,7 @@ public class PrisonControl {
      *
      * @param users ArrayList to filter
      */
-    private void filterList(ArrayList<AbstractUser> users) {
+    private void filterList(@NonNull ArrayList<AbstractUser> users) {
         inmates.clear();
         for (int i = users.size() - 1; i >= 0; i--) {
             AbstractUser u = users.get(i);
@@ -185,16 +139,16 @@ public class PrisonControl {
     }
 
     /**
-     * Fill the {@link #view} with a maximum of {@link #PRISON_COUNT} users from {@link #inmates}
+     * Fill the {@link #displayedText} with a maximum
+     * of {@link #PRISON_COUNT} users from {@link #inmates}
      */
-    private void updateView() {
-        shownInmates.clear();
+    private void updateDisplayedText() {
+        displayedText.clear();
 
         // prison is empty
         if (inmates.isEmpty()) {
-            shownInmates.add(mapControl.getActivity().getString(R.string.prison_empty));
-
-            view.setText(mapControl.getActivity().getString(R.string.prison_empty));
+            displayedText.add(activity.getString(R.string.prison_empty));
+            Log.d(CLASS + USER, "There are now users in prison");
             return;
         }
 
@@ -202,15 +156,14 @@ public class PrisonControl {
         boolean allAdded = false;
 
         // add header text
-        shownInmates.add(inmates.size() + " Insassen");
+        displayedText.add(inmates.size() + " Insassen");
 
         // #prison members less than the PRISON_COUNT --> add all
         if (inmates.size() < PRISON_COUNT) {
-            for (AbstractUser u : inmates) shownInmates.add("- " + u.getName());
+            for (AbstractUser u : inmates) displayedText.add("- " + u.getName());
             allAdded = true;
         }
         else {
-
             // check if the own user is in prison
             // in that case, show him for sure
             FirebaseUser fb = FirebaseAuth.getInstance().getCurrentUser();
@@ -222,7 +175,7 @@ public class PrisonControl {
                 for (AbstractUser u : inmates) {
                     if (u.getUid().equals(myUid)) {
                         myName = u.getName();
-                        shownInmates.add("- " + myName);
+                        displayedText.add("- " + myName);
                         break;
                     }
                 }
@@ -240,40 +193,15 @@ public class PrisonControl {
                     // skip last draw
                     break;
                 }
-                shownInmates.add("- " + inmates.get(i).getName());
+                displayedText.add("- " + inmates.get(i).getName());
             }
         }
 
-        StringBuilder sb = new StringBuilder();
-
-        // build text for the counter
-        sb.append("\n");
-        sb.append(inmates.size());
-        sb.append(" Insassen");
-        sb.append("\n");
-
-        // add picked inmates
-        for (String name : shownInmates) {
-            sb.append("- ");
-            sb.append(name);
-            sb.append(" \n");
-        }
-
-        if (!allAdded) {
-            sb.append("...");
-            shownInmates.add("...");
-        }
-
-//        Log.d(CLASS+USER, "Text: " + sb);
-        view.setText(sb);
+        // add ... at the end, if there are more inmates than shown
+        if (!allAdded) displayedText.add("...");
     }
 
-    public void initSize() {
-        if (view.getWidth() <= 0) Log.w(CLASS + USER, "Prison not initialized");
-        initialWidth = 100;//view.getWidth();
-        initialHeight = 109;//view.getHeight();
-        initialTextSize = 4f;// view.getTextSize();
-//        Log.d(CLASS + USER, "standard text size: " + initialTextSize);
-        adjustSize();
+    public void setMapControl(MapControl mapControl) {
+        this.mapControl = mapControl;
     }
 }

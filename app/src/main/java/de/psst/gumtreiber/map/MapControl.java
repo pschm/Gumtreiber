@@ -21,7 +21,6 @@ public class MapControl {
     private static final String CLASS = "MapControl ";
     private static final String USER = "pschm";
 
-
     // constants for gps calculation
     final static double MAX_LAT = 51.029673;
     final static double MIN_LAT = 51.019053;
@@ -60,7 +59,6 @@ public class MapControl {
 
         mapView.setPrisonControl(prisonControl);
         prisonControl.setMapControl(this);
-        prisonControl.initTextLooks();
 
         MovableMarker.setMapView(mapView);
     }

@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import de.psst.gumtreiber.data.AbstractUser;
 import de.psst.gumtreiber.data.Vector2;
 import uk.co.senab.photoview.PhotoView;
@@ -230,7 +231,7 @@ public class MapView extends PhotoView {
     }
 
     // some Matrix Utility
-    private void copyMatrix(Matrix dest, Matrix src) {
+    private void copyMatrix(@NonNull Matrix dest, @NonNull Matrix src) {
         src.getValues(matrixValues);
         dest.setValues(matrixValues);
     }
